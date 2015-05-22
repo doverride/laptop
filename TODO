@@ -35,6 +35,6 @@
 
 * test lynx again by downloading .ZIP file
 
-* make qemu work with -sandbox (seccomp)
-
 * new netlink socket classes: once that hits my kernels replace all "netlink_socket_perms" with new netlink socket classperms
+
+* target systemd-boot and bootctl
