@@ -38,3 +38,10 @@
 * new netlink socket classes: once that hits my kernels replace all "netlink_socket_perms" with new netlink socket classperms
 
 * target systemd-boot and bootctl
+
+* support systemctl edit <UNIT> (try it with emergency.service)
+  support systemdtl reset-failed
+
+* nf(6)?tables.service: consider Changing Before=network.target to WantedBy=network.target
+
+* remove unused permissions if/where applicable: https://marc.info/?l=selinux&m=143335717624531&w=2
