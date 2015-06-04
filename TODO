@@ -45,3 +45,5 @@
 * nf(6)?tables.service: consider Changing Before=network.target to WantedBy=network.target
 
 * remove unused permissions if/where applicable: https://marc.info/?l=selinux&m=143335717624531&w=2
+
+* target /usr/bin/chage
