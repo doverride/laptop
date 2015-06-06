@@ -46,4 +46,4 @@
 
 * remove unused permissions if/where applicable: https://marc.info/?l=selinux&m=143335717624531&w=2
 
-* target /usr/bin/chage
+* target /usr/bin/chage, /usr/bin/pwgen (for pass)
