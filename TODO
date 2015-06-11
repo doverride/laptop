@@ -48,4 +48,4 @@
 
 * target /usr/bin/chage, /usr/bin/pwgen (for pass)
 
-* look into implementing xss-lock
+* hwdb is a permissive domain for now
