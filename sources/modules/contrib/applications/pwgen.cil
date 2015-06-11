@@ -10,6 +10,8 @@
 (context pwgen_exec (system_u object_r pwgen_exec_t (systemlow systemlow)))
 (filecon "/usr/bin/pwgen" file pwgen_exec)
 
+(call devices_read_urandom (pwgen_t))
+
 (macro pwgen_exec ((type ARG1))
     (call can_exec (ARG1 pwgen_exec_t)))
 
