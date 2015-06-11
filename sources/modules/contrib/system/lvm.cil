@@ -132,7 +132,7 @@
 (call files_runtime_object_type_transition (lvmetad_t lvmetad_runtime_t file "*"))
 
 (allow lvmetad_t lvmetad_runtime_t manage_dir_perms)
-(allow lvmetad_t lvmetad_runtime_t  manage_sock_file_perms)
+(allow lvmetad_t lvmetad_runtime_t manage_sock_file_perms)
 (call files_runtime_object_type_transition (lvmetad_t lvmetad_runtime_t dir "*"))
 
 (call selinux_get_enforce_mode (lvmetad_t))
@@ -193,6 +193,7 @@
 (call files_runtime_object_type_transition (lvmpolld_t lvmpolld_runtime_t file "*"))
 
 (allow lvmpolld_t lvmpolld_runtime_t manage_sock_file_perms)
+(call lvm_lvmetad_runtime_object_object_type_transition (lvmpolld_t lvmpolld_runtime_t sock_file "*"))
 
 (call lvm_manage_lvmetad_runtime_dirs (lvmpolld_t))
 (call lvm_runtime_object_type_transition_lvmetad_runtime_dirs (lvmpolld_t))
@@ -394,6 +395,10 @@
 (macro lvm_read_lvmetad_runtime_lnk_files ((type ARG1))
     (call files_search_runtime (ARG1))
     (call read_lnk_files_pattern (ARG1 lvmetad_runtime_t lvmetad_runtime_t)))
+
+(macro lvm_lvmetad_runtime_object_object_type_transition ((type ARG1)(type ARG2)(class ARG3)(name ARG4))
+    (call files_search_runtime (ARG1))
+    (call object_type_transition_pattern (ARG1 lvmetad_runtime_t ARG2 ARG3 ARG4)))
 
 (macro lvm_runtime_object_type_transition_lvmetad_runtime_dirs ((type ARG1))
     (call files_runtime_object_type_transition (ARG1 lvmetad_runtime_t dir "lvm")))
