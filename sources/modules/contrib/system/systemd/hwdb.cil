@@ -2,8 +2,6 @@
 
 (typeattribute hwdb_admin_subject_type)
 
-(typepermissive hwdb_t)
-
 (type hwdb_t)
 (type hwdb_exec_t)
 (call applications_app (hwdb_t hwdb_exec_t))
@@ -12,6 +10,8 @@
 
 (context hwdb_exec (system_u object_r hwdb_exec_t (systemlow systemlow)))
 (filecon "/usr/bin/systemd-hwdb" file hwdb_exec)
+
+(call systemd_search_runtime (hwdb_t))
 
 (call udev_manage_config_files (hwdb_t))
 
