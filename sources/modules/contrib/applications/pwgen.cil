@@ -1,0 +1,26 @@
+(roleattribute pwgen_role)
+
+(type pwgen_t)
+(type pwgen_exec_t)
+(call applications_app (pwgen_t pwgen_exec_t))
+(roletype pwgen_role pwgen_t)
+
+(roleattributeset pwgen_role system_r)
+
+(context pwgen_exec (system_u object_r pwgen_exec_t (systemlow systemlow)))
+(filecon "/usr/bin/pwgen" file pwgen_exec)
+
+(macro pwgen_exec ((type ARG1))
+    (call can_exec (ARG1 pwgen_exec_t)))
+
+(macro pwgen_auto_subject_type_transition ((type ARG1))
+    (call pwgen_send_signal (ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 pwgen_exec_t pwgen_t)))
+
+(macro pwgen_send_signal ((type ARG1))
+    (allow ARG1 pwgen_t (process (signal))))
+
+(macro pwgen_run ((type ARG1)(role ARG2))
+    (call pwgen_auto_subject_type_transition (ARG1))
+    (roleattributeset pwgen_role ARG2))
