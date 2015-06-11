@@ -157,6 +157,45 @@
 
     (allow lvm_admin_subject_type lvmetad_unit_t (service (all))))
 
+(type lvmpolld_t)
+(type lvmpolld_exec_t)
+(call subject_common_type (lvmpolld_t))
+(call subject_entry (lvmpolld_t lvmpolld_exec_t))
+(roletype system_r lvmpolld_t)
+
+(context lvmpolld_exec (system_u object_r lvmpolld_exec_t (systemlow systemlow)))
+(filecon "/usr/sbin/lvmpolld" file lvmpolld_exec)
+
+(type lvmpolld_runtime_t)
+(call files_runtime_object_type (lvmpolld_runtime_t))
+
+(typeattributeset lvm_object_type lvmpolld_runtime_t)
+
+(context lvmpolld_runtime (system_u object_r lvmpolld_runtime_t (systemlow systemlow)))
+(filecon "/var/run/lvm/lvmpolld\.socket" socket lvmpolld_runtime)
+
+(allow lvmpolld_t lvmpolld_runtime_t manage_sock_file_perms)
+
+(call lvm_manage_lvmpolld_runtime_sock_files (lvmpolld_t))
+(call lvm_runtime_object_type_transition_lvmetad_runtime_dirs (lvmpolld_t))
+
+(optional lvmpolld_optional_systemd
+    (call systemd_daemon (lvmpolld_t lvmpolld_exec_t))
+
+    (call systemd_unix_stream_socket_activated (lvmpolld_t lvmpolld_runtime_t))
+
+    (type lvmpolld_unit_t)
+    (call systemd_unit_object_type (lvmpolld_unit_t))
+
+    (typeattributeset lvm_object_type lvmpolld_unit_t)
+
+    (context lvmpolld_unit (system_u object_r lvmpolld_unit_t (systemlow systemlow)))
+    (filecon "/usr/lib/systemd/system/lvm2-lvmpolld.*" file lvmpolld_unit)
+
+    ; (call systemd_pid_object_type (lvmpolld_runtime_t))
+
+    (allow lvm_admin_subject_type lvmpolld_unit_t (service (all))))
+
 (allow lvm_admin_subject_type lvmetad_t (process (ptrace signal signull sigkill sigstop)))
 (call ps_subject_pattern (lvm_admin_subject_type lvmetad_t))
 
@@ -168,6 +207,9 @@
 
 (macro lvm_exec_lvmetad ((type ARG1))
     (call can_exec (ARG1 lvmetad_exec_t)))
+
+(macro lvm_exec_lvmpolld ((type ARG1))
+    (call can_exec (ARG1 lvmpolld_exec_t)))
 
 (macro lvm_auto_subject_type_transition ((type ARG1))
     (call lvm_send_signal (ARG1))
@@ -191,6 +233,14 @@
 
 (macro lvm_send_signal_lvmetad ((type ARG1))
     (allow ARG1 lvmetad_t (process (signal))))
+
+(macro lvm_auto_subject_type_transition_lvmpolld ((type ARG1))
+    (call lvm_send_signal_lvmpolld (ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 lvmpolld_exec_t lvmpolld_t)))
+
+(macro lvm_send_signal_lvmpolld ((type ARG1))
+    (allow ARG1 lvmpolld_t (process (signal))))
 
 (macro lvm_search_config ((type ARG1))
     (call files_search_config (ARG1))
@@ -312,6 +362,10 @@
     (call files_search_runtime (ARG1))
     (call manage_files_pattern (ARG1 lvmetad_runtime_t lvmetad_runtime_t)))
 
+(macro lvm_manage_lvmetad_runtime_dirs ((type ARG1))
+    (call files_rw_runtime_dirs (ARG1))
+    (call manage_files_pattern (ARG1 lvmetad_runtime_t lvmetad_runtime_t)))
+
 (macro lvm_manage_lvmetad_runtime_sock_files ((type ARG1))
     (call files_search_runtime (ARG1))
     (call manage_sock_files_pattern (ARG1 lvmetad_runtime_t lvmetad_runtime_t)))
@@ -319,6 +373,9 @@
 (macro lvm_read_lvmetad_runtime_lnk_files ((type ARG1))
     (call files_search_runtime (ARG1))
     (call read_lnk_files_pattern (ARG1 lvmetad_runtime_t lvmetad_runtime_t)))
+
+(macro lvm_runtime_object_type_transition_lvmetad_runtime_dirs ((type ARG1))
+    (call files_runtime_object_type_transition (ARG1 lvmetad_runtime_t dir "lvm")))
 
 (macro lvm_read_lvmetad_runtime ((type ARG1))
     (call files_search_runtime (ARG1))
@@ -333,6 +390,15 @@
     (allow ARG1 lvmetad_runtime_t manage_dir_perms)
     (allow ARG1 lvmetad_runtime_t manage_lnk_file_perms)
     (allow ARG1 lvmetad_runtime_t manage_sock_file_perms))
+
+(macro lvm_manage_lvmpolld_runtime_sock_files ((type ARG1))
+    (call files_search_runtime (ARG1))
+    (call manage_sock_files_pattern (ARG1 lvmetad_runtime_t lvmpolld_runtime_t)))
+
+(macro lvm_stream_connect_lvmpolld ((type ARG1))
+    (call files_search_runtime (ARG1))
+    (call stream_connect_pattern
+        (ARG1 lvmetad_runtime_t lvmpolld_runtime_t lvmpolld_t)))
 
 (macro lvm_stream_connect_lvmetad ((type ARG1))
     (call files_search_runtime (ARG1))
