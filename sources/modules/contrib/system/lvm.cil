@@ -139,6 +139,7 @@
 
 (call seutil_read_selinux_config_files (lvmetad_t))
 (call seutil_read_file_context_files (lvmetad_t))
+(call seutil_read_default_context_files (lvmetad_t))
 
 (optional lvmetad_optional_systemd
     (call systemd_daemon (lvmetad_t lvmetad_exec_t))
@@ -165,6 +166,19 @@
 
 (context lvmpolld_exec (system_u object_r lvmpolld_exec_t (systemlow systemlow)))
 (filecon "/usr/sbin/lvmpolld" file lvmpolld_exec)
+
+(allow lvmpolld_t self (process (setfscreate)))
+(allow lvmpolld_t self create_unix_stream_stream_socket_perms)
+
+(call selinux_get_enforce_mode (lvmpolld_t))
+
+(call lvm_check_exec_lvm_executable_files (lvmpolld_t))
+
+(call miscfiles_read_locale (lvmpolld_t))
+
+(call seutil_read_selinux_config_files (lvmpolld_t))
+(call seutil_read_file_context_files (lvmpolld_t))
+(call seutil_read_default_context_files (lvmpolld_t))
 
 (type lvmpolld_runtime_t)
 (call files_runtime_object_type (lvmpolld_runtime_t))
@@ -208,6 +222,9 @@
 
 (macro lvm_exec ((type ARG1))
     (call can_exec (ARG1 lvm_exec_t)))
+
+(macro lvm_check_exec_lvm_executable_files ((type ARG1))
+    (allow ARG1 lvm_exec_t (file (execute))))
 
 (macro lvm_exec_lvmetad ((type ARG1))
     (call can_exec (ARG1 lvmetad_exec_t)))
