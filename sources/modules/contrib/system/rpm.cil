@@ -66,11 +66,13 @@
 (filecon "/var/log/yum\.log.*" file rpm_log)
 (filecon "/var/log/dnf\.log.*" file rpm_log)
 (filecon "/var/log/dnf\.plugin\.log.*" file rpm_log)
+(filecon "/var/log/dnf\.librepo\.log.*" file rpm_log)
 (filecon "/var/log/dnf\.rpm\.log.*" file rpm_log)
 (filecon "/var/log/hawkey\.log.*" file rpm_log)
 
 (call files_log_object_type_transition (rpm_t rpm_log_t file "dnf.log"))
 (call files_log_object_type_transition (rpm_t rpm_log_t file "dnf.plugin.log"))
+(call files_log_object_type_transition (rpm_t rpm_log_t file "dnf.librepo.log"))
 (call files_log_object_type_transition (rpm_t rpm_log_t file "dnf.rpm.log"))
 (call files_log_object_type_transition (rpm_t rpm_log_t file "hawkey.log"))
 
