@@ -46,7 +46,8 @@
 
     (allow powertop_admin_subject_type powertop_unit_t (service (all))))
 
-(allow powertop_t self (capability (dac_override net_admin sys_rawio sys_resource ipc_lock)))
+(allow powertop_t self (capability (dac_override net_admin sys_rawio sys_resource
+    sys_admin ipc_lock)))
 (allow powertop_t self (process (setrlimit)))
 (allow powertop_t self create_socket_perms)
 (allow powertop_t self create_udp_socket_perms)
@@ -55,9 +56,10 @@
 
 (call system_read_net_proc (powertop_t))
 (call system_read_kallsyms_proc (powertop_t))
-(call system_read_fs_sysctl (powertop_t))
-(call system_read_kernel_sysctl (powertop_t))
-(call system_read_vm_sysctl (powertop_t))
+(call system_rw_fs_sysctl (powertop_t))
+(call system_rw_irq_sysctl (powertop_t))
+(call system_rw_kernel_sysctl (powertop_t))
+(call system_rw_vm_sysctl (powertop_t))
 (call system_request_load_module (powertop_t))
 (call system_load_kernel_module (powertop_t))
 
@@ -77,6 +79,8 @@
 (call miscfiles_read_all_terminfo (powertop_t))
 (call miscfiles_read_hwdata (powertop_t))
 (call miscfiles_read_locale (powertop_t))
+
+(call ns_client_subject_type (powertop_t))
 
 (call subject_ptrace_all_uncond (powertop_t))
 (call subject_read_all_common_subjects_state (powertop_t))
