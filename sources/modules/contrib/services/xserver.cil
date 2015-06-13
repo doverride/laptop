@@ -120,6 +120,7 @@
 (call files_read_config_files (xserver_t))
 (call files_read_data (xserver_t))
 
+(call filesystems_list_devtmpfs (xserver_t))
 (call filesystems_list_sysfs (xserver_t))
 (call filesystems_rw_sysfs_files (xserver_t))
 (call filesystems_read_sysfs_lnk_files (xserver_t))

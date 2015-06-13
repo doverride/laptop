@@ -75,6 +75,7 @@
 (call system_read_kernel_sysctl (networkd_t))
 (call system_rw_net_sysctl (networkd_t))
 
+(call filesystems_list_debugfs (networkd_t))
 (call filesystems_read_sysfs (networkd_t))
 
 (call network_udp_bind_generic_node (networkd_t))
