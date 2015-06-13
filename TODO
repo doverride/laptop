@@ -38,4 +38,4 @@
 
 * remove unused permissions if/where applicable: https://marc.info/?l=selinux&m=143335717624531&w=2
 
-* target /usr/bin/chage gpm
+* target /usr/bin/chage gpm /sbin/rfkill (to switch off bt and wifi (xbindkeys)
