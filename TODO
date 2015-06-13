@@ -3,8 +3,6 @@
 * add systemd units and admins for various systemd daemons i neglected: machine, locale, hostname etc
     the ones that have a ctl app as well as a service unit
 
-* work on localectl loginctl timedatectl hostnamectl
-
 * cover debug-shell.service
 
 * Test it: systemd-notify can be run by system and session scripts (its an applications app) : there are some neat examples in man systemd-notify to test it
@@ -27,13 +25,7 @@
 
     The problem would be that i would need to add more logic on how to determine which seuser is unconfined and which contexts to add and which not
 
-* rw_fifo_file_perms should probably be part of ns_client_subject_type
-
 * d30: rpmfusion: mplayer .. deps
-
-* e145/x131e: reset container passwords
-
-* test lynx again by downloading .ZIP file
 
 * new netlink socket classes: once that hits my kernels replace all "netlink_socket_perms" with new netlink socket classperms
 
@@ -42,8 +34,8 @@
 * support systemctl edit <UNIT> (try it with emergency.service)
   support systemdtl reset-failed
 
-* nf(6)?tables.service: consider Changing Before=network.target to WantedBy=network.target
+* nf(6)?tables.service: consider Changing WantedBy=multi-user.target to WantedBy=network.target
 
 * remove unused permissions if/where applicable: https://marc.info/?l=selinux&m=143335717624531&w=2
 
-* target /usr/bin/chage powertop
+* target /usr/bin/chage gpm
