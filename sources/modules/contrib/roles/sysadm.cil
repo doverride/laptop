@@ -446,6 +446,7 @@
     (call power_run (sysadm_subject_type sysadm_r)))
 
 (optional sysadm_optional_powertop
+    (call powertop_admin (sysadm_t sysadm_r))
     (call powertop_run (sysadm_subject_type sysadm_r)))
 
 (optional sysadm_optional_ppp

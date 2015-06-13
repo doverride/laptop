@@ -22,7 +22,16 @@
 (filecon "/var/cache/powertop(/.*)?" any powertop_cache)
 
 (allow powertop_t powertop_cache_t manage_dir_perms)
+(allow powertop_t powertop_cache_t manage_file_perms)
 (call files_cache_object_type_transition (powertop_t powertop_cache_t dir "*"))
+
+(type powertop_tmpfs_t)
+(call usersubject_tmpfs_object_type (powertop_tmpfs_t))
+
+(typeattributeset powertop_object_type powertop_tmpfs_t)
+
+(allow powertop_t powertop_tmpfs_t manage_file_perms)
+(call filesystems_tmpfs_object_type_transition (powertop_t powertop_tmpfs_t file "*"))
 
 (optional powertop_optional_systemd
     (call systemd_daemon (powertop_t powertop_exec_t))
@@ -36,6 +45,44 @@
     (filecon "/usr/lib/systemd/system/[^/]*powertop.*" file powertop_unit)
 
     (allow powertop_admin_subject_type powertop_unit_t (service (all))))
+
+(allow powertop_t self (capability (dac_override net_admin sys_rawio sys_resource ipc_lock)))
+(allow powertop_t self (process (setrlimit)))
+(allow powertop_t self create_socket_perms)
+(allow powertop_t self create_udp_socket_perms)
+(allow powertop_t self create_netlink_socket_perms)
+(allow powertop_t self create_unix_dgram_socket_perms)
+
+(call system_read_net_proc (powertop_t))
+(call system_read_kallsyms_proc (powertop_t))
+(call system_read_fs_sysctl (powertop_t))
+(call system_read_kernel_sysctl (powertop_t))
+(call system_read_vm_sysctl (powertop_t))
+(call system_request_load_module (powertop_t))
+(call system_load_kernel_module (powertop_t))
+
+(call commands_exec_shell (powertop_t))
+
+(call devices_read_cpu (powertop_t))
+
+(call filesystems_list_proc (powertop_t))
+(call filesystems_getattr_debugfs_filesystems (powertop_t))
+(call filesystems_read_debugfs (powertop_t))
+(call filesystems_list_sysfs (powertop_t))
+(call filesystems_read_sysfs_lnk_files (powertop_t))
+(call filesystems_rw_sysfs_files (powertop_t))
+
+(call kmod_auto_subject_type_transition (powertop_t))
+
+(call miscfiles_read_all_terminfo (powertop_t))
+(call miscfiles_read_hwdata (powertop_t))
+(call miscfiles_read_locale (powertop_t))
+
+(call subject_ptrace_all_uncond (powertop_t))
+(call subject_read_all_common_subjects_state (powertop_t))
+
+(optional powertop_optional_xutil
+    (call xutil_run (powertop_t powertop_role)))
 
 (allow powertop_admin_subject_type powertop_t (process (ptrace signal signull sigkill sigstop)))
 (call ps_subject_pattern (powertop_admin_subject_type powertop_t))
@@ -85,6 +132,16 @@
     (allow ARG1 powertop_cache_t manage_file_perms)
     (allow ARG1 powertop_cache_t manage_dir_perms)
     (allow ARG1 powertop_cache_t manage_lnk_file_perms))
+
+(macro powertop_read_tmpfs_files ((type ARG1))
+    (call files_search_user_runtime (ARG1))
+    (call filesystems_search_tmpfs (ARG1))
+    (allow ARG1 powertop_tmpfs_t read_file_perms))
+
+(macro powertop_manage_tmpfs_files ((type ARG1))
+    (call files_search_user_runtime (ARG1))
+    (call filesystems_rw_tmpfs_dirs (ARG1))
+    (allow ARG1 powertop_tmpfs_t manage_file_perms))
 
 (macro powertop_admin ((type ARG1)(role ARG2))
     (typeattributeset powertop_admin_subject_type ARG1)

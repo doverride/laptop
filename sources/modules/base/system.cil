@@ -502,6 +502,10 @@
 (macro system_mounton_kmsg_proc_files ((type ARG1))
     (allow ARG1 kmsg_proc_t (file (mounton))))
 
+(macro system_read_kallsyms_proc ((type ARG1))
+    (call filesystems_search_proc (ARG1))
+    (allow ARG1 kallsyms_proc_t read_file_perms))
+
 (macro system_read_mdstat_proc ((type ARG1))
     (call filesystems_search_proc (ARG1))
     (allow ARG1 mdstat_proc_t read_file_perms))
