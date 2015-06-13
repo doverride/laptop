@@ -1,0 +1,30 @@
+(roleattribute rf_kill_role)
+
+(type rf_kill_t)
+(type rf_kill_exec_t)
+(call applications_app (rf_kill_t rf_kill_exec_t))
+(roletype rf_kill_role rf_kill_t)
+
+(roleattributeset rf_kill_role system_r)
+
+(context rf_kill_exec (system_u object_r rf_kill_exec_t (systemlow systemlow)))
+(filecon "/usr/sbin/rfkill" file rf_kill_exec)
+
+(call devices_rw_wireless (rf_kill_t))
+
+(call filesystems_read_sysfs (rf_kill_t))
+
+(macro rf_kill_exec ((type ARG1))
+    (call can_exec (ARG1 rf_kill_exec_t)))
+
+(macro rf_kill_auto_subject_type_transition ((type ARG1))
+    (call rf_kill_send_signal (ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 rf_kill_exec_t rf_kill_t)))
+
+(macro rf_kill_send_signal ((type ARG1))
+    (allow ARG1 rf_kill_t (process (signal))))
+
+(macro rf_kill_run ((type ARG1)(role ARG2))
+    (call rf_kill_auto_subject_type_transition (ARG1))
+    (roleattributeset rf_kill_role ARG2))

@@ -472,6 +472,9 @@
 (optional sysadm_optional_resetimg
     (call resetimg_run (sysadm_subject_type sysadm_r)))
 
+(optional sysadm_optional_rf_kill
+    (call rf_kill_run (sysadm_t sysadm_r)))
+
 (optional sysadm_optional_rpcbind
     (call rpcbind_admin (sysadm_t sysadm_r)))
 
