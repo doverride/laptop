@@ -445,6 +445,9 @@
 (optional sysadm_optional_power
     (call power_run (sysadm_subject_type sysadm_r)))
 
+(optional sysadm_optional_powertop
+    (call powertop_run (sysadm_subject_type sysadm_r)))
+
 (optional sysadm_optional_ppp
     (call ppp_run (sysadm_subject_type sysadm_r))
     (call ppp_manage_pppd_lock (sysadm_t))

@@ -1,0 +1,94 @@
+(roleattribute powertop_role)
+
+(typeattribute powertop_object_type)
+(typeattribute powertop_admin_subject_type)
+
+(type powertop_t)
+(type powertop_exec_t)
+(call applications_app (powertop_t powertop_exec_t))
+(roletype powertop_role powertop_t)
+
+(roleattributeset powertop_role system_r)
+
+(context powertop_exec (system_u object_r powertop_exec_t (systemlow systemlow)))
+(filecon "/usr/sbin/powertop" file powertop_exec)
+
+(type powertop_cache_t)
+(call files_cache_object_type (powertop_cache_t))
+
+(typeattributeset powertop_object_type powertop_cache_t)
+
+(context powertop_cache (system_u object_r powertop_cache_t (systemlow systemlow)))
+(filecon "/var/cache/powertop(/.*)?" any powertop_cache)
+
+(allow powertop_t powertop_cache_t manage_dir_perms)
+(call files_cache_object_type_transition (powertop_t powertop_cache_t dir "*"))
+
+(optional powertop_optional_systemd
+    (call systemd_daemon (powertop_t powertop_exec_t))
+
+    (type powertop_unit_t)
+    (call systemd_unit_object_type (powertop_unit_t))
+
+    (typeattributeset powertop_object_type powertop_unit_t)
+
+    (context powertop_unit (system_u object_r powertop_unit_t (systemlow systemlow)))
+    (filecon "/usr/lib/systemd/system/[^/]*powertop.*" file powertop_unit)
+
+    (allow powertop_admin_subject_type powertop_unit_t (service (all))))
+
+(allow powertop_admin_subject_type powertop_t (process (ptrace signal signull sigkill sigstop)))
+(call ps_subject_pattern (powertop_admin_subject_type powertop_t))
+
+(allow powertop_admin_subject_type powertop_object_type (all_file_objects
+    (not_mounton_entrypoint_and_execmod)))
+
+(macro powertop_exec ((type ARG1))
+    (call can_exec (ARG1 powertop_exec_t)))
+
+(macro powertop_auto_subject_type_transition ((type ARG1))
+    (call powertop_send_signal (ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 powertop_exec_t powertop_t)))
+
+(macro powertop_run ((type ARG1)(role ARG2))
+    (call powertop_auto_subject_type_transition (ARG1))
+    (roleattributeset powertop_role (ARG2)))
+
+(macro powertop_send_signal ((type ARG1))
+    (allow ARG1 powertop_t (process (signal))))
+
+(macro powertop_search_cache ((type ARG1))
+    (call files_search_cache (ARG1))
+    (allow ARG1 powertop_cache_t search_dir_perms))
+
+(macro powertop_list_cache ((type ARG1))
+    (call files_search_cache (ARG1))
+    (allow ARG1 powertop_cache_t list_dir_perms))
+
+(macro powertop_read_cache_files ((type ARG1))
+    (call files_search_cache (ARG1))
+    (call read_files_pattern (ARG1 powertop_cache_t powertop_cache_t)))
+
+(macro powertop_read_cache_lnk_files ((type ARG1))
+    (call files_search_cache (ARG1))
+    (call read_lnk_files_pattern (ARG1 powertop_cache_t powertop_cache_t)))
+
+(macro powertop_read_cache ((type ARG1))
+    (call files_search_cache (ARG1))
+    (allow ARG1 powertop_cache_t read_file_perms)
+    (allow ARG1 powertop_cache_t list_dir_perms)
+    (allow ARG1 powertop_cache_t read_lnk_file_perms))
+
+(macro powertop_manage_cache ((type ARG1))
+    (call files_rw_cache_dirs (ARG1))
+    (allow ARG1 powertop_cache_t manage_file_perms)
+    (allow ARG1 powertop_cache_t manage_dir_perms)
+    (allow ARG1 powertop_cache_t manage_lnk_file_perms))
+
+(macro powertop_admin ((type ARG1)(role ARG2))
+    (typeattributeset powertop_admin_subject_type ARG1)
+    (optional powertop_admin_optional_askpwd
+        (call askpwd_run_askpwdagent (ARG1 ARG2)))
+    (optional powertop_admin_optional_systemd
+        (call systemd_system_service_admin_subject_type (ARG1))))
