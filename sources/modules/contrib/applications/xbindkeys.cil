@@ -23,11 +23,14 @@
 
 (call devices_read_urandom (xbindkeys_t))
 
+(call files_dontaudit_catchall_subject_type (xbindkeys_t))
 (call files_read_data_files (xbindkeys_t))
 
 (call miscfiles_read_locale (xbindkeys_t))
 
 (call xserver_client_subject_type (xbindkeys_t))
+
+(call usersubject_use_terminals (xbindkeys_t))
 
 (optional xbindkeys_optional_pa
     (call pa_run_pactl (xbindkeys_t xbindkeys_role)))
