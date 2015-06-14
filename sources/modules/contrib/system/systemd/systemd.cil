@@ -455,7 +455,7 @@
     (call systemduser_config_home_object_type_transition_config_home_dirs (systemd_systemctl_subject_type)))
 
 (optional systemd_systemdctl_subject_type_optional_usersubject
-    (call usersubject_getattr_terminals (systemd_systemctl_subject_type))
+    (call usersubject_use_terminals (systemd_systemctl_subject_type))
     (call usersubject_search_exec_home (systemd_systemctl_subject_type))
     (call usersubject_read_exec_home_lnk_files (systemd_systemctl_subject_type))
     (call usersubject_read_user_home_files (systemd_systemctl_subject_type))
