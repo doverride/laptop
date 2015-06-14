@@ -408,7 +408,6 @@
 (call shutdown_dgram_send_shutdownd (systemd_systemctl_subject_type))
 
 (call systemd_search_config (systemd_systemctl_subject_type))
-(call systemd_search_unit (systemd_systemctl_subject_type))
 (call systemd_control_all_units (systemd_systemctl_subject_type))
 (call systemd_getattr_all_systemd_daemon_subjects (systemd_systemctl_subject_type))
 (call systemd_read_state_all_systemd_daemon_subjects (systemd_systemctl_subject_type))
@@ -416,6 +415,8 @@
 (call systemd_systemctl_client_subject_type (systemd_systemctl_subject_type))
 (call systemd_read_state (systemd_systemctl_subject_type))
 (call systemd_control_system (systemd_systemctl_subject_type))
+(call systemd_manage_unit_dirs (systemd_systemctl_subject_type))
+(call systemd_manage_unit_files (systemd_systemctl_subject_type))
 
 (call utmp_read_utmp_runtime_files (systemd_systemctl_subject_type))
 
@@ -449,13 +450,17 @@
     (call systemduser_control_all_units (systemd_systemctl_subject_type))
     (call systemduser_control_transient_units (systemd_systemctl_subject_type))
     (call systemduser_stream_connect_all_subjects (systemd_systemctl_subject_type))
-    (call systemduser_read_config_home (systemd_systemctl_subject_type)))
+    (call systemduser_manage_config_home_files (systemd_systemctl_subject_type))
+    (call systemduser_manage_config_home_dirs (systemd_systemctl_subject_type))
+    (call systemduser_config_home_object_type_transition_config_home_dirs (systemd_systemctl_subject_type)))
 
 (optional systemd_systemdctl_subject_type_optional_usersubject
     (call usersubject_getattr_terminals (systemd_systemctl_subject_type))
     (call usersubject_search_exec_home (systemd_systemctl_subject_type))
     (call usersubject_read_exec_home_lnk_files (systemd_systemctl_subject_type))
-    (call usersubject_read_user_home_files (systemd_systemctl_subject_type)))
+    (call usersubject_read_user_home_files (systemd_systemctl_subject_type))
+    (call usersubject_create_config_home_dirs (systemd_systemctl_subject_type))
+    (call usersubject_home_dir_object_type_transition_config_home_dirs (systemd_systemctl_subject_type)))
 
 (type systemd_generic_t)
 (call subject_common_type (systemd_generic_t))
@@ -540,6 +545,8 @@
 (call commands_exec (systemd_systemctl_client_subject_type))
 
 (call devices_read_urandom (systemd_systemctl_client_subject_type))
+
+(call files_read_config_files (systemd_systemctl_client_subject_type))
 
 (call filesystems_getattr_filesystems (systemd_systemctl_client_subject_type))
 (call filesystems_read_sysfs_files (systemd_systemctl_client_subject_type))
@@ -942,6 +949,10 @@
 (macro systemd_read_unit_files ((type ARG1))
     (call libraries_search (ARG1))
     (call read_files_pattern (ARG1 systemd_unit_t systemd_unit_t)))
+
+(macro systemd_manage_unit_dirs ((type ARG1))
+    (call libraries_search (ARG1))
+    (call manage_dirs_pattern (ARG1 systemd_unit_t systemd_unit_t)))
 
 (macro systemd_manage_unit_files ((type ARG1))
     (call libraries_search (ARG1))
