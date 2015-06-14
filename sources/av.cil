@@ -20,10 +20,10 @@
     audit_write audit_control setfcap))
 
 (class filesystem (mount remount unmount getattr relabelfrom
-    relabelto associate quotamod quotaget))
+    relabelto transition associate quotamod quotaget))
 
 (common file (ioctl read write create getattr setattr lock
-    relabelfrom relabelto append unlink link rename execute
+    relabelfrom relabelto append unlink link rename execute swapon
     quotaon mounton))
 
 (classcommon file file)
@@ -53,13 +53,14 @@
 
 (common socket (ioctl read write create getattr setattr lock
     relabelfrom relabelto append bind connect listen accept getopt
-    setopt shutdown recvfrom sendto name_bind))
+    setopt shutdown recvfrom sendto recv_msg send_msg name_bind))
 
 (classcommon socket socket)
 (class socket ())
 
 (classcommon tcp_socket socket)
-(class tcp_socket (node_bind name_connect))
+(class tcp_socket (connectto newconn acceptfrom node_bind
+    name_connect))
 
 (classcommon udp_socket socket)
 (class udp_socket (node_bind))
@@ -67,9 +68,11 @@
 (classcommon rawip_socket socket)
 (class rawip_socket (node_bind))
 
-(class node (recvfrom sendto))
+(class node (tcp_recv tcp_send udp_recv udp_send rawip_recv
+    rawip_send enforce_dest dccp_recv dccp_send recvfrom sendto))
 
-(class netif (ingress egress))
+(class netif (tcp_recv tcp_send udp_recv udp_send rawip_recv
+    rawip_send dccp_recv dccp_send ingress egress))
 
 (classcommon netlink_socket socket)
 (class netlink_socket ())
@@ -81,7 +84,7 @@
 (class key_socket ())
 
 (classcommon unix_stream_socket socket)
-(class unix_stream_socket (connectto))
+(class unix_stream_socket (connectto newconn acceptfrom))
 
 (classcommon unix_dgram_socket socket)
 (class unix_dgram_socket ())

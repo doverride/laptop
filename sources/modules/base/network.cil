@@ -84,13 +84,13 @@
 (allow network_unconfined_subject_type network_packet_object_type (packet (all)))
 
 (allow network_unconfined_subject_type network_port_object_type (tcp_socket
-    (name_bind name_connect)))
+    (send_msg recv_msg name_bind name_connect)))
 (allow network_unconfined_subject_type network_port_object_type (udp_socket
-    (name_bind)))
+    (send_msg recv_msg name_bind)))
 (allow network_unconfined_subject_type network_port_object_type (rawip_socket
-    (name_bind)))
+    (send_msg recv_msg name_bind)))
 (allow network_unconfined_subject_type network_port_object_type (dccp_socket
-    (name_bind name_connect)))
+    (send_msg recv_msg name_bind name_connect)))
 
 (allow network_unconfined_subject_type network_node_object_type (tcp_socket
     (node_bind)))
