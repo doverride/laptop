@@ -1,4 +1,4 @@
-* runuser su
+* target runuser, su
 
 * add systemd units and admins for various systemd daemons i neglected: machine, locale, hostname etc
     the ones that have a ctl app as well as a service unit
@@ -35,3 +35,6 @@
     See: commit b6bb6c2 and the revert of that commit
 
 * target gpm
+
+* everyone who traverses debugfs probably eventually needs filesystems_read_debugfs() as well as
+    filesystems_getattr_debugfs_filesystems()
