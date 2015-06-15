@@ -11,17 +11,23 @@
 (filecon "/usr/bin/chage" file chage_exec)
 
 (allow chage_t self (capability (dac_override)))
+(allow chage_t self (process (setfscreate)))
 
 (call system_audit_client_subject_type (chage_t))
 
 (call selinux_list_securityfs (chage_t))
 (call selinux_compute_access_vector (chage_t))
+(call selinux_validate_context (chage_t))
 
 (call auth_manage_passwd_config_files (chage_t))
-(call auth_config_object_type_transition_passwd_config_files (chage_t "*"))
-(call auth_read_shadow (chage_t))
+(call auth_manage_shadow (chage_t))
 
 (call miscfiles_read_locale (chage_t))
+
+(call seutil_read_file_context_files (chage_t))
+
+(optional chage_optional_journal
+    (call journal_client_subject_type (chage_t)))
 
 (macro chage_exec ((type ARG1))
     (call can_exec (ARG1 chage_exec_t)))
