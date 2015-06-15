@@ -74,6 +74,8 @@
 (call filesystems_read_cgroup_files (sysadm_t))
 (call filesystems_read_sysfs (sysadm_t))
 
+(call selinux_get_all_booleans (sysadm_t))
+
 (call subject_getattr_all_common_subjects (sysadm_t))
 (call subject_read_all_common_subjects_state (sysadm_t))
 
