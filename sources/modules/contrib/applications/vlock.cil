@@ -1,0 +1,60 @@
+(roleattribute vlock_role)
+
+(type vlock_t)
+(type vlock_exec_t)
+(call applications_app (vlock_t vlock_exec_t))
+(roletype vlock_role vlock_t)
+
+(context vlock_exec (system_u object_r vlock_exec_t (systemlow systemlow)))
+(filecon "/usr/bin/vlock" file vlock_exec)
+
+(type vlock_pam_config_t)
+(call auth_pam_config_object_type (vlock_pam_config_t))
+
+(context vlock_pam_config (system_u object_r vlock_pam_config_t (systemlow systemlow)))
+(filecon "/etc/pam\.d/vlock" file vlock_pam_config)
+
+(allow vlock_t self (capability (setuid)))
+(allow vlock_t self rw_fifo_file_perms)
+
+(call system_audit_client_subject_type (vlock_t))
+
+(call files_read_config_files (vlock_t))
+
+(call auth_read_pam_config (vlock_t))
+(call auth_read_authconfig_pam_config (vlock_t))
+(call auth_run_chkpwd (vlock_t vlock_role))
+
+(call miscfiles_read_locale (vlock_t))
+
+(call ns_client_subject_type (vlock_t))
+
+(call utmp_read_utmp_runtime_files (vlock_t))
+
+(call vlock_read_pam_config_files (vlock_t))
+
+(optional vlock_optional_journal
+    (call journal_client_subject_type (vlock_t)))
+
+(macro vlock_exec ((type ARG1))
+    (call can_exec (ARG1 vlock_exec_t)))
+
+(macro vlock_auto_subject_type_transition ((type ARG1))
+    (call vlock_send_signal (ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 vlock_exec_t vlock_t)))
+
+(macro vlock_send_signal ((type ARG1))
+    (allow ARG1 vlock_t (process (signal))))
+
+(macro vlock_run ((type ARG1)(role ARG2))
+    (call vlock_auto_subject_type_transition (ARG1))
+    (roleattributeset vlock_role ARG2))
+
+(macro vlock_read_pam_config_files ((type ARG1))
+    (call auth_search_pam_config (ARG1))
+    (allow ARG1 vlock_pam_config_t read_file_perms))
+
+(macro vlock_manage_pam_config_files ((type ARG1))
+    (call auth_rw_pam_config_dirs (ARG1))
+    (allow ARG1 vlock_pam_config_t manage_file_perms))

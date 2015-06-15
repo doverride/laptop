@@ -797,6 +797,10 @@
     (call utmp_manage_wtmp_log_files (sysadm_t))
     (call utmp_manage_utmp_runtime_files (sysadm_t)))
 
+(optional sysadm_optional_vlock
+    (call vlock_run (sysadm_subject_type sysadm_r))
+    (call vlock_manage_pam_config_files (sysadm_t)))
+
 (optional sysadm_optional_wpa
     (call wpa_admin (sysadm_t sysadm_r))
     (call wpa_run_wpacli (sysadm_subject_type sysadm_r)))

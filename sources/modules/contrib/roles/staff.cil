@@ -729,6 +729,9 @@
 (optional staff_optional_utmp
     (call utmp_read_utmp_runtime_files (staff_t)))
 
+(optional staff_optional_vlock
+    (call vlock_run (staff_subject_type staff_r)))
+
 (optional staff_xserver_optional_xbindkeys
     (call xbindkeys_run (staff_subject_type staff_r))
 
