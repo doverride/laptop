@@ -31,9 +31,7 @@
 
 * target systemd-boot and bootctl
 
-* support systemdtl reset-failed
-
 * kernel 4.2: remove unused permissions: https://marc.info/?l=selinux&m=143335717624531&w=2
     See: commit b6bb6c2 and the revert of that commit
 
-* target /usr/bin/chage gpm
+* target gpm
