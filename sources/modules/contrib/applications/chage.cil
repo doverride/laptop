@@ -1,0 +1,39 @@
+(roleattribute chage_role)
+
+(type chage_t)
+(type chage_exec_t)
+(call applications_app (chage_t chage_exec_t))
+(roletype chage_role chage_t)
+
+(roleattributeset chage_role system_r)
+
+(context chage_exec (system_u object_r chage_exec_t (systemlow systemlow)))
+(filecon "/usr/bin/chage" file chage_exec)
+
+(allow chage_t self (capability (dac_override)))
+
+(call system_audit_client_subject_type (chage_t))
+
+(call selinux_list_securityfs (chage_t))
+(call selinux_compute_access_vector (chage_t))
+
+(call auth_manage_passwd_config_files (chage_t))
+(call auth_config_object_type_transition_passwd_config_files (chage_t "*"))
+(call auth_read_shadow (chage_t))
+
+(call miscfiles_read_locale (chage_t))
+
+(macro chage_exec ((type ARG1))
+    (call can_exec (ARG1 chage_exec_t)))
+
+(macro chage_auto_subject_type_transition ((type ARG1))
+    (call chage_send_signal (ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 chage_exec_t chage_t)))
+
+(macro chage_send_signal ((type ARG1))
+    (allow ARG1 chage_t (process (signal))))
+
+(macro chage_run ((type ARG1)(role ARG2))
+    (call chage_auto_subject_type_transition (ARG1))
+    (roleattributeset chage_role ARG2))

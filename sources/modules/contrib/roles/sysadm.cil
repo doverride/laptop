@@ -150,6 +150,9 @@
 (optional sysadm_optional_bridgeutil
     (call bridgeutil_run (sysadm_subject_type sysadm_r)))
 
+(optional sysadm_optional_chage
+    (call chage_run (sysadm_subject_type sysadm_r)))
+
 (optional sysadm_optional_cpupower
     (call cpupower_admin (sysadm_t sysadm_r))
     (call cpupower_run (sysadm_subject_type sysadm_r)))
