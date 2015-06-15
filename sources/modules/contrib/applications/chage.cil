@@ -28,7 +28,7 @@
 (call seutil_read_selinux_config_files (chage_t))
 (call seutil_read_file_context_files (chage_t))
 
-(call subject_system_change_exemption (chage_t))
+(call subject_object_identity_change_exemption (chage_t))
 
 (optional chage_optional_journal
     (call journal_client_subject_type (chage_t)))
