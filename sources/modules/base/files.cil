@@ -27,6 +27,12 @@
 
 (typeattribute files_unconfined_subject_type)
 
+(type files_execmod_all_except_t)
+(call selinux_bool_object_type (files_execmod_all_except_t))
+
+(context files_execmod_all_except (system_u object_r files_execmod_all_except_t (systemlow systemlow)))
+(genfscon "selinuxfs" "/booleans/files_execmod_all_except" files_execmod_all_except)
+
 (type boot_t)
 (call files_boot_object_type (boot_t))
 (call system_mountpoint_object_type (boot_t))
