@@ -598,6 +598,15 @@
     (call filesystems_devtmpfs_object_type_transition (ARG1 event_dev_t chr_file "event14"))
     (call filesystems_devtmpfs_object_type_transition (ARG1 event_dev_t chr_file "event15")))
 
+(macro devices_devtmpfs_object_type_transition_sound_dev ((type ARG1))
+    (call filesystems_devtmpfs_object_type_transition (ARG1 sound_dev_t chr_file "pcmC1D0c"))
+    (call filesystems_devtmpfs_object_type_transition (ARG1 sound_dev_t chr_file "pcmC1D0p"))
+    (call filesystems_devtmpfs_object_type_transition (ARG1 sound_dev_t chr_file "pcmC2D0c"))
+    (call filesystems_devtmpfs_object_type_transition (ARG1 sound_dev_t chr_file "pcmC2D0p"))
+    (call filesystems_devtmpfs_object_type_transition (ARG1 sound_dev_t chr_file "controlC0"))
+    (call filesystems_devtmpfs_object_type_transition (ARG1 sound_dev_t chr_file "controlC1"))
+    (call filesystems_devtmpfs_object_type_transition (ARG1 sound_dev_t chr_file "controlC2")))
+
 (macro devices_devtmpfs_object_type_transition_usb_dev ((type ARG1))
     (call filesystems_devtmpfs_object_type_transition (ARG1 usb_dev_t chr_file "001"))
     (call filesystems_devtmpfs_object_type_transition (ARG1 usb_dev_t chr_file "002"))
@@ -608,6 +617,11 @@
     (call filesystems_devtmpfs_object_type_transition (ARG1 usb_dev_t chr_file "007"))
     (call filesystems_devtmpfs_object_type_transition (ARG1 usb_dev_t chr_file "008"))
     (call filesystems_devtmpfs_object_type_transition (ARG1 usb_dev_t chr_file "009")))
+
+(macro devices_devtmpfs_object_type_transition_v4l_dev ((type ARG1))
+    (call filesystems_devtmpfs_object_type_transition (ARG1 v4l_dev_t chr_file "video0"))
+    (call filesystems_devtmpfs_object_type_transition (ARG1 v4l_dev_t chr_file "video1"))
+    (call filesystems_devtmpfs_object_type_transition (ARG1 v4l_dev_t chr_file "video2")))
 
 (macro devices_devtmpfs_object_type_transition_watchdog_dev ((type ARG1))
     (call filesystems_devtmpfs_object_type_transition (ARG1 watchdog_dev_t chr_file "watchdog"))
