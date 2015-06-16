@@ -54,7 +54,7 @@
     (call journal_client_subject_type (qemuga_t)))
 
 (optional qemuga_optional_login_logind
-    (call login_dbus_chat_logind (qemuga_t)))
+    (call login_logind_client_subject_type (qemuga_t)))
 
 (optional qemuga_optional_shutdown
     (call shutdown_dgram_send_shutdownd (qemuga_t)))
