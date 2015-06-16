@@ -31,6 +31,8 @@
 (call system_load_kernel_module (kmod_t))
 (call system_request_load_module (kmod_t))
 
+(call files_dontaudit_catchall_subject_type (kmod_t))
+
 (call filesystems_list_debugfs (kmod_t))
 (call filesystems_read_sysfs (kmod_t))
 

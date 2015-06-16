@@ -28,6 +28,8 @@
 
 (call devices_read_random (journal_journalctl_subject_type))
 
+(call files_dontaudit_catchall_subject_type (journal_journalctl_subject_type))
+
 (call filesystems_getattr_tmpfs_filesystems (journal_journalctl_subject_type))
 
 (call journal_manage_log (journal_journalctl_subject_type))
