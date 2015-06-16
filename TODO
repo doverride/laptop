@@ -38,3 +38,5 @@
 
 * everyone who traverses debugfs probably eventually needs filesystems_read_debugfs() as well as
     filesystems_getattr_debugfs_filesystems()
+
+* test systemd-run -M, systemctl set-property systemd-nspawn@refpolicy CPUShares=750
