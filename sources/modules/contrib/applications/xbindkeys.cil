@@ -18,6 +18,7 @@
 (call xbindkeys_home_dir_object_type_transition_home_files (xbindkeys_subject_type))
 
 (allow xbindkeys_subject_type self (process (getsched)))
+(allow xbindkeys_subject_type self rw_fifo_file_perms)
 
 (call commands_exec_shell (xbindkeys_subject_type))
 
@@ -63,3 +64,6 @@
 
 (macro xbindkeys_home_dir_object_type_transition_home_files ((type ARG1))
     (call usersubject_home_dir_object_type_transition (ARG1 xbindkeys_home_t file ".xbindkeysrc")))
+
+(macro xbindkeys_use_all_fd ((type ARG1))
+    (allow ARG1 xbindkeys_subject_type (fd (use))))

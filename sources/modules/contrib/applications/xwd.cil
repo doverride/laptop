@@ -16,6 +16,9 @@
 (call usersubject_manage_tmpfs_files (xwd_t))
 (call usersubject_tmpfs_object_type_transition_user_tmpfs (xwd_t file "*"))
 
+(optional xwd_optional_xbindkeys
+    (call xbindkeys_use_all_fd (xwd_t)))
+
 (macro xwd_exec ((type ARG1))
     (call can_exec (ARG1 xwd_exec_t)))
 
