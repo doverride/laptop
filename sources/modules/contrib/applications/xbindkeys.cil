@@ -43,7 +43,6 @@
         (ARG2 xbindkeys_exec_t ARG3))
     (roletype ARG1 ARG3)
     (allow ARG3 ARG2 (process (signal)))
-    (call auth_run_chkpwd (ARG3 ARG1))
     (call xbindkeys_subject_type (ARG3))
     (optional xbindkeys_role_template_optional_pa
         (call pa_run_pactl (ARG3 ARG1)))
