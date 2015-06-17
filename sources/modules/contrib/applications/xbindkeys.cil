@@ -1,9 +1,9 @@
 (roleattribute xbindkeys_role)
 
-(type xbindkeys_t)
+(typeattribute xbindkeys_subject_type)
+
 (type xbindkeys_exec_t)
-(call applications_app (xbindkeys_t xbindkeys_exec_t))
-(roletype xbindkeys_role xbindkeys_t)
+(call applications_app (xbindkeys_subject_type xbindkeys_exec_t))
 
 (context xbindkeys_exec (system_u object_r xbindkeys_exec_t (systemlow systemlow)))
 (filecon "/usr/bin/xbindkeys" file xbindkeys_exec)
@@ -14,44 +14,40 @@
 
 (filecon "HOME_DIR/\.xbindkeysrc" file (system_u object_r xbindkeys_home_t (systemlow systemlow)))
 
-(allow xbindkeys_t xbindkeys_home_t manage_file_perms)
-(call xbindkeys_home_dir_object_type_transition_home_files (xbindkeys_t))
+(allow xbindkeys_subject_type xbindkeys_home_t manage_file_perms)
+(call xbindkeys_home_dir_object_type_transition_home_files (xbindkeys_subject_type))
 
-(allow xbindkeys_t self (process (getsched)))
+(allow xbindkeys_subject_type self (process (getsched)))
 
-(call commands_exec_shell (xbindkeys_t))
+(call commands_exec_shell (xbindkeys_subject_type))
 
-(call devices_read_urandom (xbindkeys_t))
+(call devices_read_urandom (xbindkeys_subject_type))
 
-(call files_dontaudit_catchall_subject_type (xbindkeys_t))
-(call files_read_data_files (xbindkeys_t))
+(call files_read_data_files (xbindkeys_subject_type))
 
-(call miscfiles_read_locale (xbindkeys_t))
+(call miscfiles_read_locale (xbindkeys_subject_type))
 
-(call xserver_client_subject_type (xbindkeys_t))
+(call xserver_client_subject_type (xbindkeys_subject_type))
 
-(call usersubject_use_terminals (xbindkeys_t))
-
-(optional xbindkeys_optional_pa
-    (call pa_run_pactl (xbindkeys_t xbindkeys_role)))
-
-(optional xbindkeys_optional_xutil
-    (call xutil_run (xbindkeys_t xbindkeys_role)))
+(call usersubject_use_terminals (xbindkeys_subject_type))
 
 (macro xbindkeys_exec ((type ARG1))
     (call can_exec (ARG1 xbindkeys_exec_t)))
 
-(macro xbindkeys_auto_subject_type_transition ((type ARG1))
-    (call xbindkeys_send_signal (ARG1))
+(macro xbindkeys_subject_type ((type ARG1))
+    (typeattributeset xbindkeys_subject_type ARG1))
+
+(macro xbindkeys_role_template ((role ARG1)(type ARG2)(type ARG3))
     (call auto_subject_type_transition_pattern
-        (ARG1 xbindkeys_exec_t xbindkeys_t)))
-
-(macro xbindkeys_send_signal ((type ARG1))
-    (allow ARG1 xbindkeys_t (process (signal))))
-
-(macro xbindkeys_run ((type ARG1)(role ARG2))
-    (call xbindkeys_auto_subject_type_transition (ARG1))
-    (roleattributeset xbindkeys_role ARG2))
+        (ARG2 xbindkeys_exec_t ARG3))
+    (roletype ARG1 ARG3)
+    (allow ARG3 ARG2 (process (signal)))
+    (call auth_run_chkpwd (ARG3 ARG1))
+    (call xbindkeys_subject_type (ARG3))
+    (optional xbindkeys_role_template_optional_pa
+        (call pa_run_pactl (ARG3 ARG1)))
+    (optional xbindkeys_role_template_optional_xutil
+        (call xutil_run (ARG3 ARG1))))
 
 (macro xbindkeys_read_home_files ((type ARG1))
     (call usersubject_search_home_dir (ARG1))

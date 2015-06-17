@@ -734,7 +734,6 @@
     (call vlock_role_template (staff_r staff_subject_type staff_vlock_t))
 
     (call commands_exec_auto_subject_type_transition (staff_vlock_t staff_t))
-    (call commands_shell_exec_auto_subject_type_transition (staff_vlock_t staff_t))
 
     (call usersubject_exec_home_auto_subject_type_transition (staff_vlock_t staff_t))
 
@@ -743,7 +742,12 @@
     (call vlock_home_dir_object_type_transition_home_files (staff_t ".vlockrc")))
 
 (optional staff_xserver_optional_xbindkeys
-    (call xbindkeys_run (staff_subject_type staff_r))
+    (type staff_xbindkeys_t)
+    (call xbindkeys_role_template (staff_r staff_subject_type staff_xbindkeys_t))
+
+    (call commands_exec_auto_subject_type_transition (staff_xbindkeys_t staff_t))
+
+    (call usersubject_exec_home_auto_subject_type_transition (staff_xbindkeys_t staff_t))
 
     (call xbindkeys_manage_home_files (staff_t))
     (call xbindkeys_relabel_home_files (staff_t))
