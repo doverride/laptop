@@ -754,7 +754,7 @@
     (call xbindkeys_home_dir_object_type_transition_home_files (staff_t)))
 
 (optional staff_xinit_optional_xbindkeys
-    (call xbindkeys_run (staff_xinit_t staff_r)))
+    (call xbindkeys_role_template (staff_r staff_xinit_t staff_xbindkeys_t)))
 
 (optional staff_xserver_optional_xlock
     (call xlock_run (staff_subject_type staff_r))
