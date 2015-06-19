@@ -70,7 +70,6 @@
 (context systemd_config (system_u object_r systemd_config_t (systemlow systemlow)))
 (filecon "/etc/systemd(/.*)?" any systemd_config)
 (filecon "/etc/yum/protected\.d/systemd\.conf" file systemd_config)
-(filecon "/etc/xdg/systemd(/.*)?" any systemd_config)
 
 (type systemd_runtime_t)
 (call systemd_runtime_object_type (systemd_runtime_t))
