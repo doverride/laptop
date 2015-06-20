@@ -378,6 +378,28 @@
 (macro filesystems_getattr_debugfs_filesystems ((type ARG1))
     (allow ARG1 debugfs_fs_t (filesystem (getattr))))
 
+(macro filesystems_search_tracefs ((type ARG1))
+    (call filesystems_search_debugfs (ARG1))
+    (allow ARG1 tracefs_fs_t search_dir_perms))
+
+(macro filesystems_list_tracefs ((type ARG1))
+    (call filesystems_search_debugfs (ARG1))
+    (allow ARG1 tracefs_fs_t list_dir_perms))
+
+(macro filesystems_read_tracefs_files ((type ARG1))
+    (call filesystems_search_debugfs (ARG1))
+    (call read_files_pattern (ARG1 tracefs_fs_t tracefs_fs_t)))
+
+(macro filesystems_read_tracefs ((type ARG1))
+    (call filesystems_search_debugfs (ARG1))
+    (allow ARG1 tracefs_fs_t read_file_perms)
+    (allow ARG1 tracefs_fs_t list_dir_perms)
+    (allow ARG1 tracefs_fs_t read_lnk_file_perms))
+
+(macro filesystems_getattr_tracefs_filesystems ((type ARG1))
+    (call filesystems_search_debugfs (ARG1))
+    (allow ARG1 tracefs_fs_t (filesystem (getattr))))
+
 (macro filesystems_search_devtmpfs ((type ARG1))
     (allow ARG1 devtmpfs_fs_t search_dir_perms))
 

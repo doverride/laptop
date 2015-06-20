@@ -22,6 +22,7 @@
 
 (filecon "HOME_DIR/\.Xresources" file (system_u object_r xutil_home_t (systemlow systemlow)))
 
+(allow xutil_t self (capability (dac_override)))
 (allow xutil_t self rw_fifo_file_perms)
 
 (call commands_exec (xutil_t))
@@ -39,6 +40,9 @@
 (call xserver_client_subject_type (xutil_t))
 
 (call xutil_read_home_files (xutil_t))
+
+(optional xutil_optional_systemd
+    (call systemd_getattr_unit_dirs (xutil_t)))
 
 (macro xutil_exec ((type ARG1))
     (call can_exec (ARG1 xutil_exec_t)))
