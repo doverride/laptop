@@ -236,6 +236,7 @@
 (call filesystems_manage_devtmpfs_dirs (systemd_t))
 (call filesystems_manage_devtmpfs_lnk_files (systemd_t))
 (call filesystems_manage_devtmpfs_chr_files (systemd_t))
+(call filesystems_manage_sysfs_dirs (systemd_t))
 (call filesystems_mount_autofs (systemd_t))
 (call filesystems_mount_tmpfs (systemd_t))
 (call filesystems_read_tmpfs_files (systemd_t))

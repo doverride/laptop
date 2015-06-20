@@ -681,6 +681,9 @@
 (macro filesystems_read_sysfs_lnk_files ((type ARG1))
     (call read_lnk_files_pattern (ARG1 sysfs_fs_t sysfs_fs_t)))
 
+(macro filesystems_manage_sysfs_dirs ((type ARG1))
+    (call manage_dirs_pattern (ARG1 sysfs_fs_t sysfs_fs_t)))
+
 (macro filesystems_read_sysfs ((type ARG1))
     (allow ARG1 sysfs_fs_t read_file_perms)
     (allow ARG1 sysfs_fs_t list_dir_perms)
