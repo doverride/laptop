@@ -15,8 +15,6 @@
     - Remove that dependency if/when that "bug/limitation" in the processing of constraints is lifted
     - Fix the tests accordingly
 
-* dbus/dbususer ~/.local/share/dbus-1/services
-
 * unconfined users currently get all HOME_DIR file contexts specs just like any other user (except root)
     should probably find a way to only add specs for those users that apply to them: home_dir_t, user_home_t, config_home_t, cache_home_t, data_home_t, ssh_home_t,
         systemd_config_home_t
@@ -34,6 +32,10 @@
 * kernel 4.2: remove unused permissions: https://marc.info/?l=selinux&m=143335717624531&w=2
     See: commit b6bb6c2 and the revert of that commit
 
-* target gpm
-
 * test systemd-run -M, systemctl set-property systemd-nspawn@refpolicy CPUShares=750
+
+* target busctl (v221)
+
+* i should probably some time try out systemd-firstboot (factory reset)
+    from what i understand i should just copy the stuff from /etc to /usr/share/factory/etc and then clear /etc
+    firstboot.service should then take care of populating /etc from /usr/share/factory/etc
