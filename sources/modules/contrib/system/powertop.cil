@@ -73,6 +73,7 @@
 (call filesystems_getattr_debugfs_filesystems (powertop_t))
 (call filesystems_read_debugfs (powertop_t))
 (call filesystems_read_tracefs (powertop_t))
+(call filesystems_mount_tracefs (powertop_t))
 (call filesystems_list_sysfs (powertop_t))
 (call filesystems_read_sysfs_lnk_files (powertop_t))
 (call filesystems_rw_sysfs_files (powertop_t))
