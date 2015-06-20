@@ -39,6 +39,7 @@
 
 (context boot (system_u object_r boot_t (systemlow systemlow)))
 (filecon "/boot(/.*)?" any boot)
+(filecon "/boot/efi(/.*)?" any ())
 
 (type config_t)
 (call files_config_object_type (config_t))
