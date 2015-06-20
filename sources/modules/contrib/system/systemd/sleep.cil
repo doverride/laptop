@@ -12,10 +12,14 @@
 (filecon "/etc/systemd/sleep\.conf\.d(/.*)?" any sleep_systemd_config)
 (filecon "/etc/systemd/sleep\.conf" file sleep_systemd_config)
 
-(call filesystems_list_debugfs (sleep_t))
 (call filesystems_list_sysfs (sleep_t))
 (call filesystems_rw_sysfs_files (sleep_t))
 (call filesystems_read_sysfs_lnk_files (sleep_t))
+
+(call filesystems_read_debugfs (sleep_t))
+(call filesystems_getattr_debugfs_filesystems (sleep_t))
+(call filesystems_read_tracefs (sleep_t))
+(call filesystems_mount_tracefs (sleep_t))
 
 (call devices_read_urandom (sleep_t))
 (call devices_write_kmsg (sleep_t))

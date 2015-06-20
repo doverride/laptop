@@ -122,7 +122,6 @@
 
 (call filesystems_getattr_filesystems (udevd_t))
 (call filesystems_mprot_write_rootfs_dirs (udevd_t))
-(call filesystems_list_debugfs (udevd_t))
 (call filesystems_manage_devtmpfs_dirs (udevd_t))
 (call filesystems_manage_devtmpfs_files (udevd_t))
 (call filesystems_manage_devtmpfs_lnk_files (udevd_t))
@@ -134,6 +133,11 @@
 (call filesystems_relabelfrom_devtmpfs_chr_files (udevd_t))
 (call filesystems_relabelfrom_devtmpfs_blk_files (udevd_t))
 (call filesystems_list_efivarfs (udevd_t))
+
+(call filesystems_read_debugfs (udevd_t))
+(call filesystems_getattr_debugfs_filesystems (udevd_t))
+(call filesystems_read_tracefs (udevd_t))
+(call filesystems_mount_tracefs (udevd_t))
 
 (call selinux_get_enforce_mode (udevd_t))
 

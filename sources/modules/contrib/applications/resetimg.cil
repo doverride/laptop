@@ -41,7 +41,11 @@
 (call filesystems_read_sysfs_lnk_files (resetimg_t))
 
 (call filesystems_read_devtmpfs_lnk_files (resetimg_t))
-(call filesystems_list_debugfs (resetimg_t))
+
+(call filesystems_read_debugfs (resetimg_t))
+(call filesystems_getattr_debugfs_filesystems (resetimg_t))
+(call filesystems_read_tracefs (resetimg_t))
+(call filesystems_mount_tracefs (resetimg_t))
 
 (call selinux_validate_context (resetimg_t))
 

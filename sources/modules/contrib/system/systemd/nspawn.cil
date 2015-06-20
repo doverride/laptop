@@ -209,7 +209,10 @@
 (call filesystems_getattr_filesystems (nspawn_t))
 (call filesystems_getattr_tmpfs_filesystems (nspawn_t))
 (call filesystems_relabelfrom_devpts_filesystems (nspawn_t))
-(call filesystems_list_debugfs (nspawn_t))
+
+(call filesystems_read_debugfs (nspawn_t))
+(call filesystems_getattr_debugfs_filesystems (nspawn_t))
+(call filesystems_read_tracefs (nspawn_t))
 
 (call filesystems_mounton_cgroup_dirs (nspawn_t))
 (call filesystems_mounton_rootfs_dirs (nspawn_t))
@@ -221,6 +224,7 @@
 (call filesystems_mount_proc (nspawn_t))
 (call filesystems_mount_sysfs (nspawn_t))
 (call filesystems_mount_tmpfs (nspawn_t))
+(call filesystems_mount_tracefs (nspawn_t))
 
 (call filesystems_remount_filesystems (nspawn_t))
 (call filesystems_remount_cgroup (nspawn_t))

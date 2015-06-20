@@ -20,9 +20,13 @@
 (call devices_write_kmsg (cryptsetup_t))
 
 (call filesystems_getattr_devtmpfs_filesystems (cryptsetup_t))
-(call filesystems_list_debugfs (cryptsetup_t))
 (call filesystems_list_devtmpfs (cryptsetup_t))
 (call filesystems_read_sysfs (cryptsetup_t))
+
+(call filesystems_read_debugfs (cryptsetup_t))
+(call filesystems_getattr_debugfs_filesystems (cryptsetup_t))
+(call filesystems_read_tracefs (cryptsetup_t))
+(call filesystems_mount_tracefs (cryptsetup_t))
 
 (call files_read_config_files (cryptsetup_t))
 

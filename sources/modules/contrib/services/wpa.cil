@@ -74,8 +74,12 @@
 
 (call files_read_config_files (wpa_t))
 
-(call filesystems_list_debugfs (wpa_t))
 (call filesystems_read_sysfs (wpa_t))
+
+(call filesystems_read_debugfs (wpa_t))
+(call filesystems_getattr_debugfs_filesystems (wpa_t))
+(call filesystems_read_tracefs (wpa_t))
+(call filesystems_mount_tracefs (wpa_t))
 
 (call dbus_acquire_system_service (wpa_t))
 (call dbus_system_client_subject_type (wpa_t))

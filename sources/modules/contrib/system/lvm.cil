@@ -61,12 +61,16 @@
 (call devices_read_urandom (lvm_t))
 (call devices_rw_lvm_control (lvm_t))
 
-(call filesystems_list_debugfs (lvm_t))
 (call filesystems_getattr_devpts_chr_files (lvm_t))
 (call filesystems_list_tmpfs (lvm_t))
 (call filesystems_list_hugetlbfs (lvm_t))
 (call filesystems_read_sysfs (lvm_t))
 (call filesystems_read_devtmpfs_lnk_files (lvm_t))
+
+(call filesystems_read_debugfs (lvm_t))
+(call filesystems_getattr_debugfs_filesystems (lvm_t))
+(call filesystems_read_tracefs (lvm_t))
+(call filesystems_mount_tracefs (lvm_t))
 
 (call selinux_get_enforce_mode (lvm_t))
 

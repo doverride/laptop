@@ -78,10 +78,14 @@
 (call devices_rw_lvm_control (fstools_t))
 (call devices_rw_loop_control (fstools_t))
 
-(call filesystems_list_debugfs (fstools_t))
 (call filesystems_list_devtmpfs (fstools_t))
 (call filesystems_read_devtmpfs_lnk_files (fstools_t))
 (call filesystems_read_sysfs (fstools_t))
+
+(call filesystems_read_debugfs (fstools_t))
+(call filesystems_getattr_debugfs_filesystems (fstools_t))
+(call filesystems_read_tracefs (fstools_t))
+(call filesystems_mount_tracefs (fstools_t))
 
 (call files_read_data_files (fstools_t))
 (call files_read_config (fstools_t))

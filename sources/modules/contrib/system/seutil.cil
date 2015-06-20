@@ -80,6 +80,10 @@
 (call filesystems_read_cgroup_files (setfiles_t))
 (call filesystems_relabel_all (setfiles_t))
 
+(call filesystems_read_debugfs (setfiles_t))
+(call filesystems_read_tracefs (setfiles_t))
+(call filesystems_mount_tracefs (setfiles_t))
+
 (call selinux_get_enforce_mode (setfiles_t))
 (call selinux_validate_context (setfiles_t))
 

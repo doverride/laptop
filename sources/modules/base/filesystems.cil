@@ -378,6 +378,10 @@
 (macro filesystems_getattr_debugfs_filesystems ((type ARG1))
     (allow ARG1 debugfs_fs_t (filesystem (getattr))))
 
+(macro filesystems_mount_tracefs ((type ARG1))
+    (call filesystems_search_debugfs (ARG1))
+    (allow ARG1 tracefs_fs_t (filesystem (mount))))
+
 (macro filesystems_search_tracefs ((type ARG1))
     (call filesystems_search_debugfs (ARG1))
     (allow ARG1 tracefs_fs_t search_dir_perms))

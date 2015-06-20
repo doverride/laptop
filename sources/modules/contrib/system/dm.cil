@@ -94,9 +94,13 @@
 
 (call filesystems_getattr_devtmpfs_filesystems (dmcrypt_t))
 (call filesystems_list_devtmpfs (dmcrypt_t))
-(call filesystems_list_debugfs (dmcrypt_t))
 (call filesystems_read_devtmpfs_lnk_files (dmcrypt_t))
 (call filesystems_read_sysfs (dmcrypt_t))
+
+(call filesystems_read_debugfs (dmcrypt_t))
+(call filesystems_getattr_debugfs_filesystems (dmcrypt_t))
+(call filesystems_read_tracefs (dmcrypt_t))
+(call filesystems_mount_tracefs (dmcrypt_t))
 
 (call devices_read_urandom (dmcrypt_t))
 (call devices_read_random (dmcrypt_t))

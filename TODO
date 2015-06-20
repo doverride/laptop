@@ -36,9 +36,4 @@
 
 * target gpm
 
-* everyone who traverses debugfs probably eventually needs filesystems_read_debugfs() as well as
-    filesystems_getattr_debugfs_filesystems()
-
-    They probably also need to be able to read tracefs (filesystems_read_tracefs())
-
 * test systemd-run -M, systemctl set-property systemd-nspawn@refpolicy CPUShares=750

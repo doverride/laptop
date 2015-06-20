@@ -33,8 +33,12 @@
 
 (call files_dontaudit_catchall_subject_type (kmod_t))
 
-(call filesystems_list_debugfs (kmod_t))
 (call filesystems_read_sysfs (kmod_t))
+
+(call filesystems_read_debugfs (kmod_t))
+(call filesystems_getattr_debugfs_filesystems (kmod_t))
+(call filesystems_read_tracefs (kmod_t))
+(call filesystems_mount_tracefs (kmod_t))
 
 (call kmod_read_config (kmod_t))
 

@@ -34,9 +34,12 @@
 
 (call files_read_config_files (fusermount_t))
 
-(call filesystems_list_debugfs (fusermount_t))
 (call filesystems_mount_fuse (fusermount_t))
 (call filesystems_unmount_fuse (fusermount_t))
+
+(call filesystems_read_debugfs (fusermount_t))
+(call filesystems_getattr_debugfs_filesystems (fusermount_t))
+(call filesystems_read_tracefs (fusermount_t))
 
 (call storage_rw_fuse (fusermount_t))
 

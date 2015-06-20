@@ -20,7 +20,10 @@
 
 (call files_read_config_files (gssproxy_t)) ; FIXME
 
-(call filesystems_list_debugfs (gssproxy_t))
+(call filesystems_read_debugfs (gssproxy_t))
+(call filesystems_getattr_debugfs_filesystems (gssproxy_t))
+(call filesystems_read_tracefs (gssproxy_t))
+(call filesystems_mount_tracefs (gssproxy_t))
 
 (call selinux_get_enforce_mode (gssproxy_t))
 

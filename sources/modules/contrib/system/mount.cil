@@ -41,11 +41,11 @@
 
 (call files_read_config_files (mount_t))
 
-(call filesystems_list_debugfs (mount_t))
 (call filesystems_getattr_all_filesystems (mount_t))
 (call filesystems_mount_all (mount_t))
 (call filesystems_read_devtmpfs_lnk_files (mount_t))
 (call filesystems_read_sysfs (mount_t))
+(call filesystems_read_debugfs (mount_t))
 (call filesystems_remount_all (mount_t))
 (call filesystems_unmount_all (mount_t))
 
