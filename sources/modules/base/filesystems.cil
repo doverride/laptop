@@ -200,6 +200,13 @@
 (filecon "/var/run/user(/.*)?" any ())
 (filecon "/var/run/initramfs/\.need_shutdown" file ())
 
+(type tracefs_fs_t)
+(call filesystems_object_type (tracefs_fs_t))
+(call system_mountpoint_object_type (tracefs_fs_t))
+
+(context tracefs_fs (system_u object_r tracefs_fs_t (systemlow systemlow)))
+(genfscon "tracefs" "/" tracefs_fs)
+
 (call system_object_type (filesystems_object_type))
 
 (allow filesystems_object_type self (filesystem (associate)))
