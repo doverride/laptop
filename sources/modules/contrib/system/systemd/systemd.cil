@@ -135,6 +135,8 @@
 
 (call ns_client_subject_type (systemd_subject_type))
 
+(call systemd_exec_systemdhelper (systemd_subject_type))
+
 (call udev_client_subject_type (systemd_subject_type))
 
 (allow systemd_t systemd_lib_t manage_file_perms)
@@ -287,7 +289,6 @@
 
 (call systemd_exec (systemd_t))
 (call systemd_auto_subject_type_transition (systemd_t))
-(call systemd_exec_systemdhelper (systemd_t))
 (call systemd_relabelto_transient_unit_dirs (systemd_t))
 
 (call utmp_rw_utmp_runtime_files (systemd_t))
