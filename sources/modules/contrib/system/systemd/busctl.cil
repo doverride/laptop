@@ -13,9 +13,16 @@
 (context busctl_exec (system_u object_r busctl_exec_t (systemlow systemlow)))
 (filecon "/usr/bin/busctl" file busctl_exec)
 
-(allow busctl_subject_type self (capability (net_admin)))
+(allow busctl_subject_type self (capability (net_admin dac_override)))
 
+(call busctl_client_subject_type (busctl_subject_type))
+
+(call dbus_acquire_system_service (busctl_subject_type))
 (call dbus_system_client_subject_type (busctl_subject_type))
+(call dbus_chat_all_unconfined_subjects (busctl_subject_type))
+(call dbus_read_state_all_unconfined_subjects (busctl_subject_type))
+(call dbus_chat_all_system_client_subjects (busctl_subject_type))
+(call dbus_read_state_all_system_client_subjects (busctl_subject_type))
 
 (call ns_client_subject_type (busctl_subject_type))
 
@@ -35,6 +42,9 @@
 
 (call miscfiles_read_locale (busctl_client_subject_type))
 (call miscfiles_read_all_terminfo (busctl_client_subject_type))
+
+(optional busctl_client_subject_type_optional_machine
+    (call machine_read_config_files (busctl_client_subject_type)))
 
 (macro busctl_exec ((type ARG1))
     (call can_exec (ARG1 busctl_exec_t))
