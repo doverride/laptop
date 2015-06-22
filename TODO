@@ -34,12 +34,6 @@
 
 * test systemd-run -M, systemctl set-property systemd-nspawn@refpolicy CPUShares=750
 
-* target busctl (v221)
-	unpriv users (staff_t) can basically just run it with their own permissions (busctl_exec(staff_t))
-		permissions can then be granted through wrappers
-	priv users (sysadm_t) run busctl with a domain transition to busctl_t which has all the permissions required to
-		interact with all busses and services (busctl_run(sysadm_t))
-
 * i should probably some time try out systemd-firstboot (factory reset)
     from what i understand i should just copy the stuff from /etc to /usr/share/factory/etc and then clear /etc
     firstboot.service should then take care of populating /etc from /usr/share/factory/etc

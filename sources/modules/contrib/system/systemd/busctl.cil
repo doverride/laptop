@@ -1,0 +1,24 @@
+(roleattribute busctl_role)
+
+(type busctl_t)
+(type busctl_exec_t)
+(call applications_app (busctl_t busctl_exec_t))
+(roletype busctl_role busctl_t)
+
+(context busctl_exec (system_u object_r busctl_exec_t (systemlow systemlow)))
+(filecon "/usr/bin/busctl" file busctl_exec)
+
+(macro busctl_exec ((type ARG1))
+    (call can_exec (ARG1 busctl_exec_t)))
+
+(macro busctl_auto_subject_type_transition ((type ARG1))
+    (call busctl_send_signal (ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 busctl_exec_t busctl_t)))
+
+(macro busctl_send_signal ((type ARG1))
+    (allow ARG1 busctl_t (process (signal))))
+
+(macro busctl_run ((type ARG1)(role ARG2))
+    (call busctl_auto_subject_type_transition (ARG1))
+    (roleattributeset busctl_role ARG2))
