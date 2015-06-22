@@ -1,15 +1,26 @@
 (roleattribute busctl_role)
 
+(typeattribute busctl_subject_type)
+
 (type busctl_t)
 (type busctl_exec_t)
-(call applications_app (busctl_t busctl_exec_t))
+(call applications_app (busctl_subject_type busctl_exec_t))
 (roletype busctl_role busctl_t)
+
+(call busctl_subject_type (busctl_t))
 
 (context busctl_exec (system_u object_r busctl_exec_t (systemlow systemlow)))
 (filecon "/usr/bin/busctl" file busctl_exec)
 
+(call dbus_system_client_subject_type (busctl_subject_type))
+
+(call ns_client_subject_type (busctl_subject_type))
+
 (macro busctl_exec ((type ARG1))
     (call can_exec (ARG1 busctl_exec_t)))
+
+(macro busctl_subject_type ((type ARG1))
+    (typeattributeset busctl_subject_type ARG1))
 
 (macro busctl_auto_subject_type_transition ((type ARG1))
     (call busctl_send_signal (ARG1))
@@ -22,3 +33,14 @@
 (macro busctl_run ((type ARG1)(role ARG2))
     (call busctl_auto_subject_type_transition (ARG1))
     (roleattributeset busctl_role ARG2))
+
+(macro busctl_role_template ((role ARG1)(type ARG2)(type ARG3))
+    (call auto_subject_type_transition_pattern
+        (ARG2 busctl_exec_t ARG3))
+    (roletype ARG1 ARG3)
+    (roleattributeset busctl_role ARG1)
+    (allow ARG3 ARG2 (process (signal)))
+    (call busctl_subject_type (ARG3)))
+
+(macro busctl_rw_busctl_subject_unix_stream_sockets ((type ARG1))
+    (allow ARG1 busctl_subject_type (unix_stream_socket (read write ioctl))))
