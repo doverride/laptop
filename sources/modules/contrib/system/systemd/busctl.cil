@@ -1,6 +1,7 @@
 (roleattribute busctl_role)
 
 (typeattribute busctl_subject_type)
+(typeattribute busctl_client_subject_type)
 
 (type busctl_t)
 (type busctl_exec_t)
@@ -12,12 +13,35 @@
 (context busctl_exec (system_u object_r busctl_exec_t (systemlow systemlow)))
 (filecon "/usr/bin/busctl" file busctl_exec)
 
+(allow busctl_subject_type self (capability (net_admin)))
+
 (call dbus_system_client_subject_type (busctl_subject_type))
 
 (call ns_client_subject_type (busctl_subject_type))
 
+(optional busctl_subject_type_optional_askpwd
+    (call askpwd_run_askpwdagent (busctl_subject_type busctl_role)))
+
+(optional busctl_subject_type_optional_usersubject
+    (call usersubject_search_exec_home (busctl_subject_type))
+    (call usersubject_read_exec_home_lnk_files (busctl_subject_type))
+    (call usersubject_read_user_home_files (busctl_subject_type)))
+
+(allow busctl_client_subject_type self rw_fifo_file_perms)
+
+(call commands_exec (busctl_client_subject_type))
+
+(call filesystems_getattr_filesystems (busctl_client_subject_type))
+
+(call miscfiles_read_locale (busctl_client_subject_type))
+(call miscfiles_read_all_terminfo (busctl_client_subject_type))
+
 (macro busctl_exec ((type ARG1))
-    (call can_exec (ARG1 busctl_exec_t)))
+    (call can_exec (ARG1 busctl_exec_t))
+    (call busctl_client_subject_type (ARG1)))
+
+(macro busctl_client_subject_type ((type ARG1))
+    (typeattributeset busctl_client_subject_type ARG1))
 
 (macro busctl_subject_type ((type ARG1))
     (typeattributeset busctl_subject_type ARG1))
