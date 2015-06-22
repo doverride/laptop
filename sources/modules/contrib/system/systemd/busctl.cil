@@ -29,6 +29,12 @@
 (optional busctl_subject_type_optional_askpwd
     (call askpwd_run_askpwdagent (busctl_subject_type busctl_role)))
 
+(optional busctl_subject_type_optional_dbususer
+    (call dbususer_acquire_service_all_busses (busctl_subject_type))
+    (call dbususer_client_subject_type (busctl_subject_type))
+    (call dbususer_chat_all_client_subjects (busctl_subject_type))
+    (call dbususer_read_state_all_client_subjects (busctl_subject_type)))
+
 (optional busctl_subject_type_optional_usersubject
     (call usersubject_search_exec_home (busctl_subject_type))
     (call usersubject_read_exec_home_lnk_files (busctl_subject_type))

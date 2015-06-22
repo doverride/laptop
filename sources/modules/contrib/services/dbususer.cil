@@ -70,6 +70,10 @@
     (allow ARG1 dbususer_client_subject_type list_dir_perms)
     (allow ARG1 dbususer_client_subject_type read_lnk_file_perms))
 
+(macro dbususer_chat_all_client_subjects ((type ARG1))
+    (allow ARG1 dbususer_client_subject_type (dbus (send_msg)))
+    (allow dbususer_client_subject_type ARG1 (dbus (send_msg))))
+
 (macro dbususer_send_signal_all_client_subjects ((type ARG1))
     (allow ARG1 dbususer_client_subject_type (process (signal))))
 
