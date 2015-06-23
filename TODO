@@ -37,3 +37,5 @@
 * i should probably some time try out systemd-firstboot (factory reset)
     from what i understand i should just copy the stuff from /etc to /usr/share/factory/etc and then clear /etc
     firstboot.service should then take care of populating /etc from /usr/share/factory/etc
+
+* copy x250: ~/bin/luisterstream to x131e: ~/bin/luisterstream 
