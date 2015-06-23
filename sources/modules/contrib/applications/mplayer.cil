@@ -52,6 +52,9 @@
 (call usersubject_manage_user_home_files (mplayer_t))
 (call usersubject_home_dir_object_type_transition_user_home (mplayer_t file "*"))
 
+(optional mplayer_optional_http
+    (call http_tcp_connect_http_port (mplayer_t)))
+
 (optional mplayer_optional_icecast
     (call icecast_tcp_connect_icecast_port (mplayer_t)))
 
