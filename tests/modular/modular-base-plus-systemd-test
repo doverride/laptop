@@ -51,7 +51,7 @@ modular_base_plus_systemd_modules () {
         sources/modules/contrib/services/rpcbind.cil sources/modules/contrib/services/gluster.cil sources/modules/contrib/services/timedatex.cil \
         sources/modules/contrib/applications/xwd.cil sources/modules/contrib/services/ngircd.cil sources/modules/contrib/applications/pwgen.cil \
 	sources/modules/contrib/system/powertop.cil sources/modules/contrib/system/rfkill.cil sources/modules/contrib/applications/chage.cil \
-	sources/modules/contrib/applications/vlock.cil sources/modules/contrib/system/systemd/busctl.cil
+	sources/modules/contrib/applications/vlock.cil sources/modules/contrib/system/systemd/bus.cil
 
     unset MODULAR_BASE_PLUS_SYSTEMD_MODULES
 

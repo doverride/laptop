@@ -639,9 +639,9 @@
     (call bootchart_manage_systemd_config (sysadm_t))
     (call bootchart_systemd_config_object_type_transition_bootchart_config (sysadm_t)))
 
-(optional sysadm_optional_busctl
+(optional sysadm_optional_bus
     (type sysadm_busctl_t)
-    (call busctl_role_template (sysadm_r sysadm_subject_type sysadm_busctl_t)))
+    (call bus_role_template_busctl (sysadm_r sysadm_subject_type sysadm_busctl_t)))
 
 (optional sysadm_optional_coredump
     (call coredump_run_coredumpctl (sysadm_subject_type sysadm_r))
@@ -763,7 +763,7 @@
     (call ssh_role_template (sysadm_r sysadm_analyze_t sysadm_ssh_t)))
 
 (optional sysadm_busctl_optional_ssh
-    (call busctl_rw_busctl_subject_unix_stream_sockets (sysadm_ssh_t))
+    (call bus_rw_busctl_subject_unix_stream_sockets (sysadm_ssh_t))
     (call ssh_role_template (sysadm_r sysadm_busctl_t sysadm_ssh_t)))
 
 (optional sysadm_hostnamectl_optional_ssh

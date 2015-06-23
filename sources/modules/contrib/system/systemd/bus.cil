@@ -1,0 +1,86 @@
+(roleattribute bus_busctl_role)
+
+(typeattribute bus_busctl_subject_type)
+(typeattribute bus_busctl_client_subject_type)
+
+(type busctl_t)
+(type busctl_exec_t)
+(call applications_app (bus_busctl_subject_type busctl_exec_t))
+(roletype bus_busctl_role busctl_t)
+
+(call bus_busctl_subject_type (busctl_t))
+
+(context busctl_exec (system_u object_r busctl_exec_t (systemlow systemlow)))
+(filecon "/usr/bin/busctl" file busctl_exec)
+
+(allow bus_busctl_subject_type self (capability (net_admin dac_override)))
+
+(call bus_busctl_client_subject_type (bus_busctl_subject_type))
+
+(call dbus_acquire_system_service (bus_busctl_subject_type))
+(call dbus_system_client_subject_type (bus_busctl_subject_type))
+(call dbus_chat_all_unconfined_subjects (bus_busctl_subject_type))
+(call dbus_read_state_all_unconfined_subjects (bus_busctl_subject_type))
+(call dbus_chat_all_system_client_subjects (bus_busctl_subject_type))
+(call dbus_read_state_all_system_client_subjects (bus_busctl_subject_type))
+
+(call ns_client_subject_type (bus_busctl_subject_type))
+
+(optional bus_busctl_subject_type_optional_askpwd
+    (call askpwd_run_askpwdagent (bus_busctl_subject_type bus_busctl_role)))
+
+(optional bus_busctl_subject_type_optional_dbususer
+    (call dbususer_acquire_service_all_busses (bus_busctl_subject_type))
+    (call dbususer_client_subject_type (bus_busctl_subject_type))
+    (call dbususer_chat_all_client_subjects (bus_busctl_subject_type))
+    (call dbususer_read_state_all_client_subjects (bus_busctl_subject_type)))
+
+(optional bus_busctl_subject_type_optional_usersubject
+    (call usersubject_search_exec_home (bus_busctl_subject_type))
+    (call usersubject_read_exec_home_lnk_files (bus_busctl_subject_type))
+    (call usersubject_read_user_home_files (bus_busctl_subject_type)))
+
+(allow bus_busctl_client_subject_type self rw_fifo_file_perms)
+
+(call commands_exec (bus_busctl_client_subject_type))
+
+(call filesystems_getattr_filesystems (bus_busctl_client_subject_type))
+
+(call miscfiles_read_locale (bus_busctl_client_subject_type))
+(call miscfiles_read_all_terminfo (bus_busctl_client_subject_type))
+
+(optional bus_busctl_client_subject_type_optional_machine
+    (call machine_read_config_files (bus_busctl_client_subject_type)))
+
+(macro bus_exec_busctl ((type ARG1))
+    (call can_exec (ARG1 busctl_exec_t))
+    (call bus_busctl_client_subject_type (ARG1)))
+
+(macro bus_busctl_client_subject_type ((type ARG1))
+    (typeattributeset bus_busctl_client_subject_type ARG1))
+
+(macro bus_busctl_subject_type ((type ARG1))
+    (typeattributeset bus_busctl_subject_type ARG1))
+
+(macro bus_auto_subject_type_transition_busctl ((type ARG1))
+    (call bus_send_signal_busctl (ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 busctl_exec_t busctl_t)))
+
+(macro bus_send_signal_busctl ((type ARG1))
+    (allow ARG1 busctl_t (process (signal))))
+
+(macro bus_run_busctl ((type ARG1)(role ARG2))
+    (call bus_auto_subject_type_transition_busctl (ARG1))
+    (roleattributeset bus_busctl_role ARG2))
+
+(macro bus_role_template_busctl ((role ARG1)(type ARG2)(type ARG3))
+    (call auto_subject_type_transition_pattern
+        (ARG2 busctl_exec_t ARG3))
+    (roletype ARG1 ARG3)
+    (roleattributeset bus_busctl_role ARG1)
+    (allow ARG3 ARG2 (process (signal)))
+    (call bus_busctl_subject_type (ARG3)))
+
+(macro bus_rw_busctl_subject_unix_stream_sockets ((type ARG1))
+    (allow ARG1 bus_busctl_subject_type (unix_stream_socket (read write ioctl))))
