@@ -19,8 +19,6 @@
 
 (filecon "HOME_DIR/\.fop(/.*)?" any (system_u object_r fop_home_t (systemlow systemlow)))
 
-(allow fop_t self rw_fifo_file_perms)
-
 (allow fop_t fop_home_t manage_dir_perms)
 (allow fop_t fop_home_t manage_file_perms)
 (call fop_home_dir_object_type_transition_fop_home_dirs (fop_t))
@@ -37,7 +35,6 @@
 
 (call miscfiles_read_all_fonts (fop_t))
 (call miscfiles_read_net_config_files (fop_t))
-(call miscfiles_read_locale (fop_t))
 
 (call usersubject_manage_user_home_files (fop_t))
 (call usersubject_home_dir_object_type_transition_user_home (fop_t file "*"))

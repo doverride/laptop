@@ -34,7 +34,6 @@
 
 (allow firefox_t self (process (setsched getsched ptrace)))
 (allow firefox_t self create_unix_dgram_socket_perms)
-(allow firefox_t self rw_fifo_file_perms)
 
 (allow firefox_t firefox_plugs_t (unix_stream_socket (read write)))
 (allow firefox_t firefox_plugs_t (fd (use)))
@@ -89,7 +88,6 @@
 
 (call miscfiles_read_all_certs (firefox_t))
 (call miscfiles_read_all_fonts (firefox_t))
-(call miscfiles_read_locale (firefox_t))
 
 (call ns_client_subject_type (firefox_t))
 

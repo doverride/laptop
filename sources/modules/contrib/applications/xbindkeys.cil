@@ -18,15 +18,12 @@
 (call xbindkeys_home_dir_object_type_transition_home_files (xbindkeys_subject_type))
 
 (allow xbindkeys_subject_type self (process (getsched)))
-(allow xbindkeys_subject_type self rw_fifo_file_perms)
 
 (call commands_exec_shell (xbindkeys_subject_type))
 
 (call devices_read_urandom (xbindkeys_subject_type))
 
 (call files_read_data_files (xbindkeys_subject_type))
-
-(call miscfiles_read_locale (xbindkeys_subject_type))
 
 (call xserver_client_subject_type (xbindkeys_subject_type))
 

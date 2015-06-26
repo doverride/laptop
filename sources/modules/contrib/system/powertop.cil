@@ -82,7 +82,6 @@
 
 (call miscfiles_read_all_terminfo (powertop_t))
 (call miscfiles_read_hwdata (powertop_t))
-(call miscfiles_read_locale (powertop_t))
 
 (call ns_client_subject_type (powertop_t))
 

@@ -11,7 +11,6 @@
 (filecon "/usr/bin/loadkeys" file loadkeys_exec)
 
 (allow loadkeys_t self (capability (sys_tty_config)))
-(allow loadkeys_t self rw_fifo_file_perms)
 
 (call system_use_fd (loadkeys_t))
 (call system_rw_unix_stream_sockets (loadkeys_t))
@@ -25,8 +24,6 @@
 
 (call terminals_use_console (loadkeys_t))
 (call terminals_use_unallocated_ttys (loadkeys_t))
-
-(call miscfiles_read_locale (loadkeys_t))
 
 (call ns_client_subject_type (loadkeys_t))
 

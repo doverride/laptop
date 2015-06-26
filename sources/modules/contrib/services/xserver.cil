@@ -84,7 +84,6 @@
 (allow xserver_t self (process (getpgid setpgid)))
 (allow xserver_t self create_tcp_stream_socket_perms)
 (allow xserver_t self (unix_stream_socket (accept listen)))
-(allow xserver_t self rw_fifo_file_perms)
 
 (allow xserver_t xserver_client_subject_type (process (signal)))
 (allow xserver_t xserver_client_subject_type rw_shm_perms)
@@ -129,7 +128,6 @@
 (call network_tcp_bind_generic_node (xserver_t))
 
 (call miscfiles_read_fonts_data_files (xserver_t))
-(call miscfiles_read_locale (xserver_t))
 
 (call ns_client_subject_type (xserver_t))
 
@@ -235,7 +233,6 @@
 (filecon "/usr/bin/xinit" file xinit_exec)
 
 (allow xserver_xinit_subject_type self (process (setpgid)))
-(allow xserver_xinit_subject_type self rw_fifo_file_perms)
 
 (allow xserver_xinit_subject_type xserver_t (process (signal)))
 
@@ -243,8 +240,6 @@
 (call commands_exec_shell (xserver_xinit_subject_type))
 
 (call filesystems_search_tmpfs (xserver_xinit_subject_type))
-
-(call miscfiles_read_locale (xserver_xinit_subject_type))
 
 (call ns_client_subject_type (xserver_xinit_subject_type))
 

@@ -27,8 +27,6 @@
 (allow xpdf_t xpdf_tmpfs_t manage_file_perms)
 (call filesystems_tmpfs_object_type_transition (xpdf_t xpdf_tmpfs_t file "*"))
 
-(allow xpdf_t self rw_fifo_file_perms)
-
 (call commands_exec_shell (xpdf_t))
 
 (call files_dontaudit_catchall_subject_type (xpdf_t))
@@ -36,7 +34,6 @@
 (call files_read_data_files (xpdf_t))
 
 (call miscfiles_read_all_fonts (xpdf_t))
-(call miscfiles_read_locale (xpdf_t))
 
 (call usersubject_manage_data_home_files (xpdf_t))
 (call usersubject_create_data_home_dirs (xpdf_t))

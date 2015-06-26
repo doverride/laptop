@@ -27,7 +27,6 @@
 
 (call miscfiles_dontaudit_setattr_fonts_cache_dirs (rp_subject_type))
 (call miscfiles_read_all_fonts (rp_subject_type))
-(call miscfiles_read_locale (rp_subject_type))
 
 (call usersubject_create_cache_home_dirs (rp_subject_type))
 (call usersubject_home_dir_object_type_transition_cache_home_dirs (rp_subject_type))

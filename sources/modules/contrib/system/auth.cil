@@ -56,8 +56,6 @@
 (context authconfig_data (system_u object_r authconfig_data_t (systemlow systemlow)))
 (filecon "/usr/share/authconfig(/.*)?" any authconfig_data)
 
-(allow authconfig_t self rw_fifo_file_perms)
-
 (allow authconfig_t authconfig_lib_t manage_dir_perms)
 (allow authconfig_t authconfig_lib_t manage_file_perms)
 (call files_lib_object_type_transition (authconfig_t authconfig_lib_t dir "authconfig"))
@@ -77,8 +75,6 @@
 (call auth_getattr_shadow (authconfig_t))
 (call auth_manage_authconfig_pam_config (authconfig_t))
 (call auth_read_authconfig_config_files (authconfig_t))
-
-(call miscfiles_read_locale (authconfig_t))
 
 (call ns_manage_config_files (authconfig_t))
 (call ns_client_subject_type (authconfig_t))

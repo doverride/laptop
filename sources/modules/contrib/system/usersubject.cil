@@ -114,7 +114,6 @@
 
 (allow usersubject_common_type self (process (setpgid getattr getsched setsched setfscreate)))
 (allow usersubject_common_type self create_unix_stream_socket_perms)
-(allow usersubject_common_type self rw_fifo_file_perms)
 
 (call system_dontaudit_catchall_subject_type (usersubject_common_type))
 
@@ -146,7 +145,6 @@
 (call applications_read_state_all_subjects (usersubject_common_type))
 
 (call miscfiles_read_all_terminfo (usersubject_common_type))
-(call miscfiles_read_locale (usersubject_common_type))
 
 (call usersubject_use_inherited_terminals (usersubject_common_type))
 

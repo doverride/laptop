@@ -33,8 +33,6 @@
 (dontaudit livestreamer_t livestreamer_tmpfs_t relabel_file_perms)
 (call filesystems_tmpfs_object_type_transition (livestreamer_t livestreamer_tmpfs_t file "*"))
 
-(allow livestreamer_t self rw_fifo_file_perms)
-
 (call commands_list (livestreamer_t))
 (call commands_exec (livestreamer_t))
 (call commands_exec_shell (livestreamer_t))
@@ -49,7 +47,6 @@
 (call ld_exec_ldconfig (livestreamer_t))
 
 (call miscfiles_read_all_certs (livestreamer_t))
-(call miscfiles_read_locale (livestreamer_t))
 
 (call ns_client_subject_type (livestreamer_t))
 

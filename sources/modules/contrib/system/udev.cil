@@ -100,7 +100,6 @@
     net_admin sys_rawio fsetid fowner)))
 (allow udevd_t self (capability2 (block_suspend)))
 (allow udevd_t self (process (setfscreate getsched)))
-(allow udevd_t self rw_fifo_file_perms)
 (allow udevd_t self create_netlink_kobject_uevent_socket_perms)
 (allow udevd_t self (netlink_route_socket (nlmsg_write)))
 (allow udevd_t self create_netlink_socket_perms)
@@ -147,7 +146,6 @@
 (call kmod_auto_subject_type_transition (udevd_t))
 
 (call miscfiles_read_modules (udevd_t))
-(call miscfiles_read_locale (udevd_t))
 
 (call ns_client_subject_type (udevd_t))
 

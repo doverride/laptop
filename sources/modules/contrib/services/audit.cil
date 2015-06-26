@@ -42,8 +42,6 @@
 
 (call commands_exec_shell (audispd_t))
 
-(call miscfiles_read_locale (audispd_t))
-
 (call audit_read_audispd_config (audispd_t))
 (call audit_rw_auditd_unix_stream_sockets (audispd_t))
 

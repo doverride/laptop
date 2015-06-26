@@ -30,7 +30,6 @@
 
 (allow dracut_t self (capability (dac_override mknod sys_chroot sys_resource)))
 (allow dracut_t self (process (getsched setfscreate)))
-(allow dracut_t self rw_fifo_file_perms)
 
 (allow dracut_t dracut_tmp_t manage_dir_perms)
 (allow dracut_t dracut_tmp_t manage_chr_file_perms)
@@ -85,7 +84,6 @@
 (call ld_exec_ldconfig (dracut_t))
 
 (call miscfiles_read_all_terminfo (dracut_t))
-(call miscfiles_read_locale (dracut_t))
 (call miscfiles_read_modules (dracut_t))
 
 (call mount_exec (dracut_t))
@@ -179,8 +177,6 @@
 (filecon "/var/run/initramfs" dir dracut_runtime_t)
 (filecon "/var/run/initramfs/.*" any ())
 
-(allow dracut_initramfs_restore_t self rw_fifo_file_perms)
-
 (call system_read_invalid_files (dracut_initramfs_restore_t)) ; FIXME
 
 (call commands_exec (dracut_initramfs_restore_t))
@@ -191,8 +187,6 @@
 (call filesystems_manage_tmpfs_files (dracut_initramfs_restore_t))
 
 (call dracut_manage_runtime (dracut_initramfs_restore_t))
-
-(call miscfiles_read_locale (dracut_initramfs_restore_t))
 
 (call mount_auto_subject_type_transition (dracut_initramfs_restore_t))
 

@@ -1,5 +1,7 @@
 (typeattribute commands_exec_object_type)
 
+(typeattribute commands_shell_client_subject_type)
+
 (type exec_t)
 (call commands_exec_object_type (exec_t))
 
@@ -42,8 +44,16 @@
 
 (call files_object_type (commands_exec_object_type))
 
+(allow commands_shell_client_subject_type self rw_fifo_file_perms)
+
+(optional commands_shell_client_subject_type_optional_miscfiles
+    (call miscfiles_read_locale (commands_shell_client_subject_type)))
+
 (macro commands_exec_object_type ((type ARG1))
     (typeattributeset commands_exec_object_type ARG1))
+
+(macro commands_shell_client_subject_type ((type ARG1))
+    (typeattributeset commands_shell_client_subject_type ARG1))
 
 (macro commands_read_exec ((type ARG1))
     (call files_search_data (ARG1))
@@ -118,6 +128,7 @@
     (call getattr_files_pattern (ARG1 exec_t shell_exec_t)))
 
 (macro commands_exec_shell ((type ARG1))
+    (call commands_shell_client_subject_type (ARG1))
     (call exec_files_pattern (ARG1 exec_t shell_exec_t)))
 
 (macro commands_auditallow_exec_shell ((type ARG1))
