@@ -420,7 +420,7 @@
 (call systemd_read_state (systemd_systemctl_subject_type))
 (call systemd_control_system (systemd_systemctl_subject_type))
 (call systemd_manage_unit_dirs (systemd_systemctl_subject_type))
-(call systemd_manage_unit_files (systemd_systemctl_subject_type))
+(call systemd_manage_all_unit_files (systemd_systemctl_subject_type))
 
 (call utmp_read_utmp_runtime_files (systemd_systemctl_subject_type))
 
@@ -948,19 +948,33 @@
 
 (macro systemd_list_unit ((type ARG1))
     (call libraries_search (ARG1))
+    (call systemd_search_config (ARG1))
     (allow ARG1 systemd_unit_t list_dir_perms))
 
-(macro systemd_read_unit_files ((type ARG1))
+(macro systemd_read_generic_unit_files ((type ARG1))
     (call libraries_search (ARG1))
+    (call systemd_search_config (ARG1))
     (call read_files_pattern (ARG1 systemd_unit_t systemd_unit_t)))
+
+(macro systemd_read_all_unit_files ((type ARG1))
+    (call libraries_search (ARG1))
+    (call systemd_search_config (ARG1))
+    (call read_files_pattern (ARG1 systemd_unit_t systemd_unit_object_type)))
 
 (macro systemd_manage_unit_dirs ((type ARG1))
     (call libraries_search (ARG1))
+    (call systemd_search_config (ARG1))
     (call manage_dirs_pattern (ARG1 systemd_unit_t systemd_unit_t)))
 
-(macro systemd_manage_unit_files ((type ARG1))
+(macro systemd_manage_generic_unit_files ((type ARG1))
     (call libraries_search (ARG1))
+    (call systemd_search_config (ARG1))
     (call manage_files_pattern (ARG1 systemd_unit_t systemd_unit_t)))
+
+(macro systemd_manage_all_unit_files ((type ARG1))
+    (call libraries_search (ARG1))
+    (call systemd_search_config (ARG1))
+    (call manage_files_pattern (ARG1 systemd_unit_t systemd_unit_object_type)))
 
 (macro systemd_getattr_unit_dirs ((type ARG1))
     (call libraries_search (ARG1))
@@ -992,49 +1006,52 @@
 (macro systemd_getattr_systemtl_subjects ((type ARG1))
     (allow ARG1 systemd_systemctl_subject_type (process (getattr))))
 
-(macro systemd_read_unit ((type ARG1))
+(macro systemd_read_generic_unit ((type ARG1))
     (call libraries_search (ARG1))
+    (call systemd_search_config (ARG1))
     (allow ARG1 systemd_unit_t read_file_perms)
     (allow ARG1 systemd_unit_t list_dir_perms)
     (allow ARG1 systemd_unit_t read_lnk_file_perms))
 
-(macro systemd_manage_unit ((type ARG1))
+(macro systemd_read_all_unit ((type ARG1))
+    (call libraries_search (ARG1))
+    (call systemd_search_config (ARG1))
+    (allow ARG1 systemd_unit_object_type read_file_perms)
+    (allow ARG1 systemd_unit_t list_dir_perms)
+    (allow ARG1 systemd_unit_t read_lnk_file_perms))
+
+(macro systemd_manage_generic_unit ((type ARG1))
     (call libraries_rw_dirs (ARG1))
+    (call systemd_rw_config_dirs (ARG1))
     (allow ARG1 systemd_unit_t manage_file_perms)
     (allow ARG1 systemd_unit_t manage_dir_perms)
     (allow ARG1 systemd_unit_t manage_lnk_file_perms))
 
-(macro systemd_relabel_unit ((type ARG1))
+(macro systemd_manage_all_unit ((type ARG1))
+    (call libraries_rw_dirs (ARG1))
+    (call systemd_rw_config_dirs (ARG1))
+    (allow ARG1 systemd_unit_object_type manage_file_perms)
+    (allow ARG1 systemd_unit_t manage_dir_perms)
+    (allow ARG1 systemd_unit_t manage_lnk_file_perms))
+
+(macro systemd_relabel_generic_unit ((type ARG1))
     (call libraries_search (ARG1))
+    (call systemd_search_config (ARG1))
     (allow ARG1 systemd_unit_t relabel_file_perms)
     (allow ARG1 systemd_unit_t relabel_dir_perms)
     (allow ARG1 systemd_unit_t relabel_lnk_file_perms))
 
-(macro systemd_list_all_unit ((type ARG1))
+(macro systemd_relabel_all_unit ((type ARG1))
     (call libraries_search (ARG1))
-    (allow ARG1 systemd_unit_object_type list_dir_perms))
-
-(macro systemd_rw_all_unit_dirs ((type ARG1))
-    (call libraries_search (ARG1))
-    (allow ARG1 systemd_unit_object_type rw_dir_perms))
-
-(macro systemd_read_all_unit_files ((type ARG1))
-    (call systemd_list_all_unit (ARG1))
-    (allow ARG1 systemd_unit_object_type read_file_perms))
-
-(macro systemd_manage_all_unit_files ((type ARG1))
-    (call systemd_rw_all_unit_dirs (ARG1))
-    (allow ARG1 systemd_unit_object_type manage_file_perms))
+    (call systemd_search_config (ARG1))
+    (allow ARG1 systemd_unit_object_type relabel_file_perms)
+    (allow ARG1 systemd_unit_object_type relabel_dir_perms)
+    (allow ARG1 systemd_unit_object_type relabel_lnk_file_perms))
 
 (macro systemd_relabel_all_unit_files ((type ARG1))
-    (call systemd_search_unit (ARG1))
-    (allow ARG1 systemd_unit_object_type relabel_file_perms))
-
-(macro systemd_read_all_unit ((type ARG1))
     (call libraries_search (ARG1))
-    (allow ARG1 systemd_unit_object_type read_file_perms)
-    (allow ARG1 systemd_unit_object_type list_dir_perms)
-    (allow ARG1 systemd_unit_object_type read_lnk_file_perms))
+    (call systemd_search_config (ARG1))
+    (call relabel_files_pattern (ARG1 systemd_unit_t systemd_unit_object_t)))
 
 (macro systemd_system_service_admin_subject_type ((type ARG1))
     (typeattributeset systemd_system_service_admin_subject_type ARG1))
