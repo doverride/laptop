@@ -104,6 +104,7 @@
 (call systemd_rw_unix_stream_sockets (systemduser_subject_type))
 (call systemd_send_signal (systemduser_subject_type))
 (call systemd_subject_type (systemduser_subject_type))
+(call systemd_search_transient_unit (systemduser_subject_type))
 
 (call systemduser_config_home_object_type_transition_config_home_dirs (systemduser_subject_type))
 (call systemduser_manage_config_home_dirs (systemduser_subject_type))
@@ -116,6 +117,8 @@
 (call systemduser_manage_transient_unit (systemduser_subject_type))
 (call systemduser_tmpfs_object_type_transition_systemduser_transient_unit_dirs (systemduser_subject_type))
 (call systemduser_read_config_home_files (systemduser_subject_type))
+(call systemduser_list_unit (systemduser_subject_type))
+(call systemduser_read_unit_lnk_files (systemduser_subject_type))
 
 (call usersubject_read_exec_home_lnk_files (systemduser_subject_type))
 
@@ -180,9 +183,39 @@
     (call systemd_unit_object_type (ARG1))
     (typeattributeset systemduser_unit_object_type ARG1))
 
+(macro systemduser_list_unit ((type ARG1))
+    (call libraries_search (ARG1))
+    (call systemd_search_config (ARG1))
+    (allow ARG1 systemduser_unit_t list_dir_perms))
+
+(macro systemduser_read_unit_lnk_files ((type ARG1))
+    (call libraries_search (ARG1))
+    (call systemd_search_config (ARG1))
+    (call read_lnk_files_pattern (ARG1 systemduser_unit_t systemduser_unit_t)))
+
+(macro systemduser_read_generic_unit ((type ARG1))
+    (call libraries_search (ARG1))
+    (call systemd_search_config (ARG1))
+    (allow ARG1 systemduser_unit_t list_dir_perms)
+    (allow ARG1 systemduser_unit_t read_file_perms)
+    (allow ARG1 systemduser_unit_t read_lnk_file_perms))
+
+(macro systemduser_read_all_unit ((type ARG1))
+    (call libraries_search (ARG1))
+    (call systemd_search_config (ARG1))
+    (allow ARG1 systemduser_unit_t list_dir_perms)
+    (allow ARG1 systemduser_unit_object_type read_file_perms)
+    (allow ARG1 systemduser_unit_t read_lnk_file_perms))
+
+(macro systemduser_read_generic_unit_files ((type ARG1))
+    (call libraries_search (ARG1))
+    (call systemd_search_config (ARG1))
+    (call read_files_pattern (ARG1 systemduser_unit_t systemduser_unit_t)))
+
 (macro systemduser_read_all_unit_files ((type ARG1))
-    (call usersubject_search_config_home (ARG1))
-    (allow ARG1 systemduser_unit_object_type read_file_perms))
+    (call libraries_search (ARG1))
+    (call systemd_search_config (ARG1))
+    (call read_files_pattern (ARG1 systemduser_unit_t systemduser_unit_object_type)))
 
 (macro systemduser_read_pam_config_files ((type ARG1))
     (call auth_search_pam_config (ARG1))
