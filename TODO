@@ -38,4 +38,8 @@
     from what i understand i should just copy the stuff from /etc to /usr/share/factory/etc and then clear /etc
     systemd(?) should then take care of populating /etc from /usr/share/factory/etc
 
-* investigate lscpu, hwloc, hugepages, vfio (pci passthrough) (d30)
+* investigate lscpu, hwloc, vfio (pci passthrough) (d30)
+
+* systemd-socket-proxyd (socket activation for daemon that don't support it natively)
+
+* trim nspawn_common_container_subject_type capabilities (can i remove sys_admin/net_admin?)
