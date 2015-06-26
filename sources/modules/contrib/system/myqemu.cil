@@ -135,8 +135,6 @@
 
 (call qemu_mmap_qemu_exec_files (myqemu_runner_t))
 
-(call usersubject_search_home_dir (myqemu_runner_t))
-
 (optional myqemu_runner_optional_machine
     (call machine_relabelfrom_lib_files (myqemu_runner_t)))
 

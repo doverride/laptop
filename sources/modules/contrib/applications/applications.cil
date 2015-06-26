@@ -24,6 +24,7 @@
     (call systemduser_send_sigchld_all_subjects (applications_subject_type)))
 
 (optional applications_optional_usersubject
+    (call usersubject_search_home_dir (applications_subject_type))
     (call usersubject_rw_inherited_fifo_files_all_common_subjects (applications_subject_type))
     (call usersubject_getattr_terminals (applications_subject_type))
     (call usersubject_use_inherited_terminals (applications_subject_type)))
