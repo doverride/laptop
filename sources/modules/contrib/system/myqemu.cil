@@ -1,3 +1,11 @@
+(boolean myqemu_use_hugepages true)
+
+(type myqemu_use_hugepages_t)
+(call selinux_bool_object_type (myqemu_use_hugepages_t))
+
+(context myqemu_use_hugepages (system_u object_r myqemu_use_hugepages_t (systemlow systemlow)))
+(genfscon "selinuxfs" "/booleans/myqemu_use_hugepages" myqemu_use_hugepages)
+
 (roleattribute myqemu_installer_role)
 (roleattribute myqemu_runner_role)
 
@@ -81,6 +89,11 @@
 (call usersubject_use_inherited_terminals (myqemu_virt_subject_type))
 
 (call systemd_daemon_forked_subject_type (myqemu_virt_subject_type))
+
+(booleanif myqemu_use_hugepages
+    (true
+        (call filesystems_getattr_hugetlbfs_filesystems (myqemu_virt_subject_type))
+        (call filesystems_manage_hugetlbfs_files (myqemu_virt_subject_type))))
 
 (optional myqemu_virt_subject_type_optional_machine
     (call machine_search_lib (myqemu_virt_subject_type)))
@@ -238,6 +251,8 @@
 
 (allow myqemu_admin_subject_type myqemu_object_type (all_file_objects
     (not_mounton_entrypoint_and_execmod)))
+
+(call myqemu_set_use_hugepages_boolean (myqemu_admin_subject_type))
 
 (macro myqemu_runner_systemd_unit_object_type ((type ARG1))
     (call systemd_unit_object_type (ARG1))
@@ -399,6 +414,11 @@
 (macro myqemu_use_all_inherited_virt_ptys ((type ARG1))
     (call filesystems_search_devpts (ARG1))
     (allow ARG1 myqemu_virt_pty_object_type rw_inherited_term_perms))
+
+(macro myqemu_set_use_hugepages_boolean ((type ARG1))
+    (call selinux_set_spec_boolean (ARG1 myqemu_use_hugepages_t))
+    (optional myqemu_set_use_hugepages_boolean_optional_seutil
+        (call seutil_exec_setsebool (ARG1))))
 
 (macro myqemu_admin ((type ARG1)(role ARG2))
     (typeattributeset myqemu_admin_subject_type ARG1)

@@ -610,6 +610,10 @@
     (call filesystems_search_hugetlbfs (ARG1))
     (allow ARG1 hugetlbfs_fs_t (dir (setattr))))
 
+(macro filesystems_manage_hugetlbfs_files ((type ARG1))
+    (call filesystems_search_devtmpfs (ARG1))
+    (call manage_files_pattern (ARG1 hugetlbfs_fs_t hugetlbfs_fs_t)))
+
 (macro filesystems_search_proc ((type ARG1))
     (allow ARG1 proc_fs_t search_dir_perms))
 
