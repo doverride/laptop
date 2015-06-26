@@ -33,12 +33,12 @@
     (type numad_unit_t)
     (call systemd_unit_object_type (numad_unit_t))
 
-    (typeattributeset numad_object_type numad_unit_t)
+    (typeattributeset numa_object_type numad_unit_t)
 
     (context numad_unit (system_u object_r numad_unit_t (systemlow systemlow)))
     (filecon "/usr/lib/systemd/system/[^/]*numad.*" file numad_unit)
 
-    (allow numad_admin_subject_type numad_unit_t (service (all))))
+    (allow numa_admin_subject_type numad_unit_t (service (all))))
 
 (type numactl_t)
 (type numactl_exec_t)
