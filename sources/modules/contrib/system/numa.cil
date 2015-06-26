@@ -87,7 +87,7 @@
 (filecon "/usr/bin/numastat" file numactl_exec)
 
 (allow numa_numactl_subject_type self (capability (dac_override)))
-(allow numa_numactl_subject_type self (process (getsched)))
+(allow numa_numactl_subject_type self (process (getsched setsched)))
 
 (call commands_exec_shell (numa_numactl_subject_type))
 
@@ -101,6 +101,8 @@
 (call subject_read_all_common_subjects_state (numa_numactl_subject_type))
 
 (call miscfiles_read_all_terminfo (numa_numactl_subject_type))
+
+(call numa_exec_numactl (numa_numactl_subject_type))
 
 (allow numa_admin_subject_type numad_t (process (ptrace signal signull sigkill sigstop)))
 (call ps_subject_pattern (numa_admin_subject_type numad_t))
