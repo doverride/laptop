@@ -15,7 +15,7 @@
 (type numad_runtime_t)
 (call files_runtime_object_type (numad_runtime_t))
 
-(typeattributeset numa_object_type numad_runtime_t))
+(typeattributeset numa_object_type numad_runtime_t)
 
 (context numad_runtime (system_u object_r numad_runtime_t (systemlow systemlow)))
 (filecon "/var/run/numad\.pid" file numad_runtime)
