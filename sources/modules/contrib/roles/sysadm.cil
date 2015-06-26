@@ -402,8 +402,9 @@
     (call ntp_admin (sysadm_t sysadm_r))
     (call ntp_run (sysadm_subject_type sysadm_r)))
 
-(optional sysadm_optional_numactl
-    (call numactl_run (sysadm_subject_type sysadm_r)))
+(optional sysadm_optional_numa
+    (call numa_admin (sysadm_t sysadm_r))
+    (call numa_run_numactl (sysadm_subject_type sysadm_r)))
 
 (optional sysadm_optional_openssl
     (call openssl_run (sysadm_subject_type sysadm_r))

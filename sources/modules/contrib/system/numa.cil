@@ -1,0 +1,120 @@
+(roleattribute numa_numactl_role)
+
+(typeattribute numa_object_type)
+(typeattribute numa_admin_subject_type)
+
+(type numad_t)
+(type numad_exec_t)
+(call subject_common_type (numad_t))
+(call subject_entry (numad_t numad_exec_t))
+(roletype system_r numad_t)
+
+(context numad_exec (system_u object_r numad_exec_t (systemlow systemlow)))
+(filecon "/usr/bin/numad" file numad_exec)
+
+(type numad_log_t)
+(call files_log_object_type (numad_log_t))
+
+(typeattributeset numa_object_type numad_log_t)
+
+(context numad_log (system_u object_r numad_log_t (systemlow systemlow)))
+(filecon "/var/log/numad.*" file numad_log)
+
+(allow numad_t numad_log_t (file (setattr)))
+(allow numad_t numad_log_t create_file_perms)
+(allow numad_t numad_log_t delete_file_perms)
+(allow numad_t numad_log_t append_file_perms)
+(allow numad_t numad_log_t read_file_perms)
+(call files_log_object_type_transition (numad_t numad_log_t file "*"))
+
+(optional numad_optional_systemd
+    (call systemd_daemon (numad_t numad_exec_t))
+
+    (type numad_unit_t)
+    (call systemd_unit_object_type (numad_unit_t))
+
+    (typeattributeset numad_object_type numad_unit_t)
+
+    (context numad_unit (system_u object_r numad_unit_t (systemlow systemlow)))
+    (filecon "/usr/lib/systemd/system/[^/]*numad.*" file numad_unit)
+
+    (allow numad_admin_subject_type numad_unit_t (service (all))))
+
+(type numactl_t)
+(type numactl_exec_t)
+(call applications_app (numactl_t numactl_exec_t))
+(roletype numa_numactl_role numactl_t)
+
+(roleattributeset numa_numactl_role system_r)
+
+(context numactl_exec (system_u object_r numactl_exec_t (systemlow systemlow)))
+(filecon "/usr/bin/memhog" file numactl_exec)
+(filecon "/usr/bin/migratepages" file numactl_exec)
+(filecon "/usr/bin/migspeed" file numactl_exec)
+(filecon "/usr/bin/numactl" file numactl_exec)
+(filecon "/usr/bin/numademo" file numactl_exec)
+(filecon "/usr/bin/numastat" file numactl_exec)
+
+(allow numactl_t self (capability (dac_override)))
+(allow numactl_t self (process (getsched)))
+
+(call commands_exec (numactl_t))
+(call commands_exec_shell (numactl_t))
+
+(call filesystems_list_sysfs (numactl_t))
+(call filesystems_read_sysfs_files (numactl_t))
+(call filesystems_read_sysfs_lnk_files (numactl_t))
+
+(call filesystems_list_proc (numactl_t))
+
+(call subject_ptrace_all_uncond (numactl_t))
+(call subject_read_all_common_subjects_state (numactl_t))
+
+(call miscfiles_read_all_terminfo (numactl_t))
+
+(allow numa_admin_subject_type numad_t (process (ptrace signal signull sigkill sigstop)))
+(call ps_subject_pattern (numa_admin_subject_type numad_t))
+
+(allow numa_admin_subject_type numa_object_type (all_file_objects
+    (not_mounton_entrypoint_and_execmod)))
+
+(macro numa_exec_numad ((type ARG1))
+    (call can_exec (ARG1 numad_exec_t)))
+
+(macro numa_auto_subject_type_transition_numad ((type ARG1))
+    (call numa_send_signal_numad (ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 numad_exec_t numad_t)))
+
+(macro numa_send_signal_numad ((type ARG1))
+    (allow ARG1 numad_t (process (signal))))
+
+(macro numa_exec_numactl ((type ARG1))
+    (call can_exec (ARG1 numactl_exec_t)))
+
+(macro numa_auto_subject_type_transition_numactl ((type ARG1))
+    (call numa_send_signal_numactl (ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 numactl_exec_t numactl_t)))
+
+(macro numa_run_numactl ((type ARG1)(role ARG2))
+    (call numa_auto_subject_type_transition_numactl (ARG1))
+    (roleattributeset numa_numactl_role (ARG2)))
+
+(macro numa_send_signal_numactl ((type ARG1))
+    (allow ARG1 numactl_t (process (signal))))
+
+(macro numa_read_numad_log_files ((type ARG1))
+    (call files_search_log (ARG1))
+    (allow ARG1 numad_log_t read_file_perms))
+
+(macro numa_manage_numad_log_files ((type ARG1))
+    (call files_rw_log_dirs (ARG1))
+    (allow ARG1 numad_log_t manage_file_perms))
+
+(macro numa_admin ((type ARG1)(role ARG2))
+    (typeattributeset numa_admin_subject_type ARG1)
+    (optional numa_admin_optional_askpwd
+        (call askpwd_run_askpwdagent (ARG1 ARG2)))
+    (optional numa_admin_optional_systemd
+        (call systemd_system_service_admin_subject_type (ARG1))))
