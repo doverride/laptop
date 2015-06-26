@@ -52,6 +52,8 @@
 (call filesystems_list_proc (numad_t))
 
 (call subject_ptrace_all_uncond (numad_t))
+(call subject_getsched_all_common_subjects (numad_t))
+(call subject_setsched_all_common_subjects (numad_t))
 (call subject_read_all_common_subjects_state (numad_t))
 
 (call miscfiles_read_locale (numad_t))
@@ -87,7 +89,6 @@
 (filecon "/usr/bin/numastat" file numactl_exec)
 
 (allow numa_numactl_subject_type self (capability (dac_override)))
-(allow numa_numactl_subject_type self (process (getsched setsched)))
 
 (call commands_exec_shell (numa_numactl_subject_type))
 
@@ -98,6 +99,8 @@
 (call filesystems_list_proc (numa_numactl_subject_type))
 
 (call subject_ptrace_all_uncond (numa_numactl_subject_type))
+(call subject_getsched_all_common_subjects (numa_numactl_subject_type))
+(call subject_setsched_all_common_subjects (numa_numactl_subject_type))
 (call subject_read_all_common_subjects_state (numa_numactl_subject_type))
 
 (call miscfiles_read_all_terminfo (numa_numactl_subject_type))
