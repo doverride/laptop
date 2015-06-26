@@ -25,6 +25,11 @@
 (call filesystems_read_sysfs_files (numactl_t))
 (call filesystems_read_sysfs_lnk_files (numactl_t))
 
+(call filesystems_list_proc (numactl_t))
+
+(call subject_ptrace_all_uncond (numactl_t))
+(call subject_read_all_common_subjects_state (numactl_t))
+
 (call miscfiles_read_all_terminfo (numactl_t))
 
 (macro numactl_exec ((type ARG1))
