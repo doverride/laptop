@@ -34,8 +34,8 @@
 
 * test systemd-run -M, systemctl set-property systemd-nspawn@refpolicy CPUShares=750
 
-* i should probably some time try out systemd-firstboot (factory reset)
+* i should probably some time try out factory reset
     from what i understand i should just copy the stuff from /etc to /usr/share/factory/etc and then clear /etc
-    firstboot.service should then take care of populating /etc from /usr/share/factory/etc
+    systemd(?) should then take care of populating /etc from /usr/share/factory/etc
 
-* copy x250: ~/bin/luisterstream to x131e: ~/bin/luisterstream 
+* investigate lscpu, numactl/numastat, hwloc, hugepages, vfio (pci passthrough) (d30)

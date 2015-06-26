@@ -30,6 +30,7 @@
 
 (call xserver_client_subject_type (xbindkeys_subject_type))
 
+(call usersubject_read_exec_home_lnk_files (xbindkeys_subject_type))
 (call usersubject_use_terminals (xbindkeys_subject_type))
 
 (macro xbindkeys_exec ((type ARG1))
