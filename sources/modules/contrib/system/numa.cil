@@ -1,5 +1,7 @@
 (roleattribute numa_numactl_role)
 
+(typeattribute numa_numactl_subject_type)
+
 (typeattribute numa_object_type)
 (typeattribute numa_admin_subject_type)
 
@@ -69,8 +71,10 @@
 
 (type numactl_t)
 (type numactl_exec_t)
-(call applications_app (numactl_t numactl_exec_t))
+(call applications_app (numa_numactl_subject_type numactl_exec_t))
 (roletype numa_numactl_role numactl_t)
+
+(call numa_numactl_subject_type (numactl_t))
 
 (roleattributeset numa_numactl_role system_r)
 
@@ -82,28 +86,30 @@
 (filecon "/usr/bin/numademo" file numactl_exec)
 (filecon "/usr/bin/numastat" file numactl_exec)
 
-(allow numactl_t self (capability (dac_override)))
-(allow numactl_t self (process (getsched)))
+(allow numa_numactl_subject_type self (capability (dac_override)))
+(allow numa_numactl_subject_type self (process (getsched)))
 
-(call commands_exec (numactl_t))
-(call commands_exec_shell (numactl_t))
+(call commands_exec_shell (numa_numactl_subject_type))
 
-(call filesystems_list_sysfs (numactl_t))
-(call filesystems_rw_sysfs_files (numactl_t))
-(call filesystems_read_sysfs_lnk_files (numactl_t))
+(call filesystems_list_sysfs (numa_numactl_subject_type))
+(call filesystems_rw_sysfs_files (numa_numactl_subject_type))
+(call filesystems_read_sysfs_lnk_files (numa_numactl_subject_type))
 
-(call filesystems_list_proc (numactl_t))
+(call filesystems_list_proc (numa_numactl_subject_type))
 
-(call subject_ptrace_all_uncond (numactl_t))
-(call subject_read_all_common_subjects_state (numactl_t))
+(call subject_ptrace_all_uncond (numa_numactl_subject_type))
+(call subject_read_all_common_subjects_state (numa_numactl_subject_type))
 
-(call miscfiles_read_all_terminfo (numactl_t))
+(call miscfiles_read_all_terminfo (nama_numactl_subject_type))
 
 (allow numa_admin_subject_type numad_t (process (ptrace signal signull sigkill sigstop)))
 (call ps_subject_pattern (numa_admin_subject_type numad_t))
 
 (allow numa_admin_subject_type numa_object_type (all_file_objects
     (not_mounton_entrypoint_and_execmod)))
+
+(macro numa_numactl_subject_type ((type ARG1))
+    (typeattributeset numa_numactl_subject_type ARG1))
 
 (macro numa_exec_numad ((type ARG1))
     (call can_exec (ARG1 numad_exec_t)))
@@ -130,6 +136,14 @@
 
 (macro numa_send_signal_numactl ((type ARG1))
     (allow ARG1 numactl_t (process (signal))))
+
+(macro numa_role_template_numactl ((role ARG1)(type ARG2)(type ARG3))
+    (call auto_subject_type_transition_pattern
+        (ARG2 numactl_exec_t ARG3))
+    (roletype ARG1 ARG3)
+    (roleattributeset numa_numactl_role ARG1)
+    (allow ARG3 ARG2 (process (signal)))
+    (call numa_numactl_subject_type (ARG3)))
 
 (macro numa_read_numad_log_files ((type ARG1))
     (call files_search_log (ARG1))

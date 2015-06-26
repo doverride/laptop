@@ -328,6 +328,9 @@
 (optional systemd_optional_machine
     (call machine_manage_lib_files (systemd_t)))
 
+(optional systemd_optional_numactl
+    (call numa_exec_numactl (systemd_t)))
+
 (optional systemd_optional_plymouth
     (call plymouth_exec (systemd_t))
     (call plymouth_read_plymouthd_runtime (systemd_t))

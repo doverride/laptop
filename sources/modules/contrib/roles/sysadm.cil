@@ -403,8 +403,14 @@
     (call ntp_run (sysadm_subject_type sysadm_r)))
 
 (optional sysadm_optional_numa
-    (call numa_admin (sysadm_t sysadm_r))
-    (call numa_run_numactl (sysadm_subject_type sysadm_r)))
+    (type sysadm_numactl_subject_type)
+    (call numa_role_template_numactl (sysadm_r sysadm_subject_type sysadm_numactl_t))
+
+    (call commands_exec_auto_subject_type_transition (sysadm_numactl_t sysadm_t))
+
+    (call usersubject_exec_home_auto_subject_type_transition (sysadm_numactl_t sysadm_t))
+
+    (call numa_admin (sysadm_t sysadm_r)))
 
 (optional sysadm_optional_openssl
     (call openssl_run (sysadm_subject_type sysadm_r))
