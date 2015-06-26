@@ -15,6 +15,9 @@
 (type numad_log_t)
 (call files_log_object_type (numad_log_t))
 
+(optional numad_log_optional_logrotate
+    (call logrotate_log_object_type (numad_log_t)))
+
 (typeattributeset numa_object_type numad_log_t)
 
 (context numad_log (system_u object_r numad_log_t (systemlow systemlow)))
