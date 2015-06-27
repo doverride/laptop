@@ -39,7 +39,7 @@
 (call xutil_read_home_files (xutil_t))
 
 (optional xutil_optional_systemd
-    (call systemd_getattr_unit_dirs (xutil_t)))
+    (call systemd_getattr_generic_unit_dirs (xutil_t)))
 
 (macro xutil_exec ((type ARG1))
     (call can_exec (ARG1 xutil_exec_t)))
