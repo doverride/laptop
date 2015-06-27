@@ -85,7 +85,7 @@
 (macro getty_start_units ((type ARG1))
     (allow ARG1 getty_unit_t (service (start)))
     (optional getty_start_unit_optional_systemd
-        (call systemd_search_unit (ARG1))))
+        (call systemd_search_generic_unit (ARG1))))
 
 (macro getty_read_runtime_files ((type ARG1))
     (call files_search_runtime (ARG1))
