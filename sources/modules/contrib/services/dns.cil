@@ -35,6 +35,9 @@
 
 (context resolve_config (system_u object_r resolve_config_t (systemlow systemlow)))
 (filecon "/etc/resolv\.conf.*" file resolve_config)
+(filecon "/etc/resolv-secure\.conf.*" file resolve_config)
+(filecon "/etc/\.resolv\.conf.*" file resolve_config)
+(filecon "/etc/\.resolv-secure\.conf.*" file resolve_config)
 (filecon "/var/run/dnssec-trigger/resolv\.conf\.backup" file resolve_config)
 
 (allow dns_resolve_client_subject_type self r_netlink_route_socket_perms)
