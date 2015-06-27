@@ -104,7 +104,6 @@
 (call systemd_rw_unix_stream_sockets (systemduser_subject_type))
 (call systemd_send_signal (systemduser_subject_type))
 (call systemd_subject_type (systemduser_subject_type))
-(call systemd_search_transient_unit (systemduser_subject_type))
 
 (call systemduser_config_home_object_type_transition_config_home_dirs (systemduser_subject_type))
 (call systemduser_manage_config_home_dirs (systemduser_subject_type))
@@ -117,8 +116,6 @@
 (call systemduser_manage_transient_unit (systemduser_subject_type))
 (call systemduser_tmpfs_object_type_transition_systemduser_transient_unit_dirs (systemduser_subject_type))
 (call systemduser_read_config_home_files (systemduser_subject_type))
-(call systemduser_list_unit (systemduser_subject_type))
-(call systemduser_read_unit_lnk_files (systemduser_subject_type))
 
 (call usersubject_read_exec_home_lnk_files (systemduser_subject_type))
 

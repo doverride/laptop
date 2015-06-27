@@ -163,7 +163,6 @@
 (call systemd_runtime_object_type_transition (systemd_t systemd_unit_t dir "generator.late"))
 
 (allow systemd_t systemd_transient_unit_t manage_dir_perms)
-(allow systemd_t systemd_transient_unit_t manage_file_perms)
 (allow systemd_t systemd_transient_unit_t manage_lnk_file_perms)
 
 (call systemd_runtime_object_type_transition (systemd_t systemd_transient_unit_t dir "system"))
@@ -411,7 +410,6 @@
 
 (call shutdown_dgram_send_shutdownd (systemd_systemctl_subject_type))
 
-(call systemd_search_config (systemd_systemctl_subject_type))
 (call systemd_control_all_units (systemd_systemctl_subject_type))
 (call systemd_getattr_all_systemd_daemon_subjects (systemd_systemctl_subject_type))
 (call systemd_read_state_all_systemd_daemon_subjects (systemd_systemctl_subject_type))
@@ -419,8 +417,7 @@
 (call systemd_systemctl_client_subject_type (systemd_systemctl_subject_type))
 (call systemd_read_state (systemd_systemctl_subject_type))
 (call systemd_control_system (systemd_systemctl_subject_type))
-(call systemd_manage_unit_dirs (systemd_systemctl_subject_type))
-(call systemd_manage_all_unit_files (systemd_systemctl_subject_type))
+(call systemd_manage_all_unit (systemd_systemctl_subject_type))
 
 (call utmp_read_utmp_runtime_files (systemd_systemctl_subject_type))
 
@@ -454,8 +451,7 @@
     (call systemduser_control_all_units (systemd_systemctl_subject_type))
     (call systemduser_control_transient_units (systemd_systemctl_subject_type))
     (call systemduser_stream_connect_all_subjects (systemd_systemctl_subject_type))
-    (call systemduser_manage_config_home_files (systemd_systemctl_subject_type))
-    (call systemduser_manage_config_home_dirs (systemd_systemctl_subject_type))
+    (call systemduser_manage_config_home (systemd_systemctl_subject_type))
     (call systemduser_config_home_object_type_transition_config_home_dirs (systemd_systemctl_subject_type)))
 
 (optional systemd_systemdctl_subject_type_optional_usersubject
@@ -938,18 +934,29 @@
     (allow ARG1 systemd_lib_object_type manage_sock_file_perms)
     (allow ARG1 systemd_lib_object_type manage_lnk_file_perms))
 
-(macro systemd_search_unit ((type ARG1))
+(macro systemd_search_generic_unit ((type ARG1))
     (call libraries_search (ARG1))
+    (call systemd_search_config (ARG1))
     (allow ARG1 systemd_unit_t search_dir_perms))
+
+(macro systemd_search_all_unit ((type ARG1))
+    (call libraries_search (ARG1))
+    (call systemd_search_config (ARG1))
+    (allow ARG1 systemd_unit_object_type search_dir_perms))
 
 (macro systemd_search_transient_unit ((type ARG1))
     (call systemd_search_runtime (ARG1))
     (allow ARG1 systemd_transient_unit_t search_dir_perms))
 
-(macro systemd_list_unit ((type ARG1))
+(macro systemd_list_generic_unit ((type ARG1))
     (call libraries_search (ARG1))
     (call systemd_search_config (ARG1))
     (allow ARG1 systemd_unit_t list_dir_perms))
+
+(macro systemd_list_all_unit ((type ARG1))
+    (call libraries_search (ARG1))
+    (call systemd_search_config (ARG1))
+    (allow ARG1 systemd_unit_object_type list_dir_perms))
 
 (macro systemd_read_generic_unit_files ((type ARG1))
     (call libraries_search (ARG1))
@@ -961,10 +968,16 @@
     (call systemd_search_config (ARG1))
     (call read_files_pattern (ARG1 systemd_unit_t systemd_unit_object_type)))
 
-(macro systemd_manage_unit_dirs ((type ARG1))
+(macro systemd_manage_generic_unit_dirs ((type ARG1))
     (call libraries_search (ARG1))
     (call systemd_search_config (ARG1))
     (call manage_dirs_pattern (ARG1 systemd_unit_t systemd_unit_t)))
+
+(macro systemd_manage_all_unit_dirs ((type ARG1))
+    (call libraries_search (ARG1))
+    (call systemd_search_config (ARG1))
+    (call manage_dirs_pattern (ARG1 systemd_unit_object_type
+        systemd_unit_object_type)))
 
 (macro systemd_manage_generic_unit_files ((type ARG1))
     (call libraries_search (ARG1))
@@ -976,28 +989,31 @@
     (call systemd_search_config (ARG1))
     (call manage_files_pattern (ARG1 systemd_unit_t systemd_unit_object_type)))
 
-(macro systemd_getattr_unit_dirs ((type ARG1))
+(macro systemd_getattr_generic_unit_dirs ((type ARG1))
     (call libraries_search (ARG1))
+    (call systemd_search_config (ARG1))
     (allow ARG1 systemd_unit_t (dir (getattr))))
 
 (macro systemd_getattr_transient_unit_dirs ((type ARG1))
     (call systemd_search_runtime (ARG1))
     (allow ARG1 systemd_transient_unit_t (dir (getattr))))
 
-(macro systemd_relabelto_unit_dirs ((type ARG1))
-    (call libraries_search (ARG1))
+(macro systemd_relabelto_generic_unit_dirs ((type ARG1))
+    (call systemd_search_generic_unit (ARG1))
     (allow ARG1 systemd_unit_t relabelto_dir_perms))
 
 (macro systemd_relabelto_transient_unit_dirs ((type ARG1))
-    (call systemd_search_runtime (ARG1))
+    (call systemd_search_transient_unit (ARG1))
     (allow ARG1 systemd_transient_unit_t relabelto_dir_perms))
 
-(macro systemd_rw_unit_dirs ((type ARG1))
+(macro systemd_rw_generic_unit_dirs ((type ARG1))
     (call libraries_search (ARG1))
+    (call systemd_search_config (ARG1))
     (allow ARG1 systemd_unit_t rw_dir_perms))
 
-(macro systemd_read_unit_lnk_files ((type ARG1))
+(macro systemd_read_generic_unit_lnk_files ((type ARG1))
     (call libraries_search (ARG1))
+    (call systemd_search_config (ARG1))
     (call read_lnk_files_pattern (ARG1 systemd_unit_t systemd_unit_t)))
 
 (macro systemd_rw_systemctl_subject_unix_stream_sockets ((type ARG1))
@@ -1017,8 +1033,8 @@
     (call libraries_search (ARG1))
     (call systemd_search_config (ARG1))
     (allow ARG1 systemd_unit_object_type read_file_perms)
-    (allow ARG1 systemd_unit_t list_dir_perms)
-    (allow ARG1 systemd_unit_t read_lnk_file_perms))
+    (allow ARG1 systemd_unit_object_type list_dir_perms)
+    (allow ARG1 systemd_unit_object_type read_lnk_file_perms))
 
 (macro systemd_manage_generic_unit ((type ARG1))
     (call libraries_rw_dirs (ARG1))
@@ -1031,8 +1047,8 @@
     (call libraries_rw_dirs (ARG1))
     (call systemd_rw_config_dirs (ARG1))
     (allow ARG1 systemd_unit_object_type manage_file_perms)
-    (allow ARG1 systemd_unit_t manage_dir_perms)
-    (allow ARG1 systemd_unit_t manage_lnk_file_perms))
+    (allow ARG1 systemd_unit_object_type manage_dir_perms)
+    (allow ARG1 systemd_unit_object_type manage_lnk_file_perms))
 
 (macro systemd_relabel_generic_unit ((type ARG1))
     (call libraries_search (ARG1))

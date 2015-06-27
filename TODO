@@ -43,3 +43,5 @@
 * systemd-socket-proxyd (socket activation for daemon that don't support it natively)
 
 * trim nspawn_common_container_subject_type capabilities (can i remove sys_admin/net_admin?)
+
+* kernel 4.2: sysfs genfscon support

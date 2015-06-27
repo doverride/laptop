@@ -453,27 +453,27 @@
     (allow ARG1 nspawn_t (fd (use))))
 
 (macro nspawn_start_unit ((type ARG1))
-    (call systemd_search_unit (ARG1))
+    (call systemd_search_generic_unit (ARG1))
     (allow ARG1 nspawn_unit_t (service (start))))
 
 (macro nspawn_status_unit ((type ARG1))
-    (call systemd_search_unit (ARG1))
+    (call systemd_search_generic_unit (ARG1))
     (allow ARG1 nspawn_unit_t (service (status))))
 
 (macro nspawn_stop_unit ((type ARG1))
-    (call systemd_search_unit (ARG1))
+    (call systemd_search_generic_unit (ARG1))
     (allow ARG1 nspawn_unit_t (service (stop))))
 
 (macro nspawn_start_all_unit ((type ARG1))
-    (call systemd_search_unit (ARG1))
+    (call systemd_search_generic_unit (ARG1))
     (allow ARG1 nspawn_systemd_unit_object_type (service (start))))
 
 (macro nspawn_status_all_unit ((type ARG1))
-    (call systemd_search_unit (ARG1))
+    (call systemd_search_generic_unit (ARG1))
     (allow ARG1 nspawn_systemd_unit_object_type (service (status))))
 
 (macro nspawn_stop_all_unit ((type ARG1))
-    (call systemd_search_unit (ARG1))
+    (call systemd_search_generic_unit (ARG1))
     (allow ARG1 nspawn_systemd_unit_object_type (service (stop))))
 
 (macro nspawn_search_tmpfs ((type ARG1))
