@@ -1051,15 +1051,13 @@
     (allow ARG1 systemd_unit_object_type manage_lnk_file_perms))
 
 (macro systemd_relabel_generic_unit ((type ARG1))
-    (call libraries_search (ARG1))
-    (call systemd_search_config (ARG1))
+    (call systemd_search_generic_unit (ARG1))
     (allow ARG1 systemd_unit_t relabel_file_perms)
     (allow ARG1 systemd_unit_t relabel_dir_perms)
     (allow ARG1 systemd_unit_t relabel_lnk_file_perms))
 
 (macro systemd_relabel_all_unit ((type ARG1))
-    (call libraries_search (ARG1))
-    (call systemd_search_config (ARG1))
+    (call systemd_search_all_unit (ARG1))
     (allow ARG1 systemd_unit_object_type relabel_file_perms)
     (allow ARG1 systemd_unit_object_type relabel_dir_perms)
     (allow ARG1 systemd_unit_object_type relabel_lnk_file_perms))
