@@ -1,0 +1,228 @@
+(roleattribute dnssec_trigger_role)
+(roleattribute dnssec_triggerc_role)
+
+(typeattribute dnssec_subject_type)
+(typeattribute dnssec_admin_subject_type)
+
+(typeattribute dnssec_object_type)
+
+(type triggerd_t)
+(type triggerd_exec_t)
+(call subject_common_type (triggerd_t))
+(call subject_entry (triggerd_t triggerd_exec_t))
+(roletype system_r triggerd_t)
+
+(typeattributeset dnssec_subject_type triggerd_t)
+
+(context triggerd_exec (system_u object_r triggerd_exec_t (systemlow systemlow)))
+(filecon "/usr/sbin/dnssec-triggerd" file triggerd_exec)
+
+(optional triggerd_optional_systemd
+    (call systemd_daemon (triggerd_t triggerd_exec_t))
+
+    (type dnssec_unit_t)
+    (call systemd_unit_object_type (dnssec_unit_t))
+
+    (typeattributeset dnssec_object_type dnssec_unit_t)
+
+    (context dnssec_unit (system_u object_r dnssec_unit_t (systemlow systemlow)))
+    (filecon "/usr/lib/systemd/system/[^/]*dnssec-triggerd.*" file dnssec_unit)
+
+    (allow dnssec_admin_subject_type dnssec_unit_t (service (all))))
+
+(type triggercs_t)
+(type triggercs_exec_t)
+(call subject_common_type (triggercs_t))
+(call subject_entry (triggercs_t triggercs_exec_t))
+(roletype system_r triggercs_t)
+
+(typeattributeset dnssec_subject_type triggercs_t)
+
+(context triggercs_exec (system_u object_r triggercs_exec_t (systemlow systemlow)))
+(filecon "/usr/sbin/dnssec-trigger-control-setup" file triggercs_exec)
+
+(optional triggercs_optional_systemd
+    (call systemd_daemon (triggercs_t triggercs_exec_t)))
+
+(type triggers_t)
+(type triggers_exec_t)
+(call subject_common_type (triggers_t))
+(call subject_entry (triggers_t triggers_exec_t))
+(roletype system_r triggers_t)
+
+(typeattributeset dnssec_subject_type triggers_t)
+
+(context triggers_exec (system_u object_r triggers_exec_t (systemlow systemlow)))
+(filecon "/usr/libexec/dnssec-trigger-script" file triggers_exec)
+
+(optional triggers_optional_systemd
+    (call systemd_daemon (triggers_t triggers_exec_t)))
+
+(type triggerc_t)
+(type triggerc_exec_t)
+(call applications_app (triggerc_t triggerc_exec_t))
+(roletype dnssec_triggerc_role triggerc_t)
+
+(roleattributeset dnssec_triggerc_role system_r)
+
+(context triggerc_exec (system_u object_r triggerc_exec_t (systemlow systemlow)))
+(filecon "/usr/sbin/dnssec-trigger-control" file triggerc_exec)
+
+(type trigger_t)
+(type trigger_exec_t)
+(call applications_app (trigger_t trigger_exec_t))
+(roletype dnssec_trigger_role trigger_t)
+
+(context trigger_exec (system_u object_r trigger_exec_t (systemlow systemlow)))
+(filecon "/usr/bin/dnssec-trigger" file trigger_exec)
+
+(type dnssec_config_t)
+(call files_config_object_type (dnssec_config_t))
+
+(typeattributeset dnssec_object_type dnssec_config_t)
+
+(context dnssec_config (system_u object_r dnssec_config_t (systemlow systemlow)))
+(filecon "/etc/dnssec-trigger(/.*)?" any dnssec_config)
+(filecon "/etc/dnssec\.conf" file dnssec_config)
+
+(type dnssec_runtime_t)
+(call files_runtime_object_type (dnssec_runtime_t))
+
+(typeattributeset dnssec_object_type dnssec_runtime_t)
+
+(context dnssec_runtime (system_u object_r dnssec_runtime_t (systemlow systemlow)))
+(filecon "/var/run/dnssec-trigger(/.*)?" any dnssec_runtime)
+
+(allow dnssec_admin_subject_type dnssec_subject_type (process (ptrace signal signull sigkill sigstop)))
+(call ps_subject_pattern (dnssec_admin_subject_type dnssec_subject_type))
+
+(allow dnssec_admin_subject_type dnssec_object_type (all_file_objects
+    (not_mounton_entrypoint_and_execmod)))
+
+(macro dnssec_exec_trigger ((type ARG1))
+    (call can_exec (ARG1 trigger_exec_t)))
+
+(macro dnssec_exec_triggerc ((type ARG1))
+    (call can_exec (ARG1 triggerc_exec_t)))
+
+(macro dnssec_exec_triggercs ((type ARG1))
+    (call can_exec (ARG1 triggercs_exec_t)))
+
+(macro dnssec_exec_triggerd ((type ARG1))
+    (call can_exec (ARG1 triggerd_exec_t)))
+
+(macro dnssec_exec_triggers ((type ARG1))
+    (call can_exec (ARG1 triggers_exec_t)))
+
+(macro dnssec_auto_subject_type_transition_trigger ((type ARG1))
+    (call dnssec_send_signal_trigger (ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 trigger_exec_t trigger_t)))
+
+(macro dnssec_auto_subject_type_transition_triggerc ((type ARG1))
+    (call dnssec_send_signal_triggerc (ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 triggerc_exec_t triggerc_t)))
+
+(macro dnssec_auto_subject_type_transition_triggercs ((type ARG1))
+    (call dnssec_send_signal_triggercs (ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 triggercs_exec_t triggercs_t)))
+
+(macro dnssec_auto_subject_type_transition_triggerd ((type ARG1))
+    (call dnssec_send_signal_triggerd (ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 triggerd_exec_t triggerd_t)))
+
+(macro dnssec_auto_subject_type_transition_triggers ((type ARG1))
+    (call dnssec_send_signal_triggers (ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 triggers_exec_t triggers_t)))
+
+(macro dnssec_send_signal_trigger ((type ARG1))
+    (allow ARG1 trigger_t (process (signal))))
+
+(macro dnssec_send_signal_triggerc ((type ARG1))
+    (allow ARG1 triggerc_t (process (signal))))
+
+(macro dnssec_send_signal_triggercs ((type ARG1))
+    (allow ARG1 triggercs_t (process (signal))))
+
+(macro dnssec_send_signal_triggerd ((type ARG1))
+    (allow ARG1 triggerd_t (process (signal))))
+
+(macro dnssec_send_signal_triggers ((type ARG1))
+    (allow ARG1 triggers_t (process (signal))))
+
+(macro dnssec_run_trigger ((type ARG1)(role ARG2))
+    (call dnssec_auto_subject_type_transition_trigger (ARG1))
+    (roleattributeset dnssec_trigger_role ARG2))
+
+(macro dnssec_run_triggerc ((type ARG1)(role ARG2))
+    (call dnssec_auto_subject_type_transition_triggerc (ARG1))
+    (roleattributeset dnssec_triggerc_role ARG2))
+
+(macro dnssec_search_config ((type ARG1))
+    (call files_search_config (ARG1))
+    (allow ARG1 dnssec_config_t search_dir_perms))
+
+(macro dnssec_list_config ((type ARG1))
+    (call files_search_config (ARG1))
+    (allow ARG1 dnssec_config_t list_dir_perms))
+
+(macro dnssec_read_config_files ((type ARG1))
+    (call files_search_config (ARG1))
+    (call read_files_pattern (ARG1 dnssec_config_t dnssec_config_t)))
+
+(macro dnssec_read_config_lnk_files ((type ARG1))
+    (call files_search_config (ARG1))
+    (call read_lnk_files_pattern (ARG1 dnssec_config_t dnssec_config_t)))
+
+(macro dnssec_read_config ((type ARG1))
+    (call files_search_config (ARG1))
+    (allow ARG1 dnssec_config_t read_file_perms)
+    (allow ARG1 dnssec_config_t list_dir_perms)
+    (allow ARG1 dnssec_config_t read_lnk_file_perms))
+
+(macro dnssec_manage_config ((type ARG1))
+    (call files_rw_config_dirs (ARG1))
+    (allow ARG1 dnssec_config_t manage_file_perms)
+    (allow ARG1 dnssec_config_t manage_dir_perms)
+    (allow ARG1 dnssec_config_t manage_lnk_file_perms))
+
+(macro dnssec_search_runtime ((type ARG1))
+    (call files_search_runtime (ARG1))
+    (allow ARG1 dnssec_runtime_t search_dir_perms))
+
+(macro dnssec_list_runtime ((type ARG1))
+    (call files_search_runtime (ARG1))
+    (allow ARG1 dnssec_runtime_t list_dir_perms))
+
+(macro dnssec_read_runtime_files ((type ARG1))
+    (call files_search_runtime (ARG1))
+    (call read_files_pattern (ARG1 dnssec_runtime_t dnssec_runtime_t)))
+
+(macro dnssec_read_runtime_lnk_files ((type ARG1))
+    (call files_search_runtime (ARG1))
+    (call read_lnk_files_pattern (ARG1 dnssec_runtime_t dnssec_runtime_t)))
+
+(macro dnssec_read_runtime ((type ARG1))
+    (call files_search_runtime (ARG1))
+    (allow ARG1 dnssec_runtime_t read_file_perms)
+    (allow ARG1 dnssec_runtime_t list_dir_perms)
+    (allow ARG1 dnssec_runtime_t read_sock_file_perms)
+    (allow ARG1 dnssec_runtime_t read_lnk_file_perms))
+
+(macro dnssec_manage_runtime ((type ARG1))
+    (call files_rw_runtime_dirs (ARG1))
+    (allow ARG1 dnssec_runtime_t manage_file_perms)
+    (allow ARG1 dnssec_runtime_t manage_dir_perms)
+    (allow ARG1 dnssec_runtime_t manage_sock_file_perms)
+    (allow ARG1 dnssec_runtime_t manage_lnk_file_perms))
+
+(macro dnssec_admin ((type ARG1)(role ARG2))
+    (typeattributeset dnssec_admin_subject_type ARG1)
+    (optional dnssec_admin_optional_askpwd
+        (call askpwd_run_askpwdagent (ARG1 ARG2)))
+    (optional dnssec_admin_optional_systemd
+        (call systemd_system_service_admin_subject_type (ARG1))))

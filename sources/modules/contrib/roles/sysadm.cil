@@ -765,6 +765,11 @@
     (call tmpfiles_manage_config (sysadm_t))
     (call tmpfiles_manage_runtime (sysadm_t)))
 
+(optional sysadm_optional_dnssec
+    (call dnssec_run_trigger (sysadm_subject_type sysadm_r))
+    (call dnssec_run_triggerc (sysadm_subject_type sysadm_r))
+    (call dnssec_admin (sysadm_t sysadm_r)))
+
 (optional sysadm_optional_vconsole
     (call vconsole_manage_config_files (sysadm_t)))
 

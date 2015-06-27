@@ -726,6 +726,9 @@
     (call rp_manage_rpws_tmpfs_files (staff_t))
     (call rp_relabel_rpws_tmpfs_files (staff_t)))
 
+(optional staff_optional_dnssec
+    (call dnssec_run_trigger (staff_subject_type staff_r)))
+
 (optional staff_optional_utmp
     (call utmp_read_utmp_runtime_files (staff_t)))
 
