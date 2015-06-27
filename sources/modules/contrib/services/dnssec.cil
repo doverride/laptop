@@ -17,6 +17,27 @@
 (context triggerd_exec (system_u object_r triggerd_exec_t (systemlow systemlow)))
 (filecon "/usr/sbin/dnssec-triggerd" file triggerd_exec)
 
+(allow triggerd_t self create_tcp_stream_socket_perms)
+
+(call commands_exec (triggerd_t))
+(call commands_exec_shell (triggerd_t))
+
+(call devices_read_urandom (triggerd_t))
+
+(call files_read_config_files (triggerd_t)) ; /etc/crypto-policies
+
+(call network_tcp_bind_generic_node (triggerd_t))
+
+(call dns_tcp_bind_dnssec_port (triggerd_t))
+
+(call dnssec_auto_subject_type_transition_triggers (triggerd_t))
+(call dnssec_read_config_files (triggerd_t))
+
+(call ns_client_subject_type (triggerd_t))
+
+(optional triggerd_optional_journal
+    (call journal_client_subject_type (triggerd_t)))
+
 (optional triggerd_optional_systemd
     (call systemd_daemon (triggerd_t triggerd_exec_t))
 
@@ -41,6 +62,31 @@
 (context triggercs_exec (system_u object_r triggercs_exec_t (systemlow systemlow)))
 (filecon "/usr/sbin/dnssec-trigger-control-setup" file triggercs_exec)
 
+(type triggercs_tmpfs_t)
+(call files_tmpfs_object_type (triggercs_tmpfs_t))
+
+(typeattributeset dnssec_object_type triggercs_tmpfs_t)
+
+(allow triggercs_t triggercs_tmpfs_t manage_file_perms)
+(call filesystems_tmpfs_object_type_transition (triggercs_t triggercs_tmpfs_t file "*"))
+
+(allow triggercs_t self rw_fifo_file_perms)
+
+(call commands_exec (triggercs_t))
+(call commands_mprot_read_shell_exec_files (triggercs_t))
+
+(call devices_read_urandom (triggercs_t))
+
+(call dnssec_manage_config (triggercs_t))
+
+(call miscfiles_read_cert (triggercs_t))
+(call miscfiles_read_locale (triggercs_t))
+
+(call ns_client_subject_type (triggercs_t))
+
+(optional triggercs_optional_openssl
+    (call openssl_exec (triggercs_t)))
+
 (optional triggercs_optional_systemd
     (call systemd_daemon (triggercs_t triggercs_exec_t)))
 
@@ -55,8 +101,47 @@
 (context triggers_exec (system_u object_r triggers_exec_t (systemlow systemlow)))
 (filecon "/usr/libexec/dnssec-trigger-script" file triggers_exec)
 
+(allow triggers_t self (capability (linux_immutable))) ; chattr +i /etc/resolv.conf
+(allow triggers_t self rw_fifo_file_perms)
+
+(allow triggers_t triggerd_t (tcp_socket (read write)))
+
+(call commands_list (triggers_t))
+(call commands_exec (triggers_t))
+
+(call devices_read_urandom (triggers_t))
+
+(call files_list_tmp (triggers_t))
+(call files_create_config_lnk_files (triggers_t))
+(call files_delete_config_lnk_files (triggers_t))
+
+(call filesystems_list_tmpfs (triggers_t))
+
+(call dns_config_object_type_transition_resolve_config_files (triggers_t))
+(call dns_manage_resolve_config_files (triggers_t))
+(call dns_relabelto_resolve_config_files (triggers_t))
+
+(call dnssec_auto_subject_type_transition_triggerc (triggers_t))
+(call dnssec_read_config_files (triggers_t))
+(call dnssec_manage_runtime_files (triggers_t))
+(call dnssec_manage_runtime_lnk_files (triggers_t))
+(call dnssec_relabel_runtime_files (triggers_t))
+
+(call miscfiles_read_locale (triggers_t))
+
+(call ns_client_subject_type (triggers_t))
+
+(optional triggers_optional_dbus
+    (call dbus_system_client_subject_type (triggers_t)))
+
 (optional triggers_optional_systemd
     (call systemd_daemon (triggers_t triggers_exec_t)))
+
+(optional triggers_optional_unbound
+    (call unbound_auto_subject_type_transition_unboundctl (triggers_t)))
+
+(optional triggers_optional_usersubject
+    (call usersubject_dontaudit_search_home_dir (triggers_t)))
 
 (type triggerc_t)
 (type triggerc_exec_t)
@@ -67,6 +152,21 @@
 
 (context triggerc_exec (system_u object_r triggerc_exec_t (systemlow systemlow)))
 (filecon "/usr/sbin/dnssec-trigger-control" file triggerc_exec)
+
+(allow triggerc_t self create_tcp_socket_perms)
+
+(call devices_read_urandom (triggerc_t))
+
+(call files_read_config_files (triggerc_t)) ; /etc/crypto-policies
+
+(call dns_tcp_connect_dnssec_port (triggerc_t))
+
+(call dnssec_read_config_files (triggerc_t))
+
+(call miscfiles_read_locale (triggerc_t))
+
+(optional triggerc_optional_systemd
+    (call systemd_daemon_forked_subject_type (triggerc_t)))
 
 (type trigger_t)
 (type trigger_exec_t)
@@ -178,6 +278,10 @@
     (call files_search_config (ARG1))
     (call read_files_pattern (ARG1 dnssec_config_t dnssec_config_t)))
 
+(macro dnssec_manage_config_files ((type ARG1))
+    (call files_search_config (ARG1))
+    (call manage_files_pattern (ARG1 dnssec_config_t dnssec_config_t)))
+
 (macro dnssec_read_config_lnk_files ((type ARG1))
     (call files_search_config (ARG1))
     (call read_lnk_files_pattern (ARG1 dnssec_config_t dnssec_config_t)))
@@ -206,9 +310,21 @@
     (call files_search_runtime (ARG1))
     (call read_files_pattern (ARG1 dnssec_runtime_t dnssec_runtime_t)))
 
+(macro dnssec_relabel_runtime_files ((type ARG1))
+    (call files_search_runtime (ARG1))
+    (call relabel_files_pattern (ARG1 dnssec_runtime_t dnssec_runtime_t)))
+
+(macro dnssec_manage_runtime_files ((type ARG1))
+    (call files_search_runtime (ARG1))
+    (call manage_files_pattern (ARG1 dnssec_runtime_t dnssec_runtime_t)))
+
 (macro dnssec_read_runtime_lnk_files ((type ARG1))
     (call files_search_runtime (ARG1))
     (call read_lnk_files_pattern (ARG1 dnssec_runtime_t dnssec_runtime_t)))
+
+(macro dnssec_manage_runtime_lnk_files ((type ARG1))
+    (call files_search_runtime (ARG1))
+    (call manage_lnk_files_pattern (ARG1 dnssec_runtime_t dnssec_runtime_t)))
 
 (macro dnssec_read_runtime ((type ARG1))
     (call files_search_runtime (ARG1))
@@ -221,6 +337,14 @@
     (allow ARG1 dnssec_runtime_t manage_file_perms)
     (allow ARG1 dnssec_runtime_t manage_dir_perms)
     (allow ARG1 dnssec_runtime_t manage_lnk_file_perms))
+
+(macro dnssec_read_triggercs_tmpfs_files ((type ARG1))
+    (call filesystems_search_tmpfs (ARG1))
+    (allow ARG1 triggercs_tmpfs_t read_file_perms))
+
+(macro dnssec_manage_triggercs_tmpfs_files ((type ARG1))
+    (call filesystems_rw_tmpfs_dirs (ARG1))
+    (allow ARG1 triggercs_tmpfs_t manage_file_perms))
 
 (macro dnssec_admin ((type ARG1)(role ARG2))
     (typeattributeset dnssec_admin_subject_type ARG1)

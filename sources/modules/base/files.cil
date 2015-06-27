@@ -519,6 +519,12 @@
 (macro files_read_config_lnk_files ((type ARG1))
     (call read_lnk_files_pattern (ARG1 config_t config_t)))
 
+(macro files_delete_config_lnk_files ((type ARG1))
+    (call delete_lnk_files_pattern (ARG1 config_t config_t)))
+
+(macro files_create_config_lnk_files ((type ARG1))
+    (call create_lnk_files_pattern (ARG1 config_t config_t)))
+
 (macro files_manage_config_files ((type ARG1))
     (call manage_files_pattern (ARG1 config_t config_t)))
 

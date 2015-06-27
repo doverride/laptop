@@ -5,6 +5,13 @@
 
 (typeattribute unbound_object_type)
 
+(type unbounddnsctl_port_t)
+(call network_unreserved_port_object_type (unbounddnsctl_port_t))
+
+(context unbounddnsctl_port (system_u object_r unbounddnsctl_port_t (systemlow systemlow)))
+(portcon "tcp" 8953 unbounddnsctl_port)
+(portcon "udp" 8953 unbounddnsctl_port)
+
 (type unbound_t)
 (type unbound_exec_t)
 (call subject_common_type (unbound_t))
@@ -15,6 +22,38 @@
 
 (context unbound_exec (system_u object_r unbound_exec_t (systemlow systemlow)))
 (filecon "/usr/sbin/unbound" file unbound_exec)
+
+(allow unbound_t self (capability (dac_override chown setuid setgid sys_resource)))
+(allow unbound_t self (process (setrlimit)))
+(allow unbound_t self create_tcp_stream_socket_perms)
+(allow unbound_t self create_udp_socket_perms)
+
+(call system_read_kernel_sysctl (unbound_t))
+
+(call devices_read_urandom (unbound_t))
+
+(call files_read_config_files (unbound_t)) ; /etc/crypto-policies
+
+(call network_tcp_bind_generic_node (unbound_t))
+(call network_udp_bind_generic_node (unbound_t))
+
+(call network_udp_bind_all_unreserved_ports (unbound_t))
+
+(call dns_tcp_bind_dns_port (unbound_t))
+(call dns_udp_bind_dns_port (unbound_t))
+
+(call miscfiles_read_cert (unbound_t))
+(call miscfiles_read_locale (unbound_t))
+
+(call ns_client_subject_type (unbound_t))
+
+(call unbound_read_config (unbound_t))
+(call unbound_manage_lib_files (unbound_t))
+(call unbound_manage_runtime_files (unbound_t))
+(call unbound_tcp_bind_unbounddnsctl_port (unbound_t))
+
+(optional unbound_optional_journal
+    (call journal_client_subject_type (unbound_t)))
 
 (optional unbound_optional_systemd
     (call systemd_daemon (unbound_t unbound_exec_t))
@@ -41,6 +80,12 @@
 (context unboundcc_exec (system_u object_r unboundcc_exec_t (systemlow systemlow)))
 (filecon "/usr/sbin/unbound-checkconf" file unboundcc_exec)
 
+(call ns_client_subject_type (unboundcc_t))
+
+(call unbound_read_config (unboundcc_t))
+(call unbound_read_lib (unboundcc_t))
+(call unbound_read_runtime (unboundcc_t))
+
 (optional unboundcc_optional_systemd
     (call systemd_daemon (unboundcc_t unboundcc_exec_t)))
 
@@ -54,6 +99,31 @@
 
 (context unboundcs_exec (system_u object_r unboundcs_exec_t (systemlow systemlow)))
 (filecon "/usr/sbin/unbound-control-setup" file unboundcs_exec)
+
+(type unboundcs_tmpfs_t)
+(call files_tmpfs_object_type (unboundcs_tmpfs_t))
+
+(typeattributeset unbound_object_type unboundcs_tmpfs_t)
+
+(allow unboundcs_t unboundcs_tmpfs_t manage_file_perms)
+(call filesystems_tmpfs_object_type_transition (unboundcs_t unboundcs_tmpfs_t file "*"))
+
+(allow unboundcs_t self rw_fifo_file_perms)
+
+(call commands_mprot_read_shell_exec_files (unboundcs_t))
+(call commands_exec (unboundcs_t))
+
+(call devices_read_urandom (unboundcs_t))
+
+(call miscfiles_read_cert (unboundcs_t))
+(call miscfiles_read_locale (unboundcs_t))
+
+(call ns_client_subject_type (unboundcs_t))
+
+(call unbound_manage_config_files (unboundcs_t))
+
+(optional unboundcs_optional_openssl
+    (call openssl_exec (unboundcs_t)))
 
 (optional unboundcs_optional_systemd
     (call systemd_daemon (unboundcs_t unboundcs_exec_t)))
@@ -69,6 +139,16 @@
 (context unboundanch_exec (system_u object_r unboundanch_exec_t (systemlow systemlow)))
 (filecon "/usr/sbin/unbound-anchor" file unboundanch_exec)
 
+(allow unboundanch_t self create_unix_stream_socket_perms)
+(allow unboundanch_t self create_udp_socket_perms)
+
+(call network_udp_bind_generic_node (unboundanch_t))
+(call network_udp_bind_all_unreserved_ports (unboundanch_t))
+
+(call miscfiles_read_locale (unboundanch_t))
+
+(call unbound_manage_lib_files (unboundanch_t))
+
 (optional unboundanch_optional_systemd
     (call systemd_daemon (unboundanch_t unboundanch_exec_t)))
 
@@ -81,6 +161,20 @@
 (filecon "/usr/sbin/unbound-control" file unboundctl_exec)
 (filecon "/usr/sbin/unbound-host" file unboundctl_exec)
 (filecon "/usr/sbin/unbound-streamtcp" file unboundctl_exec)
+
+(allow unboundctl_t self create_tcp_socket_perms)
+
+(call devices_read_urandom (unboundctl_t))
+
+(call files_read_config_files (unboundctl_t)) ; /etc/crypto-policies
+
+(call miscfiles_read_locale (unboundctl_t))
+
+(call unbound_tcp_connect_unbounddnsctl_port (unboundctl_t))
+(call unbound_read_config (unboundctl_t))
+
+(optional unboundctl_optional_systemd
+    (call systemd_daemon_forked_subject_type (unboundctl_t)))
 
 (type unbound_config_t)
 (call files_config_object_type (unbound_config_t))
@@ -99,9 +193,6 @@
 (context unbound_runtime (system_u object_r unbound_runtime_t (systemlow systemlow)))
 (filecon "/var/run/unbound(/.*)?" any unbound_runtime)
 (filecon "/var/run/unbound/unbound\.pid" file unbound_runtime)
-
-(allow unbound_t unbound_runtime_t manage_file_perms)
-(call files_runtime_object_type_transition (unbound_t unbound_runtime_t file "*"))
 
 (type unbound_lib_t)
 (call files_lib_object_type (unbound_lib_t))
@@ -192,6 +283,10 @@
     (call files_search_config (ARG1))
     (call read_files_pattern (ARG1 unbound_config_t unbound_config_t)))
 
+(macro unbound_manage_config_files ((type ARG1))
+    (call files_search_config (ARG1))
+    (call manage_files_pattern (ARG1 unbound_config_t unbound_config_t)))
+
 (macro unbound_read_config_lnk_files ((type ARG1))
     (call files_search_config (ARG1))
     (call read_lnk_files_pattern (ARG1 unbound_config_t unbound_config_t)))
@@ -219,6 +314,10 @@
 (macro unbound_read_runtime_files ((type ARG1))
     (call files_search_runtime (ARG1))
     (call read_files_pattern (ARG1 unbound_runtime_t unbound_runtime_t)))
+
+(macro unbound_manage_runtime_files ((type ARG1))
+    (call files_search_runtime (ARG1))
+    (call manage_files_pattern (ARG1 unbound_runtime_t unbound_runtime_t)))
 
 (macro unbound_read_runtime_lnk_files ((type ARG1))
     (call files_search_runtime (ARG1))
@@ -248,6 +347,10 @@
     (call files_search_lib (ARG1))
     (call read_files_pattern (ARG1 unbound_lib_t unbound_lib_t)))
 
+(macro unbound_manage_lib_files ((type ARG1))
+    (call files_search_lib (ARG1))
+    (call manage_files_pattern (ARG1 unbound_lib_t unbound_lib_t)))
+
 (macro unbound_read_lib_lnk_files ((type ARG1))
     (call files_search_lib (ARG1))
     (call read_lnk_files_pattern (ARG1 unbound_lib_t unbound_lib_t)))
@@ -263,6 +366,23 @@
     (allow ARG1 unbound_lib_t manage_file_perms)
     (allow ARG1 unbound_lib_t manage_dir_perms)
     (allow ARG1 unbound_lib_t manage_lnk_file_perms))
+
+(macro unbound_read_unboundcs_tmpfs_files ((type ARG1))
+    (call filesystems_search_tmpfs (ARG1))
+    (allow ARG1 unboundcs_tmpfs_t read_file_perms))
+
+(macro unbound_manage_unboundcs_tmpfs_files ((type ARG1))
+    (call filesystems_rw_tmpfs_dirs (ARG1))
+    (allow ARG1 unboundcs_tmpfs_t manage_file_perms))
+
+(macro unbound_tcp_connect_unbounddnsctl_port ((type ARG1))
+    (allow ARG1 unbounddnsctl_port_t (tcp_socket (name_connect))))
+
+(macro unbound_tcp_bind_unbounddnsctl_port ((type ARG1))
+    (allow ARG1 unbounddnsctl_port_t (tcp_socket (name_bind))))
+
+(macro unbound_udp_bind_unbounddnsctl_port ((type ARG1))
+    (allow ARG1 unbounddnsctl_port_t (udp_socket (name_bind))))
 
 (macro unbound_admin ((type ARG1)(role ARG2))
     (typeattributeset unbound_admin_subject_type ARG1)

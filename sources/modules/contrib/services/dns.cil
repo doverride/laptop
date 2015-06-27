@@ -33,6 +33,7 @@
 
 (context resolve_config (system_u object_r resolve_config_t (systemlow systemlow)))
 (filecon "/etc/resolv\.conf.*" file resolve_config)
+(filecon "/var/run/dnssec-trigger/resolv\.conf.*" file resolve_config)
 
 (allow dns_resolve_client_subject_type self r_netlink_route_socket_perms)
 (allow dns_resolve_client_subject_type self create_tcp_socket_perms)
@@ -62,11 +63,18 @@
     (call files_config_object_type_transition (ARG1 resolve_config_t file "resolv.conf"))
     (call files_config_object_type_transition (ARG1 resolve_config_t file "resolv.conf.tmp"))
     (call files_config_object_type_transition (ARG1 resolve_config_t file "resolv.conf.fp-tmp"))
+    (call files_config_object_type_transition (ARG1 resolve_config_t file "resolv-secure.conf"))
+    (call files_config_object_type_transition (ARG1 resolve_config_t file ".resolv.conf.dnssec-trigger"))
+    (call files_config_object_type_transition (ARG1 resolve_config_t file ".resolv-secure.conf.dnssec-trigger"))
     (call files_config_object_type_transition (ARG1 resolve_config_t file "resolv.conf.fp-saved")))
 
 (macro dns_manage_resolve_config_files ((type ARG1))
     (call files_rw_config_dirs (ARG1))
     (allow ARG1 resolve_config_t manage_file_perms))
+
+(macro dns_relabelto_resolve_config_files ((type ARG1))
+    (call files_search_config (ARG1))
+    (allow ARG1 resolve_config_t relabelto_file_perms))
 
 (macro dns_read_resolve_config_files ((type ARG1))
     (call files_read_config_lnk_files (ARG1))
