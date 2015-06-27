@@ -31,9 +31,11 @@
 (type resolve_config_t)
 (call files_config_object_type (resolve_config_t))
 
+(call filesystems_associate_tmpfs (resolve_config_t))
+
 (context resolve_config (system_u object_r resolve_config_t (systemlow systemlow)))
 (filecon "/etc/resolv\.conf.*" file resolve_config)
-(filecon "/var/run/dnssec-trigger/resolv\.conf.*" file resolve_config)
+(filecon "/var/run/dnssec-trigger/resolv\.conf\.backup" file resolve_config)
 
 (allow dns_resolve_client_subject_type self r_netlink_route_socket_perms)
 (allow dns_resolve_client_subject_type self create_tcp_socket_perms)
