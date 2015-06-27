@@ -811,6 +811,11 @@
 (optional sysadm_optional_tunctl
     (call tunctl_run (sysadm_subject_type sysadm_r)))
 
+(optional sysadm_optional_unbound
+    (call unbound_run_unboundcc (sysadm_subject_type sysadm_r))
+    (call unbound_run_unboundctl (sysadm_subject_type sysadm_r))
+    (call unbound_admin (sysadm_t sysadm_r)))
+
 (optional sysadm_optional_udev
     (call udev_admin (sysadm_t sysadm_r))
     (call udev_run_udevadm (sysadm_subject_type sysadm_r)))

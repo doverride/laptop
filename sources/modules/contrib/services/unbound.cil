@@ -1,0 +1,268 @@
+(roleattribute unboundctl_role)
+
+(typeattribute unbound_subject_type)
+(typeattribute unbound_admin_subject_type)
+
+(typeattribute unbound_object_type)
+
+(type unbound_t)
+(type unbound_exec_t)
+(call subject_common_type (unbound_t))
+(call subject_entry (unbound_t unbound_exec_t))
+(roletype system_r unbound_t)
+
+(typeattributeset unbound_subject_type unbound_t)
+
+(context unbound_exec (system_u object_r unbound_exec_t (systemlow systemlow)))
+(filecon "/usr/sbin/unbound" file unbound_exec)
+
+(optional unbound_optional_systemd
+    (call systemd_daemon (unbound_t unbound_exec_t))
+
+    (type unbound_unit_t)
+    (call systemd_unit_object_type (unbound_unit_t))
+
+    (typeattributeset unbound_object_type unbound_unit_t)
+
+    (context unbound_unit (system_u object_r unbound_unit_t (systemlow systemlow)))
+    (filecon "/usr/lib/systemd/system/[^/]*unbound.*" file unbound_unit)
+
+    (allow unbound_admin_subject_type unbound_unit_t (service (all))))
+
+(type unboundcc_t)
+(type unboundcc_exec_t)
+(call applications_app (unboundcc_t unboundcc_exec_t))
+(roletype unboundctl_role unboundcc_t)
+
+(roleattributeset unboundctl_role system_r)
+
+(typeattributeset unbound_subject_type unboundcc_t)
+
+(context unboundcc_exec (system_u object_r unboundcc_exec_t (systemlow systemlow)))
+(filecon "/usr/sbin/unbound-checkconf" file unboundcc_exec)
+
+(optional unboundcc_optional_systemd
+    (call systemd_daemon (unboundcc_t unboundcc_exec_t)))
+
+(type unboundcs_t)
+(type unboundcs_exec_t)
+(call subject_common_type (unboundcs_t))
+(call subject_entry (unboundcs_t unboundcs_exec_t))
+(roletype system_r unboundcs_t)
+
+(typeattributeset unbound_subject_type unboundcs_t)
+
+(context unboundcs_exec (system_u object_r unboundcs_exec_t (systemlow systemlow)))
+(filecon "/usr/sbin/unbound-control-setup" file unboundcs_exec)
+
+(optional unboundcs_optional_systemd
+    (call systemd_daemon (unboundcs_t unboundcs_exec_t)))
+
+(type unboundanch_t)
+(type unboundanch_exec_t)
+(call subject_common_type (unboundanch_t))
+(call subject_entry (unboundanch_t unboundanch_exec_t))
+(roletype system_r unboundanch_t)
+
+(typeattributeset unbound_subject_type unboundanch_t)
+
+(context unboundanch_exec (system_u object_r unboundanch_exec_t (systemlow systemlow)))
+(filecon "/usr/sbin/unbound-anchor" file unboundanch_exec)
+
+(optional unboundanch_optional_systemd
+    (call systemd_daemon (unboundanch_t unboundanch_exec_t)))
+
+(type unboundctl_t)
+(type unboundctl_exec_t)
+(call applications_app (unboundctl_t unboundctl_exec_t))
+(roletype unboundctl_role unboundctl_t)
+
+(context unboundctl_exec (system_u object_r unboundctl_exec_t (systemlow systemlow)))
+(filecon "/usr/sbin/unbound-control" file unboundctl_exec)
+(filecon "/usr/sbin/unbound-host" file unboundctl_exec)
+(filecon "/usr/sbin/unbound-streamtcp" file unboundctl_exec)
+
+(type unbound_config_t)
+(call files_config_object_type (unbound_config_t))
+
+(typeattributeset unbound_object_type unbound_config_t)
+
+(context unbound_config (system_u object_r unbound_config_t (systemlow systemlow)))
+(filecon "/etc/unbound(/.*)?" any unbound_config)
+(filecon "/etc/sysconfig/unbound" file unbound_config)
+
+(type unbound_runtime_t)
+(call files_runtime_object_type (unbound_runtime_t))
+
+(typeattributeset unbound_object_type unbound_runtime_t)
+
+(context unbound_runtime (system_u object_r unbound_runtime_t (systemlow systemlow)))
+(filecon "/var/run/unbound(/.*)?" any unbound_runtime)
+
+(type unbound_lib_t)
+(call files_lib_object_type (unbound_lib_t))
+
+(typeattributeset unbound_object_type unbound_lib_t)
+
+(context unbound_lib (system_u object_r unbound_lib_t (systemlow systemlow)))
+(filecon "/var/lib/unbound(/.*)?" any unbound_lib)
+
+(allow unbound_admin_subject_type unbound_subject_type (process (ptrace signal signull sigkill sigstop)))
+(call ps_subject_pattern (unbound_admin_subject_type unbound_subject_type))
+
+(allow unbound_admin_subject_type unbound_object_type (all_file_objects
+    (not_mounton_entrypoint_and_execmod)))
+
+(macro unbound_exec ((type ARG1))
+    (call can_exec (ARG1 unbound_exec_t)))
+
+(macro unbound_exec_unboundcc ((type ARG1))
+    (call can_exec (ARG1 unboundcc_exec_t)))
+
+(macro unbound_exec_unboundcs ((type ARG1))
+    (call can_exec (ARG1 unboundcs_exec_t)))
+
+(macro unbound_exec_unboundanch ((type ARG1))
+    (call can_exec (ARG1 unboundanch_exec_t)))
+
+(macro unbound_exec_unboundctl ((type ARG1))
+    (call can_exec (ARG1 unboundctl_exec_t)))
+
+(macro unbound_auto_subject_type_transition ((type ARG1))
+    (call unbound_send_signal (ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 unbound_exec_t unbound_t)))
+
+(macro unbound_auto_subject_type_transition_unboundcc ((type ARG1))
+    (call unbound_send_signal_unboundcc (ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 unboundcc_exec_t unboundcc_t)))
+
+(macro unbound_auto_subject_type_transition_unboundcs ((type ARG1))
+    (call unbound_send_signal_unboundcs (ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 unboundcs_exec_t unboundcs_t)))
+
+(macro unbound_auto_subject_type_transition_unboundanch ((type ARG1))
+    (call unbound_send_signal_unboundanch (ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 unboundanch_exec_t unboundanch_t)))
+
+(macro unbound_auto_subject_type_transition_unboundctl ((type ARG1))
+    (call unbound_send_signal_unboundctl (ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 unboundctl_exec_t unboundctl_t)))
+
+(macro unbound_send_signal ((type ARG1))
+    (allow ARG1 unbound_t (process (signal))))
+
+(macro unbound_send_signal_unboundcc ((type ARG1))
+    (allow ARG1 unboundcc_t (process (signal))))
+
+(macro unbound_send_signal_unboundcs ((type ARG1))
+    (allow ARG1 unboundcs_t (process (signal))))
+
+(macro unbound_send_signal_unboundanch ((type ARG1))
+    (allow ARG1 unboundanch_t (process (signal))))
+
+(macro unbound_send_signal_unboundctl ((type ARG1))
+    (allow ARG1 unboundctl_t (process (signal))))
+
+(macro unbound_run_unboundcc ((type ARG1)(role ARG2))
+    (call unbound_auto_subject_type_transition_unboundcc (ARG1))
+    (roleattributeset unboundctl_role ARG2))
+
+(macro unbound_run_unboundctl ((type ARG1)(role ARG2))
+    (call unbound_auto_subject_type_transition_unboundctl (ARG1))
+    (roleattributeset unboundctl_role ARG2))
+
+(macro unbound_search_config ((type ARG1))
+    (call files_search_config (ARG1))
+    (allow ARG1 unbound_config_t search_dir_perms))
+
+(macro unbound_list_config ((type ARG1))
+    (call files_search_config (ARG1))
+    (allow ARG1 unbound_config_t list_dir_perms))
+
+(macro unbound_read_config_files ((type ARG1))
+    (call files_search_config (ARG1))
+    (call read_files_pattern (ARG1 unbound_config_t unbound_config_t)))
+
+(macro unbound_read_config_lnk_files ((type ARG1))
+    (call files_search_config (ARG1))
+    (call read_lnk_files_pattern (ARG1 unbound_config_t unbound_config_t)))
+
+(macro unbound_read_config ((type ARG1))
+    (call files_search_config (ARG1))
+    (allow ARG1 unbound_config_t read_file_perms)
+    (allow ARG1 unbound_config_t list_dir_perms)
+    (allow ARG1 unbound_config_t read_lnk_file_perms))
+
+(macro unbound_manage_config ((type ARG1))
+    (call files_rw_config_dirs (ARG1))
+    (allow ARG1 unbound_config_t manage_file_perms)
+    (allow ARG1 unbound_config_t manage_dir_perms)
+    (allow ARG1 unbound_config_t manage_lnk_file_perms))
+
+(macro unbound_search_runtime ((type ARG1))
+    (call files_search_runtime (ARG1))
+    (allow ARG1 unbound_runtime_t search_dir_perms))
+
+(macro unbound_list_runtime ((type ARG1))
+    (call files_search_runtime (ARG1))
+    (allow ARG1 unbound_runtime_t list_dir_perms))
+
+(macro unbound_read_runtime_files ((type ARG1))
+    (call files_search_runtime (ARG1))
+    (call read_files_pattern (ARG1 unbound_runtime_t unbound_runtime_t)))
+
+(macro unbound_read_runtime_lnk_files ((type ARG1))
+    (call files_search_runtime (ARG1))
+    (call read_lnk_files_pattern (ARG1 unbound_runtime_t unbound_runtime_t)))
+
+(macro unbound_read_runtime ((type ARG1))
+    (call files_search_runtime (ARG1))
+    (allow ARG1 unbound_runtime_t read_file_perms)
+    (allow ARG1 unbound_runtime_t list_dir_perms)
+    (allow ARG1 unbound_runtime_t read_lnk_file_perms))
+
+(macro unbound_manage_runtime ((type ARG1))
+    (call files_rw_runtime_dirs (ARG1))
+    (allow ARG1 unbound_runtime_t manage_file_perms)
+    (allow ARG1 unbound_runtime_t manage_dir_perms)
+    (allow ARG1 unbound_runtime_t manage_lnk_file_perms))
+
+(macro unbound_search_lib ((type ARG1))
+    (call files_search_lib (ARG1))
+    (allow ARG1 unbound_lib_t search_dir_perms))
+
+(macro unbound_list_lib ((type ARG1))
+    (call files_search_lib (ARG1))
+    (allow ARG1 unbound_lib_t list_dir_perms))
+
+(macro unbound_read_lib_files ((type ARG1))
+    (call files_search_lib (ARG1))
+    (call read_files_pattern (ARG1 unbound_lib_t unbound_lib_t)))
+
+(macro unbound_read_lib_lnk_files ((type ARG1))
+    (call files_search_lib (ARG1))
+    (call read_lnk_files_pattern (ARG1 unbound_lib_t unbound_lib_t)))
+
+(macro unbound_read_lib ((type ARG1))
+    (call files_search_lib (ARG1))
+    (allow ARG1 unbound_lib_t read_file_perms)
+    (allow ARG1 unbound_lib_t list_dir_perms)
+    (allow ARG1 unbound_lib_t read_lnk_file_perms))
+
+(macro unbound_manage_lib ((type ARG1))
+    (call files_rw_lib_dirs (ARG1))
+    (allow ARG1 unbound_lib_t manage_file_perms)
+    (allow ARG1 unbound_lib_t manage_dir_perms)
+    (allow ARG1 unbound_lib_t manage_lnk_file_perms))
+
+(macro unbound_admin ((type ARG1)(role ARG2))
+    (typeattributeset unbound_admin_subject_type ARG1)
+    (optional unbound_admin_optional_askpwd
+        (call askpwd_run_askpwdagent (ARG1 ARG2)))
+    (optional unbound_admin_optional_systemd
+        (call systemd_system_service_admin_subject_type (ARG1))))
