@@ -74,7 +74,7 @@
 (roletype dnssec_trigger_role trigger_t)
 
 (context trigger_exec (system_u object_r trigger_exec_t (systemlow systemlow)))
-(filecon "/usr/bin/dnssec-trigger" file trigger_exec)
+(filecon "/usr/bin/dnssec-trigger-panel" file trigger_exec)
 
 (type dnssec_config_t)
 (call files_config_object_type (dnssec_config_t))
@@ -92,6 +92,10 @@
 
 (context dnssec_runtime (system_u object_r dnssec_runtime_t (systemlow systemlow)))
 (filecon "/var/run/dnssec-trigger(/.*)?" any dnssec_runtime)
+(filecon "/var/run/dnssec-triggerd\.pid" file dnssec_runtime)
+
+(allow triggerd_t dnssec_runtime_t manage_file_perms)
+(call files_runtime_object_type_transition (triggerd_t dnssec_runtime_t file "*"))
 
 (allow dnssec_admin_subject_type dnssec_subject_type (process (ptrace signal signull sigkill sigstop)))
 (call ps_subject_pattern (dnssec_admin_subject_type dnssec_subject_type))

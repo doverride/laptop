@@ -98,6 +98,10 @@
 
 (context unbound_runtime (system_u object_r unbound_runtime_t (systemlow systemlow)))
 (filecon "/var/run/unbound(/.*)?" any unbound_runtime)
+(filecon "/var/run/unbound/unbound\.pid" file unbound_runtime)
+
+(allow unbound_t unbound_runtime_t manage_file_perms)
+(call files_runtime_object_type_transition (unbound_t unbound_runtime_t file "*"))
 
 (type unbound_lib_t)
 (call files_lib_object_type (unbound_lib_t))
