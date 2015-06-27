@@ -132,8 +132,7 @@
 (optional dracut_optional_systemd
     (call systemd_exec (dracut_t))
     (call systemd_read_config_files (dracut_t))
-    (call systemd_read_unit_lnk_files (dracut_t))
-    (call systemd_read_all_unit_files (dracut_t))
+    (call systemd_read_all_unit (dracut_t))
     (call systemd_read_state (dracut_t))
     (call systemd_stream_connect (dracut_t))
     (call systemd_exec_systemctl (dracut_t)))
