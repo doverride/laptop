@@ -47,3 +47,5 @@
 * kernel 4.2: sysfs genfscon support
 
 * /usr/lib/systemd/system/unbound-keygen.service /usr/lib/systemd/system/dnssec-triggerd-keygen.service (override restorecon)
+
+* x131e, e145: apply /usr/local/bin/temps "sestatus" mod
