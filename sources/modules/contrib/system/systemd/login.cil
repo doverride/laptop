@@ -134,6 +134,7 @@
 
 (call terminals_use_console (logind_t))
 (call terminals_use_unallocated_ttys (logind_t))
+(call terminals_setattr_unallocated_ttys (logind_t))
 
 (call auth_read_state_all_login_program_subjects (logind_t))
 
