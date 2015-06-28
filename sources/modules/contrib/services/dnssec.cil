@@ -101,7 +101,7 @@
 (context triggers_exec (system_u object_r triggers_exec_t (systemlow systemlow)))
 (filecon "/usr/libexec/dnssec-trigger-script" file triggers_exec)
 
-(allow triggers_t self (capability (linux_immutable))) ; chattr +i /etc/resolv.conf
+(allow triggers_t self (capability (sys_admin linux_immutable))) ; chattr +i /etc/resolv.conf
 (allow triggers_t self rw_fifo_file_perms)
 
 (allow triggers_t triggerd_t (tcp_socket (read write)))
@@ -119,7 +119,7 @@
 
 (call dns_config_object_type_transition_resolve_config_files (triggers_t))
 (call dns_manage_resolve_config_files (triggers_t))
-(call dns_relabelto_resolve_config_files (triggers_t))
+(call dns_relabel_resolve_config_files (triggers_t))
 
 (call dnssec_auto_subject_type_transition_triggerc (triggers_t))
 (call dnssec_read_config_files (triggers_t))
