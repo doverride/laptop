@@ -47,5 +47,8 @@
 * kernel 4.2: sysfs genfscon support
 
 * /usr/lib/systemd/system/unbound-keygen.service /usr/lib/systemd/system/dnssec-triggerd-keygen.service (override restorecon)
+	also dnssec/unbound may not resolve after resume from suspend (this may or may not happen on my x131e only, since i only use
+	a usb network there), restarting dnssec-triggerd.service fixes that. I could
+	implement a similar solution to what i did with wpa_supplicant
 
 * x131e, e145: apply /usr/local/bin/temps "sestatus" mod
