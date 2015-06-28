@@ -15,6 +15,8 @@
 
 (call filesystems_read_sysfs (temps_t))
 
+(call selinux_get_enforce_mode (temps_t))
+
 (call miscfiles_read_locale (temps_t))
 
 (call usersubject_search_exec_home (temps_t))
