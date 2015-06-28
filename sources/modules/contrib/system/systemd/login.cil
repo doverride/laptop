@@ -133,6 +133,7 @@
 (call storage_setattr_scsi_generic (logind_t))
 
 (call terminals_use_console (logind_t))
+(call terminals_setattr_console (logind_t))
 (call terminals_use_unallocated_ttys (logind_t))
 (call terminals_setattr_unallocated_ttys (logind_t))
 
