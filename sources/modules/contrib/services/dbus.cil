@@ -107,6 +107,9 @@
 
 (call dbus_dbussend_client_subject_type (dbus_dbussend_subject_type))
 
+(optional dbus_dbussend_subject_type_optional_mail_mutt
+    (call mail_dontaudit_write_inherited_mutt_tmpfs_files (dbus_dbussend_subject_type)))
+
 (allow dbus_subject_type self create_netlink_selinux_socket_perms)
 (allow dbus_subject_type self (unix_stream_socket (listen accept)))
 

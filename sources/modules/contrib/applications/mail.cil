@@ -176,5 +176,8 @@
 (macro mail_read_inherited_mutt_tmpfs_files ((type ARG1))
     (allow ARG1 mutt_tmpfs_t read_inherited_file_perms))
 
+(macro mail_dontaudit_write_inherited_mutt_tmpfs_files ((type ARG1))
+    (dontaudit ARG1 mutt_tmpfs_t write_inherited_file_perms))
+
 (macro mail_use_all_mutt_fd ((type ARG1))
     (allow ARG1 mail_mutt_subject_type (fd (use))))
