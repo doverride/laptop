@@ -21,6 +21,7 @@
 (filecon "HOME_DIR/\.cache/livestreamer(/.*)?" any (system_u object_r livestreamer_cache_home_t (systemlow systemlow)))
 
 (call livestreamer_manage_cache_home (livestreamer_t))
+(call livestreamer_relabel_cache_home_files (livestreamer_t))
 (call livestreamer_cache_home_object_type_transition_cache_home_dirs (livestreamer_t))
 
 (call usersubject_create_cache_home_dirs (livestreamer_t))
@@ -147,6 +148,10 @@
 (macro livestreamer_manage_cache_home_files ((type ARG1))
     (call usersubject_search_cache_home (ARG1))
     (call manage_files_pattern (ARG1 livestreamer_cache_home_t livestreamer_cache_home_t)))
+
+(macro livestreamer_relabel_cache_home_files ((type ARG1))
+    (call usersubject_search_cache_home (ARG1))
+    (call relabel_files_pattern (ARG1 livestreamer_cache_home_t livestreamer_cache_home_t)))
 
 (macro livestreamer_read_cache_home ((type ARG1))
     (call usersubject_search_cache_home (ARG1))
