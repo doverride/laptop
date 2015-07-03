@@ -34,6 +34,7 @@
 
 (allow firefox_t self (process (setsched getsched ptrace)))
 (allow firefox_t self create_unix_dgram_socket_perms)
+(allow firefox_t self create_rawip_socket_perms)
 
 (allow firefox_t firefox_plugs_t (unix_stream_socket (read write)))
 (allow firefox_t firefox_plugs_t (fd (use)))
