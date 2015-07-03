@@ -55,3 +55,5 @@
 
 * [ not merged into kernel yet it seems ] investigate sctp protocol support: https://marc.info/?l=selinux&m=142229478027000&w=2
 
+* ideally pulseaudio should be prefixed ( it starts the dbus sessions bus via dbus-send ), the problem is that then all pa client
+	subjects also should be prefixed.
