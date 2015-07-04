@@ -451,7 +451,10 @@
     (call pa_relabel_home_files (staff_t))
     (call pa_home_dir_object_type_transition_home_files (staff_t)))
 
-(optional mplayer_optional_pa
+(optional staff_pa_optional_staff_dbuslaunch
+    (call dbuslaunch_role_template (staff_r staff_pa_t staff_dbuslaunch_t)))
+
+(optional staff_mplayer_optional_pa
     (type staff_mplayer_t)
     (call mplayer_role_template (staff_r staff_subject_type staff_mplayer_t))
 
