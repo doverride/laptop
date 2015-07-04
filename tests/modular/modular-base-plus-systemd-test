@@ -52,7 +52,7 @@ modular_base_plus_systemd_modules () {
         sources/modules/contrib/applications/xwd.cil sources/modules/contrib/services/ngircd.cil sources/modules/contrib/applications/pwgen.cil \
         sources/modules/contrib/system/powertop.cil sources/modules/contrib/system/rfkill.cil sources/modules/contrib/applications/chage.cil \
         sources/modules/contrib/applications/vlock.cil sources/modules/contrib/system/systemd/bus.cil sources/modules/contrib/system/numa.cil \
-        sources/modules/contrib/services/dnssec.cil sources/modular/contrib/services/unbound.cil
+        sources/modules/contrib/services/dnssec.cil sources/modular/contrib/services/unbound.cil sources/modules/contrib/applications/dmenu.cil
 
     unset MODULAR_BASE_PLUS_SYSTEMD_MODULES
 

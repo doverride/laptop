@@ -41,7 +41,9 @@
         (ARG2 dunst_exec_t ARG3))
     (roletype ARG1 ARG3)
     (allow ARG3 ARG2 (process (signal)))
-    (call dunst_subject_type (ARG3)))
+    (call dunst_subject_type (ARG3))
+    (optional dunst_role_template_optional_dmenu
+        (call dmenu_run (ARG3 ARG1))))
 
 (macro dunst_search_config_home ((type ARG1))
     (call usersubject_search_config_home (ARG1))

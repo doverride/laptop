@@ -119,9 +119,6 @@
 (optional firefox_subject_type_optional_dbus
     (call dbususer_client_subject_type (firefox_subject_type)))
 
-(optional firefox_subject_type_optional_dunst
-    (call dunst_dbus_chat (firefox_subject_type)))
-
 (optional firefox_subject_type_optional_gstreamer
     (call gstreamer_client_subject_type (firefox_subject_type)))
 

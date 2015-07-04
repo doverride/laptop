@@ -1,0 +1,36 @@
+(roleattribute dmenu_role)
+
+(type dmenu_t)
+(type dmenu_exec_t)
+(call applications_app (dmenu_t dmenu_exec_t))
+(roletype dmenu_role dmenu_t)
+
+(context dmenu_exec (system_u object_r dmenu_exec_t (systemlow systemlow)))
+(filecon "/usr/bin/dmenu" file dmenu_exec)
+(filecon "/usr/bin/dmenu_path" file dmenu_exec)
+(filecon "/usr/bin/dmenu_run" file dmenu_exec)
+(filecon "/usr/bin/stest" file dmenu_exec)
+
+(call files_search_cache (dmenu_t))
+
+(call miscfiles_read_locale (dmenu_t))
+
+(call xserver_client_subject_type (dmenu_t))
+
+(optional dmenu_optional_dbususer
+    (call dbususer_rw_inherited_unix_stream_sockets (dmenu_t)))
+
+(macro dmenu_exec ((type ARG1))
+    (call can_exec (ARG1 dmenu_exec_t)))
+
+(macro dmenu_auto_subject_type_transition ((type ARG1))
+    (call dmenu_send_signal (ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 dmenu_exec_t dmenu_t)))
+
+(macro dmenu_send_signal ((type ARG1))
+    (allow ARG1 dmenu_t (process (signal))))
+
+(macro dmenu_run ((type ARG1)(role ARG2))
+    (call dmenu_auto_subject_type_transition (ARG1))
+    (roleattributeset dmenu_role ARG2))

@@ -92,6 +92,10 @@
 (macro dbususer_use_fd ((type ARG1))
     (allow ARG1 dbususer_subject_type (fd (use))))
 
+(macro dbususer_rw_inherited_unix_stream_sockets ((type ARG1))
+    (call dbususer_use_fd (ARG1))
+    (allow ARG1 dbususer_subject_type (unix_stream_socket (read write))))
+
 (macro dbususer_stream_connect ((type ARG1))
     (call files_search_user_runtime (ARG1))
     (call filesystems_search_tmpfs (ARG1))
