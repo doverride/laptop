@@ -306,7 +306,12 @@
     (call gpg_role_template (staff_r staff_mutt_t staff_gpg_t)))
 
 (optional staff_optional_libnotify
-    (call libnotify_run (staff_subject_type staff_r)))
+    (type staff_libnotify_t)
+    (call libnotify_role_template (staff_r staff_subject_type staff_libnotify_t)))
+
+(optional staff_libnotify_optional_staff_dunst
+    (allow staff_libnotify_t staff_dunst_t (dbus (send_msg)))
+    (allow staff_dunst_t staff_libnotify_t (dbus (send_msg))))
 
 (optional staff_optional_lynx
     (type staff_lynx_t)
