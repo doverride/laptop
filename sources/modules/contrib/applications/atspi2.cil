@@ -10,6 +10,13 @@
 (context atspi2busl_exec (system_u object_r atspi2busl_exec_t (systemlow systemlow)))
 (filecon "/usr/libexec/at-spi-bus-launcher" file atspi2busl_exec)
 
+(allow atspi2_busl_subject_type self rw_fifo_file_perms)
+
+(call files_read_data_files (atspi2_busl_subject_type))
+
+(optional atspi2_busl_subject_type_optional_xserver
+    (call xserver_client_subject_type (atspi2_busl_subject_type)))
+
 (type atspi2regd_t)
 (type atspi2regd_exec_t)
 (call applications_app (atspi2regd_t atspi2regd_exec_t))
