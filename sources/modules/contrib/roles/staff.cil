@@ -133,9 +133,6 @@
 (optional staff_dunst_optional_staff_firefox
     (call firefox_role_template (staff_r staff_dunst_t staff_firefox_t)))
 
-(optional staff_dunst_optiona_staff_pa
-    (call pa_tmpfs_client_template (staff_r staff_dunst_t staff_pa_t dunst_tmpfs_t)))
-
 (optional staff_xinit_optional_dbuslaunch
     (call dbuslaunch_role_template (staff_r staff_xinit_t staff_dbuslaunch_t)))
 
