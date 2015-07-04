@@ -1,5 +1,15 @@
 (roleattribute atspi2_atspi2regd_role)
 
+(roleattribute atspi2_busl_role)
+
+(typeattribute atspi2_busl_subject_type)
+
+(type atspi2busl_exec_t)
+(call applications_app (atspi2_busl_subject_type atspi2busl_exec_t))
+
+(context atspi2busl_exec (system_u object_r atspi2busl_exec_t (systemlow systemlow)))
+(filecon "/usr/libexec/at-spi-bus-launcher" file atspi2busl_exec)
+
 (type atspi2regd_t)
 (type atspi2regd_exec_t)
 (call applications_app (atspi2regd_t atspi2regd_exec_t))
@@ -18,6 +28,19 @@
 
 (macro atspi2_exec_atspiregd ((type ARG1))
     (call can_exec (ARG1 atspi2regd_exec_t)))
+
+(macro atspi2_exec_atspibusl ((type ARG1))
+    (call can_exec (ARG1 atspi2busl_exec_t)))
+
+(macro atspi2_busl_subject_type ((type ARG1))
+    (typeattributeset atspi2_busl_subject_type ARG1))
+
+(macro atspi2_role_template_atspi2busl ((role ARG1)(type ARG2)(type ARG3))
+    (call auto_subject_type_transition_pattern
+        (ARG2 atspi2busl_exec_t ARG3))
+    (roletype ARG1 ARG3)
+    (allow ARG3 ARG2 (process (signal)))
+    (call atspi2_busl_subject_type (ARG3)))
 
 (macro atspi2_auto_subject_type_transition_atspi2regd ((type ARG1))
     (call atspi2_send_signal_atspi2regd (ARG1))

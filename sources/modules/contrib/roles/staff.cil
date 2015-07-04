@@ -86,7 +86,15 @@
     (call dbususer_tmpfs_object_type_transition_dbususer_tmpfs_dirs (staff_t)))
 
 (optional staff_dbususer_optional_atspi2
+    (type staff_atspi2busl_t)
+    (call atspi2_role_template_atspi2busl (staff_r staff_subject_type staff_atspi2busl_t))
+
     (call atspi2_run_atspi2regd (staff_dbususer_t staff_r)))
+
+(optional staff_atspi2busl_optional_staff_dbususer
+    (call dbususer_service (staff_atspi2busl_t staff_dbususer_t atspi2busl_exec_t))
+
+    (call dbususer_role_template (staff_r staff_atspi2busl_t staff_dbususer_t)))
 
 (optional staff_dbususer_optional_dbuslaunch
     (call dbuslaunch_role_template (staff_r staff_dbususer_t staff_dbuslaunch_t)))

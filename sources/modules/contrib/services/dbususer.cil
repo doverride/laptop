@@ -23,9 +23,6 @@
 
 (call usersubject_use_inherited_terminals (dbususer_subject_type))
 
-(optional dbususer_subject_type_optional_atspi2
-    (call atspi2_read_config_files (dbususer_subject_type)))
-
 (optional dbususer_subject_type_optional_dbuslaunch
     (call dbuslaunch_write_inherited_fifo_files_all_client_subjects (dbususer_subject_type)))
 
