@@ -91,10 +91,7 @@
         (ARG2 mutt_exec_t ARG3))
     (roletype ARG1 ARG3)
     (allow ARG3 ARG2 (process (signal)))
-    (call mail_mutt_subject_type (ARG3))
-    (optional mail_role_template_mutt_optional_firefox
-        (call firefox_run (ARG3 ARG1))
-        (call firefox_run_xremotec (ARG3 ARG1))))
+    (call mail_mutt_subject_type (ARG3)))
 
 (macro mail_muttpgp_subject_type ((type ARG1))
     (typeattributeset mail_muttpgp_subject_type ARG1))

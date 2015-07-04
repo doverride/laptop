@@ -21,9 +21,14 @@
 (call usersubject_getattr_terminals (staff_t))
 
 (optional staff_optional_alsa
-    (call alsa_run_alsautil (staff_subject_type staff_r))
+    (type staff_alsautil_t)
+    (call alsa_role_template_alsautil (staff_r staff_subject_type staff_alsautil_t))
+
     (call alsa_manage_alsautil_tmpfs_files (staff_t))
     (call alsa_relabel_alsautil_tmpfs_files (staff_t)))
+
+(optional staff_alsautil_optional_pa
+    (call pa_tmpfs_client_template (staff_r staff_alsautil_t staff_pa_t alsautil_tmpfs_t)))
 
 (optional staff_optional_askpwd
     (call askpwd_run_askpwdagent (staff_subject_type staff_r)))
@@ -139,16 +144,24 @@
     (call stream_connect_pattern (staff_emacsclient_t emacs_tmpfs_t emacs_tmpfs_t staff_emacs_t)))
 
 (optional staff_optional_festival
-    (call festival_run (staff_subject_type staff_r))
+    (type staff_festival_t)
+    (call festival_role_template (staff_r staff_subject_type staff_festival_t))
 
     (call festival_manage_tmpfs_files (staff_t))
     (call festival_relabel_tmpfs_files (staff_t)))
 
+(optional staff_festival_optional_staff_pa_client
+    (call pa_tmpfs_client_template (staff_r staff_festival_t staff_pa_t festival_tmpfs_t)))
+
 (optional staff_optional_ffmpeg
-    (call ffmpeg_run (staff_subject_type staff_r))
+    (type staff_ffmpeg_t)
+    (call ffmpeg_role_template (staff_r staff_subject_type staff_ffmpeg_t))
 
     (call ffmpeg_manage_tmpfs_files (staff_t))
     (call ffmpeg_relabel_tmpfs_files (staff_t)))
+
+(optional staff_ffmpeg_optional_staff_pa
+    (call pa_tmpfs_client_template (staff_r staff_ffmpeg_t staff_pa_t ffmpeg_tmpfs_t)))
 
 (optional staff_optional_fpaste
     (call fpaste_run (staff_subject_type staff_r))
@@ -328,7 +341,8 @@
     (call fop_home_dir_object_type_transition_fop_home_dirs (staff_t)))
 
 (optional staff_optional_livestreamer
-    (call livestreamer_run (staff_subject_type staff_r))
+    (type staff_livestreamer_t)
+    (call livestreamer_role_template (staff_r staff_subject_type staff_livestreamer_t))
 
     (call livestreamer_manage_tmpfs_files (staff_t))
     (call livestreamer_relabel_tmpfs_files (staff_t))
@@ -340,6 +354,9 @@
     (call livestreamer_manage_config_home (staff_t))
     (call livestreamer_relabel_config_home (staff_t))
     (call livestreamer_config_home_object_type_transition_config_home_dirs (staff_t)))
+
+(optional staff_livestreamer_optional_staff_mplayer
+    (call mplayer_role_template (staff_r staff_livestreamer_t staff_mplayer_t)))
 
 (optional staff_optional_mail
     (type staff_mutt_t)
@@ -367,6 +384,11 @@
 
     (call mail_role_template_muttpgp (staff_r staff_mutt_t staff_muttpgp_t)))
 
+(optional staff_mail_optional_staff_firefox
+    (call firefox_role_template (staff_r staff_mutt_t staff_firefox_t))
+
+    (call firefox_role_template_xremotec (staff_r staff_mutt_t staff_firefox_xremotec_t)))
+
 (optional staff_http_optional_staff_mail
     (call mail_role_template_mutt (staff_r staff_lynx_t staff_mutt_t)))
 
@@ -390,6 +412,12 @@
 
     (call usersubject_exec_home_auto_subject_type_transition (staff_nb_t staff_t)))
 
+(optional staff_nb_optional_staff_firefox
+    (call firefox_role_template (staff_r staff_nb_t staff_firefox_t)))
+
+(optional staff_nb_optional_staff_mplayer
+    (call mplayer_role_template (staff_r staff_nb_t staff_mplayer_t)))
+
 (optional staff_optional_nm
     (call nm_run_nmcli (staff_subject_type staff_r)))
 
@@ -405,8 +433,11 @@
     (call openssl_relabel_home_files (staff_t)))
 
 (optional staff_optional_pa
-    (call pa_run (staff_subject_type staff_r))
-    (call pa_run_pactl (staff_subject_type staff_r))
+    (type staff_pa_t)
+    (call pa_role_template (staff_r staff_subject_type staff_pa_t))
+
+    (type staff_pactl_t)
+    (call pa_role_template_pactl (staff_r staff_subject_type staff_pactl_t))
 
     (call pa_manage_tmpfs (staff_t))
     (call pa_relabel_tmpfs (staff_t))
@@ -421,14 +452,17 @@
     (call pa_home_dir_object_type_transition_home_files (staff_t)))
 
 (optional mplayer_optional_pa
-    (call mplayer_run (staff_subject_type staff_r))
+    (type staff_mplayer_t)
+    (call mplayer_role_template (staff_r staff_subject_type staff_mplayer_t))
 
     (call mplayer_manage_home (staff_t))
     (call mplayer_relabel_home (staff_t))
     (call mplayer_home_dir_object_type_transition_home_dirs (staff_t))
 
     (call mplayer_manage_tmpfs_files (staff_t))
-    (call mplayer_relabel_tmpfs_files (staff_t)))
+    (call mplayer_relabel_tmpfs_files (staff_t))
+
+    (call pa_tmpfs_client_template (staff_r staff_mplayer_t staff_pa_t mplayer_tmpfs_t)))
 
 (optional staff_optional_pass
     (call pass_manage_home (staff_t))
@@ -683,8 +717,16 @@
     (call xserver_data_home_object_type_transition_xserver_data_home_dirs (staff_t)))
 
 (optional staff_xserver_firefox
-    (call firefox_run (staff_subject_type staff_r))
-    (call firefox_run_xremotec (staff_subject_type staff_r))
+    (type staff_firefox_t)
+    (call firefox_role_template (staff_r staff_subject_type staff_firefox_t))
+
+    (type staff_firefox_plugs_t)
+    (call firefox_role_template_plugs (staff_r staff_firefox_t staff_firefox_plugs_t))
+
+    (type staff_firefox_xremotec_t)
+    (call firefox_role_template_xremotec (staff_r staff_subject_type staff_firefox_xremotec_t))
+
+    (call firefox_role_template_xremotec (staff_r staff_firefox_t staff_firefox_xremotec_t))
 
     (call firefox_manage_home (staff_t))
     (call firefox_relabel_home (staff_t))
@@ -699,6 +741,12 @@
 
     (call firefox_manage_plugs_tmpfs_files (staff_t))
     (call firefox_relabel_plugs_tmpfs_files (staff_t)))
+
+(optional staff_firefox_optional_staff_pa
+    (call pa_tmpfs_client_template (staff_r staff_firefox_t staff_pa_t firefox_tmpfs_t)))
+
+(optional staff_firefox_optional_staff_xpdf
+    (call xpdf_role_template (staff_r staff_firefox_t staff_xpdf_t)))
 
 (optional staff_xserver_optional_qiv
     (call qiv_run (staff_subject_type staff_r))
@@ -756,6 +804,9 @@
     (call xbindkeys_relabel_home_files (staff_t))
     (call xbindkeys_home_dir_object_type_transition_home_files (staff_t)))
 
+(optional staff_xbindkeys_optional_pa_pactl
+    (call pa_role_template_pactl (staff_r staff_xbindkeys_t staff_pactl_t)))
+
 (optional staff_xinit_optional_xbindkeys
     (call xbindkeys_role_template (staff_r staff_xinit_t staff_xbindkeys_t)))
 
@@ -768,7 +819,8 @@
     (call xlock_home_dir_object_type_transition_home_files (staff_t)))
 
 (optional staff_xserver_optional_xpdf
-    (call xpdf_run (staff_subject_type staff_r))
+    (type staff_xpdf_t)
+    (call xpdf_role_template (staff_r staff_subject_type staff_xpdf_t))
 
     (call xpdf_manage_home_files (staff_t))
     (call xpdf_relabel_home_files (staff_t))
@@ -776,6 +828,9 @@
 
     (call xpdf_manage_tmpfs_files (staff_t))
     (call xpdf_relabel_tmpfs_files (staff_t)))
+
+(optional staff_xpdf_optional_staff_firefox
+    (call firefox_role_template (staff_r staff_xpdf_t staff_firefox_t)))
 
 (optional staff_xserver_optional_xterm
     (type staff_xterm_t)

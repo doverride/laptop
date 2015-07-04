@@ -1,9 +1,9 @@
 (roleattribute ffmpeg_role)
 
-(type ffmpeg_t)
+(typeattribute ffmpeg_subject_type)
+
 (type ffmpeg_exec_t)
-(call applications_app (ffmpeg_t ffmpeg_exec_t))
-(roletype ffmpeg_role ffmpeg_t)
+(call applications_app (ffmpeg_subject_type ffmpeg_exec_t))
 
 (context ffmpeg_exec (system_u object_r ffmpeg_exec_t (systemlow systemlow)))
 (filecon "/usr/bin/ffmpeg" file ffmpeg_exec)
@@ -15,42 +15,37 @@
 (type ffmpeg_tmpfs_t)
 (call usersubject_tmpfs_object_type (ffmpeg_tmpfs_t))
 
-(allow ffmpeg_t self (process (setsched)))
+(allow ffmpeg_subject_type ffmpeg_tmpfs_t manage_file_perms)
+(call filesystems_tmpfs_object_type_transition (ffmpeg_subject_type ffmpeg_tmpfs_t file "*"))
 
-(allow ffmpeg_t ffmpeg_tmpfs_t manage_file_perms)
-(call filesystems_tmpfs_object_type_transition (ffmpeg_t ffmpeg_tmpfs_t file "*"))
+(allow ffmpeg_subject_type self (process (setsched)))
 
-(call files_dontaudit_catchall_subject_type (ffmpeg_t))
-(call files_read_data (ffmpeg_t))
-(call files_search_mnt (ffmpeg_t))
+(call files_dontaudit_catchall_subject_type (ffmpeg_subject_type))
+(call files_read_data (ffmpeg_subject_type))
+(call files_search_mnt (ffmpeg_subject_type))
 
-(call miscfiles_read_locale (ffmpeg_t))
+(call miscfiles_read_locale (ffmpeg_subject_type))
 
-(call filesystems_manage_fuse_subject_type (ffmpeg_t))
+(call filesystems_manage_fuse_subject_type (ffmpeg_subject_type))
 
-(call usersubject_manage_user_home_files (ffmpeg_t))
-(call usersubject_home_dir_object_type_transition_user_home (ffmpeg_t file "*"))
+(call usersubject_manage_user_home_files (ffmpeg_subject_type))
+(call usersubject_home_dir_object_type_transition_user_home (ffmpeg_subject_type file "*"))
 
-(optional ffmpeg_optional_pa
-    (call pa_tmpfs_client_template (ffmpeg_t ffmpeg_role ffmpeg_tmpfs_t)))
-
-(optional ffmpeg_optional_xserver
-    (call xserver_tmpfs_client_template (ffmpeg_t ffmpeg_tmpfs_t)))
+(optional ffmpeg_subject_type_optional_xserver
+    (call xserver_tmpfs_client_template (ffmpeg_subject_type ffmpeg_tmpfs_t)))
 
 (macro ffmpeg_exec ((type ARG1))
     (call can_exec (ARG1 ffmpeg_exec_t)))
 
-(macro ffmpeg_auto_subject_type_transition ((type ARG1))
-    (call ffmpeg_send_signal (ARG1))
+(macro ffmpeg_subject_type ((type ARG1))
+    (typeattributeset ffmpeg_subject_type ARG1))
+
+(macro ffmpeg_role_template ((role ARG1)(type ARG2)(type ARG3))
     (call auto_subject_type_transition_pattern
-        (ARG1 ffmpeg_exec_t ffmpeg_t)))
-
-(macro ffmpeg_send_signal ((type ARG1))
-    (allow ARG1 ffmpeg_t (process (signal))))
-
-(macro ffmpeg_run ((type ARG1)(role ARG2))
-    (call ffmpeg_auto_subject_type_transition (ARG1))
-    (roleattributeset ffmpeg_role ARG2))
+        (ARG2 ffmpeg_exec_t ARG3))
+    (roletype ARG1 ARG3)
+    (allow ARG3 ARG2 (process (signal)))
+    (call ffmpeg_subject_type (ARG3)))
 
 (macro ffmpeg_read_tmpfs_files ((type ARG1))
     (call files_search_user_runtime (ARG1))

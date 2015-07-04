@@ -1,9 +1,9 @@
 (roleattribute mplayer_role)
 
-(type mplayer_t)
+(typeattribute mplayer_subject_type)
+
 (type mplayer_exec_t)
-(call applications_app (mplayer_t mplayer_exec_t))
-(roletype mplayer_role mplayer_t)
+(call applications_app (mplayer_subject_type mplayer_exec_t))
 
 (context mplayer_exec (system_u object_r mplayer_exec_t (systemlow systemlow)))
 (filecon "/usr/bin/mplayer" file mplayer_exec)
@@ -22,62 +22,58 @@
 (type mplayer_tmpfs_t)
 (call usersubject_tmpfs_object_type (mplayer_tmpfs_t))
 
-(allow mplayer_t mplayer_home_t manage_dir_perms)
-(allow mplayer_t mplayer_home_t manage_file_perms)
-(call mplayer_home_dir_object_type_transition_home_dirs (mplayer_t))
+(allow mplayer_subject_type mplayer_home_t manage_dir_perms)
+(allow mplayer_subject_type mplayer_home_t manage_file_perms)
+(call mplayer_home_dir_object_type_transition_home_dirs (mplayer_subject_type))
 
-(allow mplayer_t mplayer_tmpfs_t manage_file_perms)
-(call filesystems_tmpfs_object_type_transition (mplayer_t mplayer_tmpfs_t file "*"))
+(allow mplayer_subject_type mplayer_tmpfs_t manage_file_perms)
+(call filesystems_tmpfs_object_type_transition (mplayer_subject_type mplayer_tmpfs_t file "*"))
 
-(call devices_rw_dri (mplayer_t))
+(call devices_rw_dri (mplayer_subject_type))
 
-(call files_dontaudit_catchall_subject_type (mplayer_t))
-(call files_read_config_files (mplayer_t))
-(call files_read_data_files (mplayer_t))
+(call files_dontaudit_catchall_subject_type (mplayer_subject_type))
+(call files_read_config_files (mplayer_subject_type))
+(call files_read_data_files (mplayer_subject_type))
 
-(call files_search_mnt (mplayer_t))
+(call files_search_mnt (mplayer_subject_type))
 
-(call filesystems_read_fuse_subject_type (mplayer_t))
+(call filesystems_read_fuse_subject_type (mplayer_subject_type))
 
-(call miscfiles_read_locale (mplayer_t))
+(call miscfiles_read_locale (mplayer_subject_type))
 
-(call mplayer_read_config_files (mplayer_t))
+(call mplayer_read_config_files (mplayer_subject_type))
 
-(call ns_client_subject_type (mplayer_t))
+(call ns_client_subject_type (mplayer_subject_type))
 
-(call pa_tmpfs_client_template (mplayer_t mplayer_role mplayer_tmpfs_t))
+(call udev_client_subject_type (mplayer_subject_type))
 
-(call udev_client_subject_type (mplayer_t))
+(call usersubject_manage_user_home_files (mplayer_subject_type))
+(call usersubject_home_dir_object_type_transition_user_home (mplayer_subject_type file "*"))
 
-(call usersubject_manage_user_home_files (mplayer_t))
-(call usersubject_home_dir_object_type_transition_user_home (mplayer_t file "*"))
+(optional mplayer_subject_type_optional_http
+    (call http_tcp_connect_http_port (mplayer_subject_type)))
 
-(optional mplayer_optional_http
-    (call http_tcp_connect_http_port (mplayer_t)))
+(optional mplayer_subject_type_optional_icecast
+    (call icecast_tcp_connect_icecast_port (mplayer_subject_type)))
 
-(optional mplayer_optional_icecast
-    (call icecast_tcp_connect_icecast_port (mplayer_t)))
+(optional mplayer_subject_type_optional_lirc
+    (call lirc_search_runtime (mplayer_subject_type)))
 
-(optional mplayer_optional_lirc
-    (call lirc_search_runtime (mplayer_t)))
-
-(optional mplayer_optional_xserver
-    (call xserver_tmpfs_client_template (mplayer_t mplayer_tmpfs_t)))
+(optional mplayer_subject_type_optional_xserver
+    (call xserver_tmpfs_client_template (mplayer_subject_type mplayer_tmpfs_t)))
 
 (macro mplayer_exec ((type ARG1))
     (call can_exec (ARG1 mplayer_exec_t)))
 
-(macro mplayer_auto_subject_type_transition ((type ARG1))
-    (call mplayer_send_signal (ARG1))
+(macro mplayer_subject_type ((type ARG1))
+    (typeattributeset mplayer_subject_type ARG1))
+
+(macro mplayer_role_template ((role ARG1)(type ARG2)(type ARG3))
     (call auto_subject_type_transition_pattern
-        (ARG1 mplayer_exec_t mplayer_t)))
-
-(macro mplayer_send_signal ((type ARG1))
-    (allow ARG1 mplayer_t (process (signal))))
-
-(macro mplayer_run ((type ARG1)(role ARG2))
-    (call mplayer_auto_subject_type_transition (ARG1))
-    (roleattributeset mplayer_role ARG2))
+        (ARG2 mplayer_exec_t ARG3))
+    (roletype ARG1 ARG3)
+    (allow ARG3 ARG2 (process (signal)))
+    (call mplayer_subject_type (ARG3)))
 
 (macro mplayer_search_config ((type ARG1))
     (call files_search_config (ARG1))

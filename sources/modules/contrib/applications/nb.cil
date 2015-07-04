@@ -51,11 +51,7 @@
         (ARG2 nb_exec_t ARG3))
     (roletype ARG1 ARG3)
     (allow ARG3 ARG2 (process (signal)))
-    (call nb_subject_type (ARG3))
-    (optional nb_optional_firefox
-        (call firefox_run (ARG3 ARG1)))
-    (optional nb_optional_mplayer
-        (call mplayer_run (ARG3 ARG1))))
+    (call nb_subject_type (ARG3)))
 
 (macro nb_search_home ((type ARG1))
     (call usersubject_search_home_dir (ARG1))

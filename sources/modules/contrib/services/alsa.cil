@@ -1,5 +1,6 @@
 (roleattribute alsa_alsautil_role)
 
+(typeattribute alsa_alsautil_subject_type)
 (typeattribute alsa_admin_subject_type)
 
 (typeattribute alsa_object_type)
@@ -90,10 +91,8 @@
 
     (allow alsa_admin_subject_type alsactl_unit_t (service (all))))
 
-(type alsautil_t)
 (type alsautil_exec_t)
-(call applications_app (alsautil_t alsautil_exec_t))
-(roletype alsa_alsautil_role alsautil_t)
+(call applications_app (alsa_alsautil_subject_type alsautil_exec_t))
 
 (type alsautil_tmpfs_t)
 (call usersubject_tmpfs_object_type (alsautil_tmpfs_t))
@@ -115,21 +114,18 @@
 (filecon "/usr/bin/iecset" file alsautil_exec)
 (filecon "/usr/bin/speaker-test" file alsautil_exec)
 
-(allow alsautil_t alsautil_tmpfs_t manage_file_perms)
-(call filesystems_tmpfs_object_type_transition (alsautil_t alsautil_tmpfs_t file "*"))
+(allow alsa_alsautil_subject_type alsautil_tmpfs_t manage_file_perms)
+(call filesystems_tmpfs_object_type_transition (alsa_alsautil_subject_type alsautil_tmpfs_t file "*"))
 
-(call devices_rw_sound (alsautil_t))
+(call devices_rw_sound (alsa_alsautil_subject_type))
 
-(call files_read_data (alsautil_t))
+(call files_read_data (alsa_alsautil_subject_type))
 
-(call miscfiles_read_all_terminfo (alsautil_t))
-(call miscfiles_read_locale (alsautil_t))
+(call miscfiles_read_all_terminfo (alsa_alsautil_subject_type))
+(call miscfiles_read_locale (alsa_alsautil_subject_type))
 
-(optional alsautil_optional_pa
-    (call pa_tmpfs_client_template (alsautil_t alsa_alsautil_role alsautil_tmpfs_t)))
-
-(optional alsautil_optional_xserver
-    (call xserver_client_subject_type (alsautil_t)))
+(optional alsa_alsautil_subject_type_optional_xserver
+    (call xserver_client_subject_type (alsa_alsautil_subject_type)))
 
 (allow alsa_admin_subject_type alsactl_t (process (ptrace signal signull sigkill sigstop)))
 (call ps_subject_pattern (alsa_admin_subject_type alsactl_t))
@@ -143,17 +139,15 @@
 (macro alsa_exec_alsautil ((type ARG1))
     (call can_exec (ARG1 alsautil_exec_t)))
 
-(macro alsa_auto_subject_type_transition_alsautil ((type ARG1))
-    (call alsa_send_signal_alsautil (ARG1))
+(macro alsa_alsautil_subject_type ((type ARG1))
+    (typeattributeset alsa_alsautil_subject_type ARG1))
+
+(macro alsa_role_template_alsautil ((role ARG1)(type ARG2)(type ARG3))
     (call auto_subject_type_transition_pattern
-        (ARG1 alsautil_exec_t alsautil_t)))
-
-(macro alsa_send_signal_alsautil ((type ARG1))
-    (allow ARG1 alsautil_t (process (signal))))
-
-(macro alsa_run_alsautil ((type ARG1)(role ARG2))
-    (call alsa_auto_subject_type_transition_alsautil (ARG1))
-    (roleattributeset alsa_alsautil_role ARG2))
+        (ARG2 alsautil_exec_t ARG3))
+    (roletype ARG1 ARG3)
+    (allow ARG3 ARG2 (process (signal)))
+    (call alsa_alsautil_subject_type (ARG3)))
 
 (macro alsa_auto_subject_type_transition_alsactl ((type ARG1))
     (call alsa_send_signal_alsactl (ARG1))

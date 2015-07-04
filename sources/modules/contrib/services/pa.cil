@@ -1,17 +1,15 @@
 (roleattribute pa_role)
 (roleattribute pa_client_role)
-(roleattribute pactl_role)
+(roleattribute pa_pactl_role)
 
+(typeattribute pa_subject_type)
+(typeattribute pa_pactl_subject_type)
 (typeattribute pa_client_subject_type)
 
 (typeattribute pa_tmpfs_object_type)
 
-(type pa_t)
 (type pa_exec_t)
-(call applications_app (pa_t pa_exec_t))
-(roletype pa_role pa_t)
-
-(roleattributeset pa_role system_r)
+(call applications_app (pa_subject_type pa_exec_t))
 
 (context pa_exec (system_u object_r pa_exec_t (systemlow systemlow)))
 (filecon "/usr/bin/pulseaudio" file pa_exec)
@@ -47,71 +45,67 @@
 (type pa_tmpfs_t)
 (call usersubject_tmpfs_object_type (pa_tmpfs_t))
 
-(allow pa_t self (process (setcap setsched setrlimit)))
-(allow pa_t self (unix_stream_socket (listen accept)))
+(allow pa_subject_type self (process (setcap setsched setrlimit)))
+(allow pa_subject_type self (unix_stream_socket (listen accept)))
 
-(allow pa_t pa_tmpfs_t mmap_file_perms)
-(call filesystems_tmpfs_object_type_transition (pa_t pa_tmpfs_t file "*"))
-(call filesystems_tmpfs_object_type_transition (pa_t pa_tmpfs_t dir "*"))
+(allow pa_subject_type pa_tmpfs_t mmap_file_perms)
+(call filesystems_tmpfs_object_type_transition (pa_subject_type pa_tmpfs_t file "*"))
+(call filesystems_tmpfs_object_type_transition (pa_subject_type pa_tmpfs_t dir "*"))
 
-(call devices_rw_sound (pa_t))
+(call devices_rw_sound (pa_subject_type))
 
-(call files_dontaudit_catchall_subject_type (pa_t))
-(call files_read_data (pa_t))
+(call files_dontaudit_catchall_subject_type (pa_subject_type))
+(call files_read_data (pa_subject_type))
 
-(call filesystems_getattr_proc_filesystems (pa_t))
-(call filesystems_list_devtmpfs (pa_t))
-(call filesystems_list_proc (pa_t))
+(call filesystems_getattr_proc_filesystems (pa_subject_type))
+(call filesystems_list_devtmpfs (pa_subject_type))
+(call filesystems_list_proc (pa_subject_type))
 
-(call dbus_system_client_subject_type (pa_t))
+(call dbus_system_client_subject_type (pa_subject_type))
 
-(call miscfiles_read_locale (pa_t))
+(call miscfiles_read_locale (pa_subject_type))
 
-(call pa_exec (pa_t))
-(call pa_client (pa_t pa_role))
+(call pa_exec (pa_subject_type))
+(call pa_client_subject_type (pa_subject_type))
 
-(call rtkit_client_subject_type (pa_t))
+(call rtkit_client_subject_type (pa_subject_type))
 
-(call udev_client_subject_type (pa_t))
+(call udev_client_subject_type (pa_subject_type))
 
-(optional pa_optional_journal
-    (call journal_client_subject_type (pa_t)))
+(optional pa_subject_type_optional_journal
+    (call journal_client_subject_type (pa_subject_type)))
 
-(optional pa_optional_livestreamer
-    (call livestreamer_use_fd (pa_t)))
+(optional pa_subject_type_optional_livestreamer
+    (call livestreamer_use_fd_all_subjects (pa_subject_type)))
 
-(optional pa_optional_login_logind
-    (call login_read_logind_systemd_runtime (pa_t)))
+(optional pa_subject_type_optional_login_logind
+    (call login_read_logind_systemd_runtime (pa_subject_type)))
 
-(optional pa_optional_dbususer
-    (call dbususer_client_subject_type (pa_t))
-    (call dbususer_acquire_service_all_busses (pa_t)))
+(optional pa_subject_type_optional_dbususer
+    (call dbususer_client_subject_type (pa_subject_type))
+    (call dbususer_acquire_service_all_busses (pa_subject_type)))
 
-(optional pa_optional_xserver
-    (call xserver_client_subject_type (pa_t)))
+(optional pa_subject_type_optional_xserver
+    (call xserver_client_subject_type (pa_subject_type)))
 
-(type pactl_t)
 (type pactl_exec_t)
-(call applications_app (pactl_t pactl_exec_t))
-(roletype pactl_role pactl_t)
-
-(roleattributeset pactl_role system_r)
+(call applications_app (pa_pactl_subject_type pactl_exec_t))
 
 (context pactl_exec (system_u object_r pactl_exec_t (systemlow systemlow)))
 (filecon "/usr/bin/pactl" file pactl_exec)
 (filecon "/usr/bin/pacmd" file pactl_exec)
 
-(allow pactl_t pa_tmpfs_t mmap_file_perms)
-(call filesystems_tmpfs_object_type_transition (pactl_t pa_tmpfs_t file "*"))
+(allow pa_pactl_subject_type pa_tmpfs_t mmap_file_perms)
+(call filesystems_tmpfs_object_type_transition (pa_pactl_subject_type pa_tmpfs_t file "*"))
 
-(call miscfiles_read_locale (pactl_t))
+(call miscfiles_read_locale (pa_pactl_subject_type))
 
-(call pa_client (pactl_t pactl_role))
-(call pa_read_state (pactl_t))
-(call pa_stream_connect (pactl_t))
+(call pa_read_state_all_subjects (pa_pactl_subject_type))
+(call pa_stream_connect_all_subjects (pa_pactl_subject_type))
+(call pa_client_subject_type (pa_pactl_subject_type))
 
-(optional pactl_optional_xserver
-    (call xserver_client_subject_type (pactl_t)))
+(optional pa_pactl_subject_type_optional_xserver
+    (call xserver_client_subject_type (pa_pactl_subject_type)))
 
 (allow pa_client_subject_type self (process (getsched)))
 (allow pa_client_subject_type self rw_fifo_file_perms)
@@ -121,7 +115,7 @@
 (allow pa_client_subject_type pa_tmpfs_object_type delete_file_perms)
 (allow pa_client_subject_type pa_tmpfs_object_type read_file_perms)
 
-(allow pa_client_subject_type pa_t (unix_stream_socket (connectto)))
+(allow pa_client_subject_type pa_subject_type (unix_stream_socket (connectto)))
 
 (call devices_read_urandom (pa_client_subject_type))
 
@@ -142,7 +136,6 @@
 (call pa_manage_tmpfs (pa_client_subject_type))
 (call pa_tmpfs_object_type_transition_tmpfs_dirs (pa_client_subject_type))
 
-(call pa_run (pa_client_subject_type pa_client_role))
 (call pa_read_config (pa_client_subject_type))
 
 (call usersubject_delete_tmpfs_files (pa_client_subject_type))
@@ -155,9 +148,15 @@
     (call unconfined_send_signal_all_subjects (pa_client_subject_type))
     (call unconfined_send_signull_all_subjects (pa_client_subject_type)))
 
-(macro pa_client ((type ARG1)(role ARG2))
-    (typeattributeset pa_client_subject_type ARG1)
-    (roleattributeset pa_client_role ARG2))
+(macro pa_client_subject_type ((type ARG1))
+    (typeattributeset pa_client_subject_type ARG1))
+
+(macro pa_client_template ((role ARG1)(type ARG2)(type ARG3))
+    (typeattributeset pa_client_subject_type ARG2)
+    (roleattributeset pa_client_role ARG1)
+    (call auto_subject_type_transition_pattern (ARG2 pa_exec_t ARG3))
+    (allow ARG3 ARG2 (process (signal)))
+    (roletype ARG1 ARG3))
 
 (macro pa_tmpfs_object_type ((type ARG1))
     (typeattributeset pa_tmpfs_object_type ARG1))
@@ -168,29 +167,25 @@
 (macro pa_exec_pactl ((type ARG1))
     (call can_exec (ARG1 pactl_exec_t)))
 
-(macro pa_auto_subject_type_transition ((type ARG1))
-    (call pa_send_signal (ARG1))
+(macro pa_subject_type ((type ARG1))
+    (typeattributeset pa_subject_type ARG1))
+
+(macro pa_role_template ((role ARG1)(type ARG2)(type ARG3))
     (call auto_subject_type_transition_pattern
-        (ARG1 pa_exec_t pa_t)))
+        (ARG2 pa_exec_t ARG3))
+    (roletype ARG1 ARG3)
+    (allow ARG3 ARG2 (process (signal)))
+    (call pa_subject_type (ARG3)))
 
-(macro pa_send_signal ((type ARG1))
-    (allow ARG1 pa_t (process (signal))))
+(macro pa_pactl_subject_type ((type ARG1))
+    (typeattributeset pa_pactl_subject_type ARG1))
 
-(macro pa_run ((type ARG1)(role ARG2))
-    (call pa_auto_subject_type_transition (ARG1))
-    (roleattributeset pa_role ARG2))
-
-(macro pa_auto_subject_type_transition_pactl ((type ARG1))
-    (call pa_send_signal_pactl (ARG1))
+(macro pa_role_template_pactl ((role ARG1)(type ARG2)(type ARG3))
     (call auto_subject_type_transition_pattern
-        (ARG1 pactl_exec_t pactl_t)))
-
-(macro pa_send_signal_pactl ((type ARG1))
-    (allow ARG1 pactl_t (process (signal))))
-
-(macro pa_run_pactl ((type ARG1)(role ARG2))
-    (call pa_auto_subject_type_transition_pactl (ARG1))
-    (roleattributeset pactl_role ARG2))
+        (ARG2 pactl_exec_t ARG3))
+    (roletype ARG1 ARG3)
+    (allow ARG3 ARG2 (process (signal)))
+    (call pa_pactl_subject_type (ARG3)))
 
 (macro pa_search_config ((type ARG1))
     (call files_search_config (ARG1))
@@ -356,17 +351,17 @@
 (macro pa_home_dir_object_type_transition_home_files ((type ARG1))
     (call usersubject_home_dir_object_type_transition (ARG1 pa_home_t file ".esd_auth")))
 
-(macro pa_stream_connect ((type ARG1))
+(macro pa_stream_connect_all_subjects ((type ARG1))
     (call files_search_user_runtime (ARG1))
     (call filesystems_search_tmpfs (ARG1))
-    (call stream_connect_pattern (ARG1 pa_tmpfs_t pa_tmpfs_t pa_t)))
+    (call stream_connect_pattern (ARG1 pa_tmpfs_t pa_tmpfs_t pa_subject_type)))
 
-(macro pa_read_state ((type ARG1))
+(macro pa_read_state_all_subjects ((type ARG1))
     (call filesystems_search_proc (ARG1))
-    (allow ARG1 pa_t read_file_perms)
-    (allow ARG1 pa_t list_dir_perms)
-    (allow ARG1 pa_t read_lnk_file_perms))
+    (allow ARG1 pa_subject_type read_file_perms)
+    (allow ARG1 pa_subject_type list_dir_perms)
+    (allow ARG1 pa_subject_type read_lnk_file_perms))
 
-(macro pa_tmpfs_client_template ((type ARG1)(role ARG2)(type ARG3))
-    (call pa_client (ARG1 ARG2))
-    (call pa_tmpfs_object_type (ARG3)))
+(macro pa_tmpfs_client_template ((role ARG1)(type ARG2)(type ARG3)(type ARG4))
+    (call pa_client_template (ARG1 ARG2 ARG3))
+    (call pa_tmpfs_object_type (ARG4)))

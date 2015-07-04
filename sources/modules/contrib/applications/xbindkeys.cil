@@ -44,8 +44,6 @@
     (roletype ARG1 ARG3)
     (allow ARG3 ARG2 (process (signal)))
     (call xbindkeys_subject_type (ARG3))
-    (optional xbindkeys_role_template_optional_pa
-        (call pa_run_pactl (ARG3 ARG1)))
     (optional xbindkeys_role_template_optional_xutil
         (call xutil_run (ARG3 ARG1))))
 
