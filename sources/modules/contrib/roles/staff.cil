@@ -106,7 +106,8 @@
     (call dbususer_tmpfs_object_type_transition_dbususer_tmpfs_dirs (staff_systemduser_t)))
 
 (optional staff_optional_dunst
-    (call dunst_run (staff_subject_type staff_r))
+    (type staff_dunst_t)
+    (call dunst_role_template (staff_r staff_subject_type staff_dunst_t))
 
     (call dunst_manage_tmpfs_files (staff_t))
     (call dunst_relabel_tmpfs_files (staff_t))
@@ -114,6 +115,12 @@
     (call dunst_manage_config_home (staff_t))
     (call dunst_relabel_config_home (staff_t))
     (call dunst_config_home_object_type_transition_config_home_dirs (staff_t)))
+
+(optional staff_dunst_optional_dbususer
+    (call dbususer_service (staff_dunst_t staff_dbususer_t dunst_exec_t)))
+
+(optional staff_dunst_optional_dbuslaunch
+    (call dbuslaunch_role_template (staff_r staff_dunst_t staff_dbuslaunch_t)))
 
 (optional staff_xinit_optional_dbuslaunch
     (call dbuslaunch_role_template (staff_r staff_xinit_t staff_dbuslaunch_t)))
