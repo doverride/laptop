@@ -82,8 +82,7 @@
     (call login_read_logind_systemd_runtime (pa_subject_type)))
 
 (optional pa_subject_type_optional_dbususer
-    (call dbususer_client_subject_type (pa_subject_type))
-    (call dbususer_acquire_service_all_busses (pa_subject_type)))
+    (call dbususer_client_subject_type (pa_subject_type)))
 
 (optional pa_subject_type_optional_xserver
     (call xserver_client_subject_type (pa_subject_type)))
