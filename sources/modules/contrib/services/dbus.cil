@@ -159,15 +159,16 @@
 (call dbus_chat_all_unconfined_subjects (dbus_unconfined_subject_type))
 (call dbus_chat_all_system_client_subjects (dbus_unconfined_subject_type))
 
-(tunableif enable_ubac
-    (true
-        (constrain (dbus (send_msg acquire_svc))
-            (or (or (or (or (or (eq u1 u2)
-                (eq u1 system_u))
-                (eq u1 staff_u))
-                (eq u1 sysadm_u))
-                (eq u2 system_u))
-                (neq t1 ubac_constrained_subject_type)))))
+(optional dbus_optional_ubac
+    (tunableif enable_ubac
+        (true
+            (constrain (dbus (send_msg acquire_svc))
+                (or (or (or (or (or (eq u1 u2)
+                    (eq u1 system_u))
+                    (eq u1 staff_u))
+                    (eq u1 sysadm_u))
+                    (eq u2 system_u))
+                    (neq t1 ubac_constrained_subject_type))))))
 
 (macro dbus_dbussend_subject_type ((type ARG1))
     (typeattributeset dbus_dbussend_subject_type ARG1))
