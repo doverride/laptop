@@ -447,6 +447,8 @@
     (type staff_pactl_t)
     (call pa_role_template_pactl (staff_r staff_subject_type staff_pactl_t))
 
+    (call pa_client_template (staff_r staff_pactl_t staff_pa_t))
+
     (call pa_manage_tmpfs (staff_t))
     (call pa_relabel_tmpfs (staff_t))
     (call pa_tmpfs_object_type_transition_tmpfs_dirs (staff_t))

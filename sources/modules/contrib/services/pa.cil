@@ -102,7 +102,6 @@
 
 (call pa_read_state_all_subjects (pa_pactl_subject_type))
 (call pa_stream_connect_all_subjects (pa_pactl_subject_type))
-(call pa_client_subject_type (pa_pactl_subject_type))
 
 (optional pa_pactl_subject_type_optional_xserver
     (call xserver_client_subject_type (pa_pactl_subject_type)))
