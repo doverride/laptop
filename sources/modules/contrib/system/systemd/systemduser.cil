@@ -128,6 +128,17 @@
 (optional systemduser_subject_type_optional_run
     (call run_getattr_all_subjects (systemduser_subject_type)))
 
+(optional systemduser_optional_ubac
+    (tunableif enable_ubac
+        (true
+            (constrain (service (stop status disable enable reload start))
+                (or (or (or (or (or (eq u1 u2)
+                    (eq u1 system_u))
+                    (eq u1 staff_u))
+                    (eq u1 sysadm_u))
+                    (eq u2 system_u))
+                    (neq t1 ubac_constrained_subject_type))))))
+
 (macro systemduser_subject_type ((type ARG1))
     (typeattributeset systemduser_subject_type ARG1))
 
