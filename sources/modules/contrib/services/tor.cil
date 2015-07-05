@@ -6,21 +6,37 @@
 (context tor_use (system_u object_r tor_use_t (systemlow systemlow)))
 (genfscon "selinuxfs" "/booleans/tor_use" tor_use)
 
-(type tor_port_t)
-(call network_unreserved_port_object_type (tor_port_t))
+(type tor_socks_port_t)
+(call network_unreserved_port_object_type (tor_socks_port_t))
 
-(context tor_port (system_u object_r tor_port_t (systemlow systemlow)))
-(portcon "tcp" 9050 tor_port)
-(portcon "udp" 9050 tor_port)
+(context tor_socks_port (system_u object_r tor_socks_port_t (systemlow systemlow)))
+(portcon "tcp" 9050 tor_socks_port)
+(portcon "udp" 9050 tor_socks_port)
+(portcon "tcp" 9100 tor_socks_port)
+(portcon "udp" 9100 tor_socks_port)
 
-(type tor_proxy_port_t)
-(call network_unreserved_port_object_type (tor_proxy_port_t))
+(type tor_control_port_t)
+(call network_unreserved_port_object_type (tor_control_port_t))
 
-(context tor_proxy_port (system_u object_r tor_proxy_port_t (systemlow systemlow)))
-(portcon "tcp" (9001 9004) tor_proxy_port)
-(portcon "udp" (9001 9004) tor_proxy_port)
-(portcon "tcp" (9030 9033) tor_proxy_port)
-(portcon "udp" (9030 9033) tor_proxy_port)
+(context tor_control_port (system_u object_r tor_control_port_t (systemlow systemlow)))
+(portcon "tcp" 9051 tor_control_port)
+(portcon "udp" 9051 tor_control_port)
+
+(type tor_or_port_t)
+(call network_unreserved_port_object_type (tor_or_port_t))
+
+(context tor_or_port (system_u object_r tor_or_port_t (systemlow systemlow)))
+(portcon "tcp" (9001 9004) tor_or_port)
+(portcon "udp" (9001 9004) tor_or_port)
+(portcon "tcp" (9999 9999) tor_or_port)
+(portcon "udp" (9999 9999) tor_or_port)
+
+(type tor_dir_port_t)
+(call network_unreserved_port_object_type (tor_dir_port_t))
+
+(context tor_dir_port (system_u object_r tor_dir_port_t (systemlow systemlow)))
+(portcon "tcp" (9030 9033) tor_dir_port)
+(portcon "udp" (9030 9033) tor_dir_port)
 
 (type tor_trans_port_t)
 (call network_unreserved_port_object_type (tor_trans_port_t))
@@ -28,13 +44,6 @@
 (context tor_trans_port (system_u object_r tor_trans_port_t (systemlow systemlow)))
 (portcon "tcp" 9040 tor_trans_port)
 (portcon "udp" 9040 tor_trans_port)
-
-(type tor_relay_port_t)
-(call network_unreserved_port_object_type (tor_relay_port_t))
-
-(context tor_relay_port (system_u object_r tor_relay_port_t (systemlow systemlow)))
-(portcon "tcp" 9100 tor_relay_port)
-(portcon "udp" 9100 tor_relay_port)
 
 (roleattribute tor_role)
 (roleattribute tor_socks_role)
@@ -116,10 +125,11 @@
 (call ns_client_subject_type (tor_t))
 
 (call tor_read_config (tor_t))
-(call tor_tcp_bind_tor_port (tor_t))
+(call tor_tcp_bind_socks_port (tor_t))
+(call tor_tcp_bind_control_port (tor_t))
 (call tor_tcp_bind_tor_trans_port (tor_t))
-(call tor_tcp_connect_tor_relay_port (tor_t))
-(call tor_tcp_connect_tor_proxy_port (tor_t))
+(call tor_tcp_connect_tor_dir_port (tor_t))
+(call tor_tcp_connect_tor_or_port (tor_t))
 
 (optional tor_optional_http
     (call http_tcp_connect_http_port (tor_t)))
@@ -161,7 +171,7 @@
 
 (allow torresolve_t self create_tcp_socket_perms)
 
-(call tor_tcp_connect_tor_port (torresolve_t))
+(call tor_tcp_connect_socks_port (torresolve_t))
 
 (type torsocks_exec_t)
 (call applications_app (tor_socks_subject_type torsocks_exec_t))
@@ -202,7 +212,7 @@
 (booleanif tor_use
     (true
         (allow tor_torsocks_client_subject_type self create_tcp_socket_perms)
-        (call tor_tcp_connect_tor_port (tor_torsocks_client_subject_type))))
+        (call tor_tcp_connect_socks_port (tor_torsocks_client_subject_type))))
 
 (macro tor_torsocks_client_subject_type ((type ARG1))
     (typeattributeset tor_torsocks_client_subject_type ARG1))
@@ -394,11 +404,17 @@
 (macro tor_home_dir_object_type_transition_tor_home_dirs ((type ARG1))
     (call usersubject_home_dir_object_type_transition (ARG1 tor_home_t dir ".tor")))
 
-(macro tor_tcp_bind_tor_port ((type ARG1))
-    (allow ARG1 tor_port_t (tcp_socket (name_bind))))
+(macro tor_tcp_bind_socks_port ((type ARG1))
+    (allow ARG1 tor_socks_port_t (tcp_socket (name_bind))))
 
-(macro tor_tcp_connect_tor_port ((type ARG1))
-    (allow ARG1 tor_port_t (tcp_socket (name_connect))))
+(macro tor_tcp_connect_socks_port ((type ARG1))
+    (allow ARG1 tor_socks_port_t (tcp_socket (name_connect))))
+
+(macro tor_tcp_bind_control_port ((type ARG1))
+    (allow ARG1 tor_control_port_t (tcp_socket (name_bind))))
+
+(macro tor_tcp_connect_control_port ((type ARG1))
+    (allow ARG1 tor_control_port_t (tcp_socket (name_connect))))
 
 (macro tor_tcp_bind_tor_trans_port ((type ARG1))
     (allow ARG1 tor_trans_port_t (tcp_socket (name_bind))))
@@ -406,17 +422,17 @@
 (macro tor_tcp_connect_tor_trans_port ((type ARG1))
     (allow ARG1 tor_trans_port_t (tcp_socket (name_connect))))
 
-(macro tor_tcp_bind_tor_relay_port ((type ARG1))
-    (allow ARG1 tor_relay_port_t (tcp_socket (name_bind))))
+(macro tor_tcp_bind_tor_or_port ((type ARG1))
+    (allow ARG1 tor_or_port_t (tcp_socket (name_bind))))
 
-(macro tor_tcp_connect_tor_relay_port ((type ARG1))
-    (allow ARG1 tor_relay_port_t (tcp_socket (name_connect))))
+(macro tor_tcp_connect_tor_or_port ((type ARG1))
+    (allow ARG1 tor_or_port_t (tcp_socket (name_connect))))
 
-(macro tor_tcp_bind_tor_proxy_port ((type ARG1))
-    (allow ARG1 tor_proxy_port_t (tcp_socket (name_bind))))
+(macro tor_tcp_bind_tor_dir_port ((type ARG1))
+    (allow ARG1 tor_dir_port_t (tcp_socket (name_bind))))
 
-(macro tor_tcp_connect_tor_proxy_port ((type ARG1))
-    (allow ARG1 tor_proxy_port_t (tcp_socket (name_connect))))
+(macro tor_tcp_connect_tor_dir_port ((type ARG1))
+    (allow ARG1 tor_dir_port_t (tcp_socket (name_connect))))
 
 (macro tor_admin ((type ARG1)(role ARG2))
     (typeattributeset tor_admin_subject_type ARG1)
