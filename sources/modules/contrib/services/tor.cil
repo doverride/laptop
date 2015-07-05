@@ -28,8 +28,8 @@
 (context tor_or_port (system_u object_r tor_or_port_t (systemlow systemlow)))
 (portcon "tcp" (9001 9004) tor_or_port)
 (portcon "udp" (9001 9004) tor_or_port)
-(portcon "tcp" (9999 9999) tor_or_port)
-(portcon "udp" (9999 9999) tor_or_port)
+(portcon "tcp" 9999 tor_or_port)
+(portcon "udp" 9999 tor_or_port)
 
 (type tor_dir_port_t)
 (call network_unreserved_port_object_type (tor_dir_port_t))
