@@ -14,6 +14,8 @@
 
 (call files_read_data_files (atspi2_busl_subject_type))
 
+(call ns_client_subject_type (atspi2_busl_subject_type))
+
 (optional atspi2_busl_subject_type_optional_xserver
     (call xserver_client_subject_type (atspi2_busl_subject_type)))
 
