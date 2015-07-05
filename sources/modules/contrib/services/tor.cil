@@ -12,14 +12,29 @@
 (context tor_port (system_u object_r tor_port_t (systemlow systemlow)))
 (portcon "tcp" 9050 tor_port)
 (portcon "udp" 9050 tor_port)
-(portcon "tcp" 9040 tor_port)
-(portcon "udp" 9040 tor_port)
-(portcon "tcp" (9001 9004) tor_port)
-(portcon "udp" (9001 9004) tor_port)
-(portcon "tcp" (9030 9033) tor_port)
-(portcon "udp" (9030 9033) tor_port)
-(portcon "tcp" 9100 tor_port)
-(portcon "udp" 9100 tor_port)
+
+(type tor_proxy_port_t)
+(call network_unreserved_port_object_type (tor_proxy_port_t))
+
+(context tor_proxy_port (system_u object_r tor_proxy_port_t (systemlow systemlow)))
+(portcon "tcp" (9001 9004) tor_proxy_port)
+(portcon "udp" (9001 9004) tor_proxy_port)
+(portcon "tcp" (9030 9033) tor_proxy_port)
+(portcon "udp" (9030 9033) tor_proxy_port)
+
+(type tor_trans_port_t)
+(call network_unreserved_port_object_type (tor_trans_port_t))
+
+(context tor_trans_port (system_u object_r tor_trans_port_t (systemlow systemlow)))
+(portcon "tcp" 9040 tor_trans_port)
+(portcon "udp" 9040 tor_trans_port)
+
+(type tor_relay_port_t)
+(call network_unreserved_port_object_type (tor_relay_port_t))
+
+(context tor_relay_port (system_u object_r tor_relay_port_t (systemlow systemlow)))
+(portcon "tcp" 9100 tor_relay_port)
+(portcon "udp" 9100 tor_relay_port)
 
 (roleattribute tor_role)
 (roleattribute tor_socks_role)
@@ -102,7 +117,9 @@
 
 (call tor_read_config (tor_t))
 (call tor_tcp_bind_tor_port (tor_t))
-(call tor_tcp_connect_tor_port (tor_t))
+(call tor_tcp_bind_tor_trans_port (tor_t))
+(call tor_tcp_connect_tor_relay_port (tor_t))
+(call tor_tcp_connect_tor_proxy_port (tor_t))
 
 (optional tor_optional_http
     (call http_tcp_connect_http_port (tor_t)))
@@ -382,6 +399,24 @@
 
 (macro tor_tcp_connect_tor_port ((type ARG1))
     (allow ARG1 tor_port_t (tcp_socket (name_connect))))
+
+(macro tor_tcp_bind_tor_trans_port ((type ARG1))
+    (allow ARG1 tor_trans_port_t (tcp_socket (name_bind))))
+
+(macro tor_tcp_connect_tor_trans_port ((type ARG1))
+    (allow ARG1 tor_trans_port_t (tcp_socket (name_connect))))
+
+(macro tor_tcp_bind_tor_relay_port ((type ARG1))
+    (allow ARG1 tor_relay_port_t (tcp_socket (name_bind))))
+
+(macro tor_tcp_connect_tor_relay_port ((type ARG1))
+    (allow ARG1 tor_relay_port_t (tcp_socket (name_connect))))
+
+(macro tor_tcp_bind_tor_proxy_port ((type ARG1))
+    (allow ARG1 tor_proxy_port_t (tcp_socket (name_bind))))
+
+(macro tor_tcp_connect_tor_proxy_port ((type ARG1))
+    (allow ARG1 tor_proxy_port_t (tcp_socket (name_connect))))
 
 (macro tor_admin ((type ARG1)(role ARG2))
     (typeattributeset tor_admin_subject_type ARG1)
