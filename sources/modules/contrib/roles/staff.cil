@@ -732,6 +732,13 @@
     (call tor_torsocks_client_subject_type (staff_lynx_t))
     (call lynx_role_template (staff_r staff_torsocks_t staff_lynx_t)))
 
+(optional staff_tor_optional_staff_git
+    (call tor_torsocks_client_subject_type (staff_git_t))
+    (call git_role_template (staff_r staff_torsocks_t staff_git_t))
+
+    (call tor_torsocks_client_subject_type (staff_gitemail_t))
+    (call git_role_template_gitemail (staff_r staff_torsocks_t staff_gitemail_t)))
+
 (optional staff_tor_optional_staff_firefox
     (call tor_torsocks_client_subject_type (staff_firefox_t))
     (call firefox_role_template (staff_r staff_torsocks_t staff_firefox_t)))

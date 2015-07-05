@@ -38,6 +38,9 @@
 
 (call ns_client_subject_type (bti_t))
 
+(optional bti_optional_tor
+    (call tor_torsocks_client_subject_type (bti_t)))
+
 (macro bti_exec ((type ARG1))
     (call can_exec (ARG1 bti_exec_t)))
 

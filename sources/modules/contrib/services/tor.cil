@@ -239,6 +239,8 @@
     (roletype ARG1 ARG3)
     (allow ARG3 ARG2 (process (signal)))
     (call tor_socks_subject_type (ARG3))
+    (optional tor_role_template_torsocks_optional_bti
+        (call bti_run (ARG3 ARG1)))
     (optional tor_role_template_torsocks_optional_curl
         (call curl_run (ARG3 ARG1))))
 
