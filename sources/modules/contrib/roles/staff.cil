@@ -304,8 +304,8 @@
     (call stream_connect_pattern (staff_gpg_t gpgagent_home_t gpgagent_home_t staff_gpgagent_t)))
 
 (optional staff_gpg_optional_staff_torsocks
-    (call tor_torsocks_client_subject_type (staff_gpgagent_t))
-    (call tor_torsocks_client_subject_type (staff_gpg_t)))
+    (call tor_read_config_files (staff_gpgagent_t))
+    (call tor_read_config_files (staff_gpg_t)))
 
 (optional staff_optional_gstreamer
     (call gstreamer_manage_cache_home (staff_t))
