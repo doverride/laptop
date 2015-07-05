@@ -747,6 +747,10 @@
     (call tor_torsocks_client_subject_type (staff_lynx_t))
     (call irc_role_template_irssi (staff_r staff_torsocks_t staff_irssi_t)))
 
+(optional staff_tor_optional_staff_ssh
+    (call tor_torsocks_client_subject_type (staff_ssh_t))
+    (call ssh_role_template (staff_r staff_torsocks_t staff_ssh_t)))
+
 (optional staff_optional_torrent
     (call torrent_run_rtorrent (staff_subject_type staff_r))
 
