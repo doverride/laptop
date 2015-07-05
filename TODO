@@ -54,3 +54,6 @@
 * x131e, e145: apply /usr/local/bin/temps "sestatus" mod
 
 * [ not merged into kernel yet it seems ] investigate sctp protocol support: https://marc.info/?l=selinux&m=142229478027000&w=2
+
+* there is a bug in secilc that my classmaps expose. this results in rules vanishing from policy. Until this is fixed
+	be careful with excluding modules
