@@ -72,7 +72,7 @@
 (optional gssproxy_optional_systemd
     (call systemd_daemon (gssproxy_t gssproxy_exec_t))
 
-    (call systemd_pid_object_type (gssproxy_runtime_t))
+    (call systemd_daemon_pid_object_type (gssproxy_runtime_t))
 
     (type gssproxy_unit_t)
     (call systemd_unit_object_type (gssproxy_unit_t))

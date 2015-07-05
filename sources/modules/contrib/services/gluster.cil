@@ -110,7 +110,7 @@
 (optional glusterd_optional_systemd
     (call systemd_daemon (glusterd_t glusterd_exec_t))
 
-    (call systemd_pid_object_type (glusterd_runtime_t))
+    (call systemd_daemon_pid_object_type (glusterd_runtime_t))
 
     (type glusterd_unit_t)
     (call systemd_unit_object_type (glusterd_unit_t))

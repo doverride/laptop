@@ -158,7 +158,7 @@
     (context lvmetad_unit (system_u object_r lvmetad_unit_t (systemlow systemlow)))
     (filecon "/usr/lib/systemd/system/lvm2-lvmetad.*" file lvmetad_unit)
 
-    (call systemd_pid_object_type (lvmetad_runtime_t))
+    (call systemd_daemon_pid_object_type (lvmetad_runtime_t))
 
     (allow lvm_admin_subject_type lvmetad_unit_t (service (all))))
 
@@ -215,7 +215,7 @@
     (context lvmpolld_unit (system_u object_r lvmpolld_unit_t (systemlow systemlow)))
     (filecon "/usr/lib/systemd/system/lvm2-lvmpolld.*" file lvmpolld_unit)
 
-    (call systemd_pid_object_type (lvmpolld_runtime_t))
+    (call systemd_daemon_pid_object_type (lvmpolld_runtime_t))
 
     (allow lvm_admin_subject_type lvmpolld_unit_t (service (all))))
 

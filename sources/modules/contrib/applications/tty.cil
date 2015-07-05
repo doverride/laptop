@@ -25,6 +25,9 @@
 
 (call usersubject_getattr_terminals (tty_t))
 
+(optional tty_optional_tor
+    (call tor_read_config_files (tty_t)))
+
 (type wall_t)
 (type wall_exec_t)
 (call applications_app (wall_t wall_exec_t))

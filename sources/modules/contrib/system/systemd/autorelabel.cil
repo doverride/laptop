@@ -1,3 +1,7 @@
+(typeattribute autorelabel_object_type)
+
+(typeattribute autorelabel_admin_subject_type)
+
 (type autorelabel_t)
 (type autorelabel_exec_t)
 (call systemd_daemon (autorelabel_t autorelabel_exec_t))
@@ -5,8 +9,18 @@
 (context autorelabel_exec (system_u object_r autorelabel_exec_t (systemlow systemlow)))
 (filecon "/usr/lib/systemd/fedora-autorelabel" file autorelabel_exec)
 
+(type autorelabel_unit_t)
+(call systemd_unit_object_type (autorelabel_unit_t))
+
+(typeattributeset autorelabel_object_type autorelabel_unit_t)
+
+(context autorelabel_unit (system_u object_r autorelabel_unit_t (systemlow systemlow)))
+(filecon "/usr/lib/systemd/system/[^/]*autorelabel.*" file autorelabel_unit)
+
 (type autorelabel_flag_t)
 (call files_flag_object_type (autorelabel_flag_t))
+
+(typeattributeset autorelabel_object_type autorelabel_flag_t)
 
 (context autorelabel_flag (system_u object_r autorelabel_flag_t (systemlow systemlow)))
 (filecon "/\.autorelabel" file autorelabel_flag)
@@ -47,6 +61,14 @@
 (call systemd_exec_systemctl (autorelabel_t))
 (call systemd_reboot_system (autorelabel_t))
 
+(allow autorelabel_admin_subject_type autorelabel_t (process (ptrace signal signull sigkill sigstop)))
+(call ps_subject_pattern (autorelabel_admin_subject_type autorelabel_t))
+
+(allow autorelabel_admin_subject_type autorelabel_object_type (all_file_objects
+    (not_mounton_entrypoint_and_execmod)))
+
+(allow autorelabel_admin_subject_type autorelabel_unit_t (service (all)))
+
 (macro autorelabel_exec ((type ARG1))
     (call can_exec (ARG1 autorelabel_exec_t)))
 
@@ -64,3 +86,10 @@
 (macro autorelabel_manage_flag_files ((type ARG1))
     (call filesystems_rw_rootfs_dirs (ARG1))
     (allow ARG1 autorelabel_flag_t manage_file_perms))
+
+(macro autorelabel_admin ((type ARG1)(role ARG2))
+    (typeattributeset autorelabel_admin_subject_type ARG1)
+    (optional autorelabel_admin_optional_askpwd
+        (call askpwd_run_askpwdagent (ARG1 ARG2)))
+    (optional autorelabel_admin_optional_systemd
+        (call systemd_system_service_admin_subject_type (ARG1))))

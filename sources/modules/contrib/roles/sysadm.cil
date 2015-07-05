@@ -637,7 +637,7 @@
     (call stdiobridge_run (sysadm_subject_type sysadm_r)))
 
 (optional sysadm_optional_autorelabel
-    (call autorelabel_manage_flag_files (sysadm_t)))
+    (call autorelabel_admin (sysadm_t sysadm_r)))
 
 (optional sysadm_optional_backlight
     (call backlight_manage_systemd_lib (sysadm_t)))
@@ -806,6 +806,11 @@
 
 (optional sysadm_optional_tcs
     (call tcs_admin (sysadm_t sysadm_r)))
+
+(optional sysadm_optional_tor
+    (call tor_admin (sysadm_t sysadm_r))
+    (call tor_run_resolve (sysadm_subject_type sysadm_r))
+    (call tor_run_gencert (sysadm_subject_type sysadm_r)))
 
 (optional sysadm_optional_tunctl
     (call tunctl_run (sysadm_subject_type sysadm_r)))

@@ -4,6 +4,378 @@
 (context tor_port (system_u object_r tor_port_t (systemlow systemlow)))
 (portcon "tcp" 9050 tor_port)
 (portcon "udp" 9050 tor_port)
+(portcon "tcp" 9040 tor_port)
+(portcon "udp" 9040 tor_port)
+(portcon "tcp" (9001 9004) tor_port)
+(portcon "udp" (9001 9004) tor_port)
+(portcon "tcp" (9030 9033) tor_port)
+(portcon "udp" (9030 9033) tor_port)
+(portcon "tcp" 9100 tor_port)
+(portcon "udp" 9100 tor_port)
+
+(roleattribute tor_role)
+(roleattribute tor_socks_role)
+(roleattribute tor_resolve_role)
+(roleattribute tor_gencert_role)
+
+(typeattribute tor_socks_subject_type)
+(typeattribute tor_admin_subject_type)
+
+(typeattribute tor_torsocks_client_subject_type)
+
+(typeattribute tor_object_type)
+
+(type tor_t)
+(type tor_exec_t)
+(call applications_app (tor_t tor_exec_t))
+(roletype tor_role tor_t)
+
+(roleattributeset tor_role system_r)
+
+(context tor_exec (system_u object_r tor_exec_t (systemlow systemlow)))
+(filecon "/usr/bin/tor" file tor_exec)
+
+(type tor_lib_t)
+(call files_lib_object_type (tor_lib_t))
+
+(typeattributeset tor_object_type tor_lib_t)
+
+(context tor_lib (system_u object_r tor_lib_t (systemlow systemlow)))
+(filecon "/var/lib/tor(/.*)?" any tor_lib)
+
+(call manage_dirs_pattern (tor_t tor_lib_t tor_lib_t))
+(call manage_files_pattern (tor_t tor_lib_t tor_lib_t))
+(call files_lib_object_type_transition (tor_t tor_lib_t dir "*"))
+
+(type tor_log_t)
+(call files_log_object_type (tor_log_t))
+
+(typeattributeset tor_object_type tor_log_t)
+
+(context tor_log (system_u object_r tor_log_t (systemlow systemlow)))
+(filecon "/var/log/tor(/.*)?" any tor_log)
+
+(allow tor_t tor_log_t (file (setattr)))
+(call append_files_pattern (tor_t tor_log_t tor_log_t))
+(call create_files_pattern (tor_t tor_log_t tor_log_t))
+(call read_files_pattern (tor_t tor_log_t tor_log_t))
+(call delete_files_pattern (tor_t tor_log_t tor_log_t))
+(allow tor_t tor_log_t manage_dir_perms)
+(call files_log_object_type_transition (tor_t tor_log_t dir "*"))
+
+(type tor_home_t)
+(call usersubject_home_object_type (tor_home_t))
+
+(filecon "HOME_DIR/\.tor(/.*)?" any (system_u object_r tor_home_t (systemlow systemlow)))
+
+(optional tor_log_optional_logrotate
+    (call logrotate_log_object_type (tor_log_t)))
+
+(allow tor_t self (capability (setgid setuid)))
+(allow tor_t self create_tcp_stream_socket_perms)
+
+(call system_read_kernel_sysctl (tor_t))
+
+(call devices_read_urandom (tor_t))
+
+(call files_read_config_files (tor_t))
+(call files_read_data_files (tor_t))
+
+(call filesystems_read_sysfs (tor_t))
+
+(call network_tcp_bind_generic_node (tor_t))
+(call network_udp_bind_generic_node (tor_t))
+
+(call dns_udp_bind_mdns_port (tor_t))
+
+(call miscfiles_read_locale (tor_t))
+
+(call ns_client_subject_type (tor_t))
+
+(call tor_read_config (tor_t))
+(call tor_tcp_bind_tor_port (tor_t))
+(call tor_tcp_connect_tor_port (tor_t))
+
+(optional tor_optional_http
+    (call http_tcp_connect_http_port (tor_t)))
+
+(optional tor_optional_journal
+    (call journal_client_subject_type (tor_t)))
+
+(optional tor_optional_systemd
+    (call systemd_daemon (tor_t tor_exec_t))
+
+    (type tor_unit_t)
+    (call systemd_unit_object_type (tor_unit_t))
+
+    (typeattributeset tor_object_type tor_unit_t)
+
+    (context tor_unit (system_u object_r tor_unit_t (systemlow systemlow)))
+    (filecon "/usr/lib/systemd/system/[^/]*tor.*" file tor_unit)
+
+    (call systemd_daemon_readwrite_dir_object_type (tor_log_t))
+    (call systemd_daemon_readwrite_dir_object_type (tor_lib_t))
+
+    (allow tor_admin_subject_type tor_unit_t (service (all))))
+
+(type torgencert_t)
+(type torgencert_exec_t)
+(call applications_app (torgencert_t torgencert_exec_t))
+(roletype tor_gencert_role torgencert_t)
+
+(context torgencert_exec (system_u object_r torgencert_exec_t (systemlow systemlow)))
+(filecon "/usr/bin/tor-gencert" file torgencert_exec)
+
+(type torresolve_t)
+(type torresolve_exec_t)
+(call applications_app (torresolve_t torresolve_exec_t))
+(roletype tor_resolve_role torresolve_t)
+
+(context torresolve_exec (system_u object_r torresolve_exec_t (systemlow systemlow)))
+(filecon "/usr/bin/tor-resolve" file torresolve_exec)
+
+(allow torresolve_t self create_tcp_socket_perms)
+
+(call tor_tcp_connect_tor_port (torresolve_t))
+
+(type torsocks_exec_t)
+(call applications_app (tor_socks_subject_type torsocks_exec_t))
+
+(context torsocks_exec (system_u object_r torsocks_exec_t (systemlow systemlow)))
+(filecon "/usr/bin/torify" file torsocks_exec)
+(filecon "/usr/bin/torsocks" file torsocks_exec)
+
+(allow tor_socks_subject_type self rw_fifo_file_perms)
+
+(call commands_exec (tor_socks_subject_type))
+(call commands_mmap_shell (tor_socks_subject_type))
+
+(call files_dontaudit_catchall_subject_type (tor_socks_subject_type))
+
+(call miscfiles_read_locale (tor_socks_subject_type))
+
+(call tor_exec_torsocks (tor_socks_subject_type))
+
+(type tor_config_t)
+(call files_config_object_type (tor_config_t))
+
+(typeattributeset tor_object_type tor_config_t)
+
+(context tor_config (system_u object_r tor_config_t (systemlow systemlow)))
+(filecon "/etc/tor(/.*)?" any tor_config)
+
+(allow tor_admin_subject_type tor_t (process (ptrace signal signull sigkill sigstop)))
+(call ps_subject_pattern (tor_admin_subject_type tor_t))
+
+(allow tor_admin_subject_type tor_object_type (all_file_objects
+    (not_mounton_entrypoint_and_execmod)))
+
+(call devices_read_urandom (tor_torsocks_client_subject_type))
+
+(call files_read_config_files (tor_torsocks_client_subject_type))
+
+(call miscfiles_read_all_certs (tor_torsocks_client_subject_type))
+
+(call tor_read_config_files (tor_torsocks_client_subject_type))
+(call tor_tcp_connect_tor_port (tor_torsocks_client_subject_type))
+
+(macro tor_torsocks_client_subject_type ((type ARG1))
+    (typeattributeset tor_torsocks_client_subject_type ARG1))
+
+(macro tor_exec ((type ARG1))
+    (call can_exec (ARG1 tor_exec_t)))
+
+(macro tor_exec_torsocks ((type ARG1))
+    (call can_exec (ARG1 torsocks_exec_t)))
+
+(macro tor_exec_gencert ((type ARG1))
+    (call can_exec (ARG1 torgencert_exec_t)))
+
+(macro tor_exec_resolve ((type ARG1))
+    (call can_exec (ARG1 torresolve_exec_t)))
+
+(macro tor_auto_subject_type_transition ((type ARG1))
+    (call tor_send_signal (ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 tor_exec_t tor_t)))
+
+(macro tor_send_signal ((type ARG1))
+    (allow ARG1 tor_t (process (signal))))
+
+(macro tor_run ((type ARG1)(role ARG2))
+    (call tor_auto_subject_type_transition (ARG1))
+    (roleattributeset tor_role ARG2))
+
+(macro tor_auto_subject_type_transition_resolve ((type ARG1))
+    (call tor_send_signal_resolve (ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 torresolve_exec_t torresolve_t)))
+
+(macro tor_send_signal_resolve ((type ARG1))
+    (allow ARG1 torresolve_t (process (signal))))
+
+(macro tor_run_resolve ((type ARG1)(role ARG2))
+    (call tor_auto_subject_type_transition_resolve (ARG1))
+    (roleattributeset tor_resolve_role ARG2))
+
+(macro tor_auto_subject_type_transition_gencert ((type ARG1))
+    (call tor_send_signal_gencert (ARG1))
+    (call auto_subject_type_transition_pattern
+        (ARG1 torgencert_exec_t torgencert_t)))
+
+(macro tor_send_signal_gencert ((type ARG1))
+    (allow ARG1 torgencert_t (process (signal))))
+
+(macro tor_run_gencert ((type ARG1)(role ARG2))
+    (call tor_auto_subject_type_transition_gencert (ARG1))
+    (roleattributeset tor_gencert_role ARG2))
+
+(macro tor_socks_subject_type ((type ARG1))
+    (typeattributeset tor_socks_subject_type ARG1))
+
+(macro tor_role_template_torsocks ((role ARG1)(type ARG2)(type ARG3))
+    (call auto_subject_type_transition_pattern
+        (ARG2 torsocks_exec_t ARG3))
+    (roletype ARG1 ARG3)
+    (allow ARG3 ARG2 (process (signal)))
+    (call tor_socks_subject_type (ARG3))
+    (optional tor_role_template_torsocks_optional_curl
+        (call curl_run (ARG3 ARG1))))
+
+(macro tor_search_config ((type ARG1))
+    (call files_search_config (ARG1))
+    (allow ARG1 tor_config_t search_dir_perms))
+
+(macro tor_list_config ((type ARG1))
+    (call files_search_config (ARG1))
+    (allow ARG1 tor_config_t list_dir_perms))
+
+(macro tor_read_config_files ((type ARG1))
+    (call files_search_config (ARG1))
+    (call read_files_pattern (ARG1 tor_config_t tor_config_t)))
+
+(macro tor_read_config_lnk_files ((type ARG1))
+    (call files_search_config (ARG1))
+    (call read_lnk_files_pattern (ARG1 tor_config_t tor_config_t)))
+
+(macro tor_read_config ((type ARG1))
+    (call files_search_config (ARG1))
+    (allow ARG1 tor_config_t read_file_perms)
+    (allow ARG1 tor_config_t list_dir_perms)
+    (allow ARG1 tor_config_t read_lnk_file_perms))
+
+(macro tor_manage_config ((type ARG1))
+    (call files_rw_config_dirs (ARG1))
+    (allow ARG1 tor_config_t manage_file_perms)
+    (allow ARG1 tor_config_t manage_dir_perms)
+    (allow ARG1 tor_config_t manage_lnk_file_perms))
+
+(macro tor_search_log ((type ARG1))
+    (call files_search_log (ARG1))
+    (allow ARG1 tor_log_t search_dir_perms))
+
+(macro tor_list_log ((type ARG1))
+    (call files_search_log (ARG1))
+    (allow ARG1 tor_log_t list_dir_perms))
+
+(macro tor_read_log_files ((type ARG1))
+    (call files_search_log (ARG1))
+    (call read_files_pattern (ARG1 tor_log_t tor_log_t)))
+
+(macro tor_read_log_lnk_files ((type ARG1))
+    (call files_search_log (ARG1))
+    (call read_lnk_files_pattern (ARG1 tor_log_t tor_log_t)))
+
+(macro tor_read_log ((type ARG1))
+    (call files_search_log (ARG1))
+    (allow ARG1 tor_log_t read_file_perms)
+    (allow ARG1 tor_log_t list_dir_perms)
+    (allow ARG1 tor_log_t read_lnk_file_perms))
+
+(macro tor_manage_log ((type ARG1))
+    (call files_rw_log_dirs (ARG1))
+    (allow ARG1 tor_log_t manage_file_perms)
+    (allow ARG1 tor_log_t manage_dir_perms)
+    (allow ARG1 tor_log_t manage_lnk_file_perms))
+
+(macro tor_search_lib ((type ARG1))
+    (call files_search_lib (ARG1))
+    (allow ARG1 tor_lib_t search_dir_perms))
+
+(macro tor_list_lib ((type ARG1))
+    (call files_search_lib (ARG1))
+    (allow ARG1 tor_lib_t list_dir_perms))
+
+(macro tor_read_lib_files ((type ARG1))
+    (call files_search_lib (ARG1))
+    (call read_files_pattern (ARG1 tor_lib_t tor_lib_t)))
+
+(macro tor_read_lib_lnk_files ((type ARG1))
+    (call files_search_lib (ARG1))
+    (call read_lnk_files_pattern (ARG1 tor_lib_t tor_lib_t)))
+
+(macro tor_read_lib ((type ARG1))
+    (call files_search_lib (ARG1))
+    (allow ARG1 tor_lib_t read_file_perms)
+    (allow ARG1 tor_lib_t list_dir_perms)
+    (allow ARG1 tor_lib_t read_lnk_file_perms))
+
+(macro tor_manage_lib ((type ARG1))
+    (call files_rw_lib_dirs (ARG1))
+    (allow ARG1 tor_lib_t manage_file_perms)
+    (allow ARG1 tor_lib_t manage_dir_perms)
+    (allow ARG1 tor_lib_t manage_lnk_file_perms))
+
+(macro tor_search_home ((type ARG1))
+    (call usersubject_search_home_dir (ARG1))
+    (allow ARG1 tor_home_t search_dir_perms))
+
+(macro tor_list_home ((type ARG1))
+    (call usersubject_search_home_dir (ARG1))
+    (allow ARG1 tor_home_t list_dir_perms))
+
+(macro tor_read_home_files ((type ARG1))
+    (call usersubject_search_home_dir (ARG1))
+    (call read_files_pattern (ARG1 tor_home_t tor_home_t)))
+
+(macro tor_manage_home_files ((type ARG1))
+    (call usersubject_search_home_dir (ARG1))
+    (call manage_files_pattern (ARG1 tor_home_t tor_home_t)))
+
+(macro tor_read_home_lnk_files ((type ARG1))
+    (call usersubject_search_home_dir (ARG1))
+    (call read_lnk_files_pattern (ARG1 tor_home_t tor_home_t)))
+
+(macro tor_read_home ((type ARG1))
+    (call usersubject_search_home_dir (ARG1))
+    (allow ARG1 tor_home_t read_file_perms)
+    (allow ARG1 tor_home_t list_dir_perms)
+    (allow ARG1 tor_home_t read_lnk_file_perms))
+
+(macro tor_manage_home ((type ARG1))
+    (call usersubject_rw_home_dir_dirs (ARG1))
+    (allow ARG1 tor_home_t manage_file_perms)
+    (allow ARG1 tor_home_t manage_dir_perms)
+    (allow ARG1 tor_home_t manage_lnk_file_perms))
+
+(macro tor_relabel_home ((type ARG1))
+    (call usersubject_search_home_dir (ARG1))
+    (allow ARG1 tor_home_t relabel_file_perms)
+    (allow ARG1 tor_home_t relabel_dir_perms)
+    (allow ARG1 tor_home_t relabel_lnk_file_perms))
+
+(macro tor_home_dir_object_type_transition_tor_home_dirs ((type ARG1))
+    (call usersubject_home_dir_object_type_transition (ARG1 tor_home_t dir ".tor")))
+
+(macro tor_tcp_bind_tor_port ((type ARG1))
+    (allow ARG1 tor_port_t (tcp_socket (name_bind))))
 
 (macro tor_tcp_connect_tor_port ((type ARG1))
     (allow ARG1 tor_port_t (tcp_socket (name_connect))))
+
+(macro tor_admin ((type ARG1)(role ARG2))
+    (typeattributeset tor_admin_subject_type ARG1)
+    (optional tor_admin_optional_askpwd
+        (call askpwd_run_askpwdagent (ARG1 ARG2)))
+    (optional tor_admin_optional_systemd
+        (call systemd_system_service_admin_subject_type (ARG1))))

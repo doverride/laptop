@@ -176,7 +176,7 @@
 
     (allow ntp_admin_subject_type ntpd_unit_t (service (all)))
 
-    (call systemd_pid_object_type (ntpd_runtime_t)))
+    (call systemd_daemon_pid_object_type (ntpd_runtime_t)))
 
 (allow ntp_admin_subject_type ntpd_t (process (ptrace signal signull sigkill sigstop)))
 (call ps_subject_pattern (ntp_admin_subject_type ntpd_t))

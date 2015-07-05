@@ -36,8 +36,11 @@
 (typeattribute systemd_sock_file_socket_activated_object_type)
 
 (typeattribute systemd_object_type)
-(typeattribute systemd_pid_object_type)
 (typeattribute systemd_unit_object_type)
+
+
+(typeattribute systemd_daemon_pid_object_type)
+(typeattribute systemd_daemon_readwrite_dir_object_type)
 
 (typeattribute systemd_config_object_type)
 (typeattribute systemd_lib_object_type)
@@ -186,8 +189,10 @@
 (call manage_sock_files_pattern (systemd_t systemd_sock_file_socket_activated_object_type
     systemd_sock_file_socket_activated_object_type))
 
-(allow systemd_t systemd_pid_object_type read_file_perms)
-(allow systemd_t systemd_pid_object_type delete_file_perms)
+(allow systemd_t systemd_daemon_pid_object_type read_file_perms)
+(allow systemd_t systemd_daemon_pid_object_type delete_file_perms)
+
+(allow systemd_t systemd_daemon_readwrite_dir_object_type (dir (mounton)))
 
 (call commands_exec_auto_subject_type_transition (systemd_t systemd_generic_t))
 (call commands_shell_exec_auto_subject_type_transition (systemd_t systemd_generic_t))
@@ -244,11 +249,7 @@
 (call filesystems_relabelfrom_devtmpfs_chr_files (systemd_t))
 (call filesystems_relabelfrom_devtmpfs_blk_files (systemd_t))
 (call filesystems_relabelfrom_tmpfs (systemd_t))
-(call filesystems_remount_devpts (systemd_t))
-(call filesystems_remount_dosfs (systemd_t))
-(call filesystems_remount_filesystems (systemd_t))
-(call filesystems_remount_hugetlbfs (systemd_t))
-(call filesystems_remount_tmpfs (systemd_t))
+(call filesystems_remount_all (systemd_t))
 (call filesystems_setattr_cgroup_files (systemd_t))
 (call filesystems_unmount_all (systemd_t))
 (call filesystems_write_inherited_devpts_chr_files (systemd_t))
@@ -666,6 +667,9 @@
 (macro systemd_daemon_forked_subject_type ((type ARG1))
     (typeattributeset systemd_daemon_forked_subject_type ARG1))
 
+(macro systemd_daemon_readwrite_dir_object_type ((type ARG1))
+    (typeattributeset systemd_daemon_readwrite_dir_object_type ARG1))
+
 (macro systemd_bounded_subject_type ((type ARG1))
     (typebounds systemd_t ARG1))
 
@@ -683,8 +687,8 @@
     (call files_object_type (ARG1))
     (typeattributeset systemd_unit_object_type ARG1))
 
-(macro systemd_pid_object_type ((type ARG1))
-    (typeattributeset systemd_pid_object_type ARG1))
+(macro systemd_daemon_pid_object_type ((type ARG1))
+    (typeattributeset systemd_daemon_pid_object_type ARG1))
 
 (macro systemd_config_object_type ((type ARG1))
     (call files_config_object_type (ARG1))

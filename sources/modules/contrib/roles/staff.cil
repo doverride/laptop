@@ -303,6 +303,10 @@
     (call gpg_role_template_gpgagent (staff_r staff_gpg_t staff_gpgagent_t))
     (call stream_connect_pattern (staff_gpg_t gpgagent_home_t gpgagent_home_t staff_gpgagent_t)))
 
+(optional staff_gpg_optional_staff_torsocks
+    (call tor_torsocks_client_subject_type (staff_gpgagent_t))
+    (call tor_torsocks_client_subject_type (staff_gpg_t)))
+
 (optional staff_optional_gstreamer
     (call gstreamer_manage_cache_home (staff_t))
     (call gstreamer_relabel_cache_home (staff_t))
@@ -708,6 +712,33 @@
 
 (optional staff_optional_temps
     (call temps_exec (staff_t)))
+
+(optional staff_optional_tor
+    (type staff_torsocks_t)
+    (call tor_role_template_torsocks (staff_r staff_subject_type staff_torsocks_t))
+
+    (call commands_shell_exec_auto_subject_type_transition (staff_torsocks_t staff_t))
+
+    (call tor_run (staff_subject_type staff_r))
+
+    (call tor_manage_home (staff_t))
+    (call tor_relabel_home (staff_t))
+    (call tor_home_dir_object_type_transition_tor_home_dirs (staff_t))
+
+    (call tor_run_resolve (staff_subject_type staff_r))
+    (call tor_run_gencert (staff_subject_type staff_r)))
+
+(optional staff_tor_optional_staff_lynx
+    (call tor_torsocks_client_subject_type (staff_lynx_t))
+    (call lynx_role_template (staff_r staff_torsocks_t staff_lynx_t)))
+
+(optional staff_tor_optional_staff_firefox
+    (call tor_torsocks_client_subject_type (staff_firefox_t))
+    (call firefox_role_template (staff_r staff_torsocks_t staff_firefox_t)))
+
+(optional staff_tor_optional_staff_irc
+    (call tor_torsocks_client_subject_type (staff_lynx_t))
+    (call irc_role_template_irssi (staff_r staff_torsocks_t staff_irssi_t)))
 
 (optional staff_optional_torrent
     (call torrent_run_rtorrent (staff_subject_type staff_r))
