@@ -182,9 +182,6 @@
 
 (allow tor_socks_subject_type self rw_fifo_file_perms)
 
-(call commands_exec (tor_socks_subject_type))
-(call commands_mmap_shell (tor_socks_subject_type))
-
 (call files_dontaudit_catchall_subject_type (tor_socks_subject_type))
 
 (call miscfiles_read_locale (tor_socks_subject_type))
