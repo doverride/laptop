@@ -134,9 +134,6 @@
 (optional firefox_subject_type_optional_nm
     (call nm_dbus_chat (firefox_subject_type)))
 
-(optional firefox_subject_type_optional_tor
-    (call tor_tcp_connect_tor_port (firefox_subject_type)))
-
 (type firefox_plugs_exec_t)
 (call applications_app (firefox_plugs_subject_type firefox_plugs_exec_t))
 

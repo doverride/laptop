@@ -247,6 +247,9 @@
 
     (call git_role_template (staff_r staff_gitemail_t staff_git_t)))
 
+(optional staff_git_optional_staff_tor
+    (call tor_role_template_torsocks (staff_r staff_git_t staff_torsocks_t)))
+
 (optional staff_emacs_optional_staff_git
     (call git_role_template (staff_r staff_emacs_t staff_git_t)))
 
@@ -717,7 +720,10 @@
     (type staff_torsocks_t)
     (call tor_role_template_torsocks (staff_r staff_subject_type staff_torsocks_t))
 
+    (call commands_exec_auto_subject_type_transition (staff_torsocks_t staff_t))
     (call commands_shell_exec_auto_subject_type_transition (staff_torsocks_t staff_t))
+
+    (call usersubject_exec_home_auto_subject_type_transition (staff_torsocks_t staff_t))
 
     (call tor_run (staff_subject_type staff_r))
 
