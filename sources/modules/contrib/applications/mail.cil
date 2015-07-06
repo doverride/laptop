@@ -74,6 +74,8 @@
 
 (call usersubject_manage_user_home_files (mail_mutt_subject_type))
 (call usersubject_home_dir_object_type_transition_user_home (mail_mutt_subject_type file "*"))
+(call usersubject_rw_mail_spool_files (mail_mutt_subject_type))
+(call usersubject_setattr_mail_spool_files (mail_mutt_subject_type))
 
 (optional mail_mutt_subject_type_optional_dbus
     (call dbus_read_lib_files (mail_mutt_subject_type)))
