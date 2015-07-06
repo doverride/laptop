@@ -412,8 +412,6 @@
 (call shutdown_dgram_send_shutdownd (systemd_systemctl_subject_type))
 
 (call systemd_control_all_units (systemd_systemctl_subject_type))
-(call systemd_getattr_all_systemd_daemon_subjects (systemd_systemctl_subject_type))
-(call systemd_read_state_all_systemd_daemon_subjects (systemd_systemctl_subject_type))
 (call systemd_stream_connect (systemd_systemctl_subject_type))
 (call systemd_systemctl_client_subject_type (systemd_systemctl_subject_type))
 (call systemd_read_state (systemd_systemctl_subject_type))
@@ -532,7 +530,7 @@
 
 (call systemd_rw_inherited_unix_stream_sockets (systemd_daemon_forked_subject_type))
 
-(call systemd_rw_unix_stream_sockets (systemd_daemon_subject_type))
+(call systemd_daemon_forked_subject_type (systemd_daemon_subject_type))
 (call systemd_read_state (systemd_daemon_subject_type))
 
 (allow systemd_systemctl_client_subject_type self (capability (ipc_lock)))
