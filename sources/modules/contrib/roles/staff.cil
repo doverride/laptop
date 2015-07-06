@@ -738,6 +738,14 @@
     (call tor_torsocks_client_subject_type (staff_lynx_t))
     (call lynx_role_template (staff_r staff_torsocks_t staff_lynx_t)))
 
+(optional staff_tor_optional_staff_livestreamer
+    (call tor_torsocks_client_subject_type (staff_livestreamer_t))
+    (call livestreamer_role_template (staff_r staff_torsocks_t staff_livestreamer_t)))
+
+(optional staff_tor_optional_staff_mplayer
+    (call tor_torsocks_client_subject_type (staff_mplayer_t))
+    (call mplayer_role_template (staff_r staff_torsocks_t staff_mplayer_t)))
+
 (optional staff_tor_optional_staff_mutt
     (call tor_torsocks_client_subject_type (staff_mutt_t))
     (call mail_role_template_mutt (staff_r staff_torsocks_t staff_mutt_t)))
