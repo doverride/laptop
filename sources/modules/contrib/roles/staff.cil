@@ -412,6 +412,8 @@
     (call mail_relabel_mutt_home_files (staff_t))
 
     (call mail_home_dir_object_type_transition_mutt_home_files (staff_t ".muttrc"))
+    (call mail_home_dir_object_type_transition_mutt_home_files (staff_t ".muttrc.gmail"))
+    (call mail_home_dir_object_type_transition_mutt_home_files (staff_t ".muttrc.cock"))
     (call mail_home_dir_object_type_transition_mutt_home_files (staff_t ".mutt_cache"))
     (call mail_home_dir_object_type_transition_mutt_home_files (staff_t ".mutt_certificates"))
     (call mail_home_dir_object_type_transition_mutt_home_files (staff_t ".mutt_passwords"))
