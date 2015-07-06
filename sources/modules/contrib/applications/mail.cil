@@ -12,7 +12,6 @@
 
 (filecon "HOME_DIR/\.muttrc\..*" file (system_u object_r mutt_home_t (systemlow systemlow)))
 (filecon "HOME_DIR/\.mutt_cache" file (system_u object_r mutt_home_t (systemlow systemlow)))
-(filecon "HOME_DIR/\.mutt_cache\.cock" file (system_u object_r mutt_home_t (systemlow systemlow)))
 (filecon "HOME_DIR/\.mutt_cache\.gmail" file (system_u object_r mutt_home_t (systemlow systemlow)))
 (filecon "HOME_DIR/\.mutt_certificates" file (system_u object_r mutt_home_t (systemlow systemlow)))
 (filecon "HOME_DIR/\.mutt_passwords" file (system_u object_r mutt_home_t (systemlow systemlow)))
@@ -48,7 +47,6 @@
 (allow mail_mutt_subject_type mutt_home_t manage_file_perms)
 (call mail_home_dir_object_type_transition_mutt_home_files (mail_mutt_subject_type ".mutt_cache"))
 (call mail_home_dir_object_type_transition_mutt_home_files (mail_mutt_subject_type ".mutt_cache.gmail"))
-(call mail_home_dir_object_type_transition_mutt_home_files (mail_mutt_subject_type ".mutt_cache.cock"))
 (call mail_home_dir_object_type_transition_mutt_home_files (mail_mutt_subject_type ".mutt_certificates"))
 
 (allow mail_mutt_subject_type mutt_tmpfs_t manage_dir_perms)
