@@ -10,9 +10,12 @@
 (type mutt_home_t)
 (call usersubject_home_object_type (mutt_home_t))
 
-(filecon "HOME_DIR/\.muttrc.*" file (system_u object_r mutt_home_t (systemlow systemlow)))
+(filecon "HOME_DIR/\.muttrc\..*" file (system_u object_r mutt_home_t (systemlow systemlow)))
 (filecon "HOME_DIR/\.mutt_cache" file (system_u object_r mutt_home_t (systemlow systemlow)))
+(filecon "HOME_DIR/\.mutt_cache\.cock" file (system_u object_r mutt_home_t (systemlow systemlow)))
+(filecon "HOME_DIR/\.mutt_cache\.gmail" file (system_u object_r mutt_home_t (systemlow systemlow)))
 (filecon "HOME_DIR/\.mutt_certificates" file (system_u object_r mutt_home_t (systemlow systemlow)))
+(filecon "HOME_DIR/\.mutt_passwords" file (system_u object_r mutt_home_t (systemlow systemlow)))
 (filecon "HOME_DIR/\.mutt_passwords\.gpg" file (system_u object_r mutt_home_t (systemlow systemlow)))
 
 (type mutt_tmpfs_t)
@@ -44,6 +47,8 @@
 
 (allow mail_mutt_subject_type mutt_home_t manage_file_perms)
 (call mail_home_dir_object_type_transition_mutt_home_files (mail_mutt_subject_type ".mutt_cache"))
+(call mail_home_dir_object_type_transition_mutt_home_files (mail_mutt_subject_type ".mutt_cache.gmail"))
+(call mail_home_dir_object_type_transition_mutt_home_files (mail_mutt_subject_type ".mutt_cache.cock"))
 (call mail_home_dir_object_type_transition_mutt_home_files (mail_mutt_subject_type ".mutt_certificates"))
 
 (allow mail_mutt_subject_type mutt_tmpfs_t manage_dir_perms)
@@ -73,6 +78,9 @@
 
 (optional mail_mutt_subject_type_optional_dbus
     (call dbus_read_lib_files (mail_mutt_subject_type)))
+
+(optional mail_mutt_subject_type_optional_journal
+    (call journal_client_subject_type (mail_mutt_subject_type)))
 
 (macro mail_exec_mutt ((type ARG1))
     (call can_exec (ARG1 mutt_exec_t)))
