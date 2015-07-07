@@ -213,6 +213,7 @@
 (call openssl_home_dir_object_type_transition_home_files (myqemu_installer_t))
 
 (call qemu_exec (myqemu_installer_t))
+(call qemu_read_config (myqemu_installer_t))
 
 (call usersubject_manage_user_home_files (myqemu_installer_t))
 (call usersubject_home_dir_object_type_transition_user_home (myqemu_installer_t file "*"))

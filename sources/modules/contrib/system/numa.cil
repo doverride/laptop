@@ -43,6 +43,7 @@
 (allow numad_t numad_log_t read_file_perms)
 (call files_log_object_type_transition (numad_t numad_log_t file "*"))
 
+(allow numad_t self (capability (sys_nice)))
 (allow numad_t self create_msgq_perms)
 
 (call filesystems_list_sysfs (numad_t))
