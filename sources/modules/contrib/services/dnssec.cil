@@ -41,7 +41,7 @@
 (optional triggerd_optional_systemd
     (call systemd_daemon (triggerd_t triggerd_exec_t))
 
-    (call systemd_pid_object_type (dnssec_runtime_t))
+    (call systemd_daemon_pid_object_type (dnssec_runtime_t))
 
     (type dnssec_unit_t)
     (call systemd_unit_object_type (dnssec_unit_t))
