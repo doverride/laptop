@@ -61,6 +61,7 @@
 (allow wpa_t self create_unix_dgram_socket_perms)
 (allow wpa_t self create_udp_socket_perms)
 (allow wpa_t self create_netlink_socket_perms)
+(allow wpa_t self create_netlink_generic_socket_perms)
 (allow wpa_t self create_netlink_route_socket_perms)
 (allow wpa_t self create_packet_socket_perms)
 

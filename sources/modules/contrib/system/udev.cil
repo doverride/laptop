@@ -103,6 +103,7 @@
 (allow udevd_t self create_netlink_kobject_uevent_socket_perms)
 (allow udevd_t self (netlink_route_socket (nlmsg_write)))
 (allow udevd_t self create_netlink_socket_perms)
+(allow udevd_t self create_netlink_generic_socket_perms)
 (allow udevd_t self (unix_stream_socket (listen accept)))
 
 (call system_link_keyring (udevd_t))

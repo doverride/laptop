@@ -65,6 +65,7 @@
 
 (allow iptables_t self (capability (net_raw net_admin dac_override)))
 (allow iptables_t self create_netlink_socket_perms)
+(allow iptables_t self create_netlink_netfilter_socket_perms)
 (allow iptables_t self create_rawip_socket_perms)
 (allow iptables_t self create_unix_dgram_socket_perms)
 (allow iptables_t self rw_fifo_file_perms)
